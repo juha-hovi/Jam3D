@@ -1,13 +1,15 @@
 CXX		  := g++
 CXX_FLAGS := -Wall -Wextra -std=c++17 -ggdb
 
+VPATH := src/renderer
+
 BIN		:= bin
 SRC		:= src
-INCLUDE	:= include 
+VENDOR	:= vendor
 LIB		:= lib
 
 LIBRARIES	:= -lglfw -lGLEW -lGLU -lGL
-EXECUTABLE	:= main
+EXECUTABLE	:= application
 
 
 all: $(BIN)/$(EXECUTABLE)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vertexbuffer.h"
+#include "vertexbufferlayout.h"
 
 // Interface for OpenGL vertex array object
 class VertexArray

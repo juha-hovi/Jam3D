@@ -37,6 +37,9 @@ int main() {
     std::cout << "GLFW & GLEW initialized" << "\n" << "GLEW: " << glewGetString(GLEW_VERSION) << "\n"
               << "OpenGL: " << glGetString(GL_VERSION) << std::endl;
 
+    Renderer renderer();
+    Shader shader("src/shaders/basic3d.shader");
+
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(window))
     {
