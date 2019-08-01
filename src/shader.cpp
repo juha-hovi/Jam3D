@@ -1,11 +1,14 @@
+#include "shader.h"
+
 #include <iostream>
 #include <sstream>
 #include <fstream>
 
 #include <GL/glew.h>
 
-#include "shader.h"
-
+// Creates OpenGL shader program from text file.
+// Input:
+//    - fp: reference to a filepath string
 Shader::Shader(const std::string& fp)
     : m_FilePath(fp), m_RendererID(0)
 {
@@ -13,6 +16,12 @@ Shader::Shader(const std::string& fp)
     m_RendererID = CreateShader(shaderSources.vertexSource, shaderSources.fragmentSource);
 }
 
+// Compiles the shaders and links them to a program.
+// Input:
+//    - vertexSource: reference to a vertex shader source string
+//    - fragmentSource: reference to a fragment shader source string
+// Output:
+//    - program ID associated with the shaders
 unsigned int Shader::CreateShader(std::string& vertexSource, std::string& fragmentSource)
 {
     unsigned int program = glCreateProgram();
@@ -30,6 +39,13 @@ unsigned int Shader::CreateShader(std::string& vertexSource, std::string& fragme
     return program;
 }
 
+// Compiles a single shader and reports failure.
+// Input:
+//    - type: GL_ENUM representing shader type
+//    - source: reference to a shader source string
+// Output:
+//    - id: shader id of a successfully compiled shader
+//    - 0 if compilation failed
 int Shader::CompileShader(unsigned int type, const std::string& source)
 {
     unsigned int id = glCreateShader(type);
@@ -45,8 +61,8 @@ int Shader::CompileShader(unsigned int type, const std::string& source)
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 		char* message = (char*)alloca(length * sizeof(char));
 		glGetShaderInfoLog(id, length, &length, message);
-		std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << "\n";
-		std::cout << message << "\n";
+		std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
+		std::cout << message << std::endl;
 		glDeleteShader(id);
 		return 0;
     }
@@ -54,6 +70,13 @@ int Shader::CompileShader(unsigned int type, const std::string& source)
     return id;
 }
 
+// Parses a single text file containing vertex and fragment shader source codes.
+// See 'shader.basic' file for example on format.
+// Input:
+//    - fp: reference to file path string
+// Output:
+//    - id: shader id of a successfully compiled shader
+//    - 0 if compilation failed
 Shader::ShaderSources Shader::ParseShader(const std::string& fp)
 {
     std::ifstream stream(fp);
@@ -98,4 +121,16 @@ Shader::ShaderSources Shader::ParseShader(const std::string& fp)
 
     ShaderSources shaderSources = {sstreamVertex.str(), sstreamFragment.str()};
     return shaderSources;
+}
+
+// Binds the program.
+void Shader::Bind() const
+{
+    glUseProgram(m_RendererID);
+}
+
+// Unbinds the program.
+void Shader::Unbind() const
+{
+    glUseProgram(0);
 }

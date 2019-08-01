@@ -6,7 +6,7 @@
 #include "shader.h"
 
 int main() {
-    // GLFW + GLEW setup
+    // GLFW + GLEW setup.
     GLFWwindow* window;
 
     if (!glfwInit())
@@ -36,7 +36,7 @@ int main() {
     std::cout << "GLFW & GLEW initialized" << "\n" << "GLEW: " << glewGetString(GLEW_VERSION) << "\n"
               << "OpenGL: " << glGetString(GL_VERSION) << std::endl;
 
-    // Main loop
+    // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);

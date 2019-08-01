@@ -2,6 +2,7 @@
 
 #include <string>
 
+// Interface for OpenGL shader program. 
 class Shader
 {
 private:
@@ -20,8 +21,8 @@ private:
 public:
     Shader(const std::string& fp);
 
-    void bind();
-    void unbind();
+    void Bind() const;
+    void Unbind() const;
 
 private:
     unsigned int CreateShader(std::string& vertexSource, std::string& fragmentSource);
