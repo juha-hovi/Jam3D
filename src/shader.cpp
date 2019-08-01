@@ -104,12 +104,10 @@ Shader::ShaderSources Shader::ParseShader(const std::string& fp)
             {
             case 1:
                 sstreamVertex << line << "\n";
-                break;
-            
+                break;            
             case 2:
                 sstreamFragment << line << "\n";
                 break;
-
             case -1:
                 std::cout << "Shader type not identified. Current line: " << line << std::endl;
             }  
@@ -133,4 +131,45 @@ void Shader::Bind() const
 void Shader::Unbind() const
 {
     glUseProgram(0);
+}
+
+// Sets value for a uniform containing 1 int.
+void Shader::SetUniform1i(const std::string& name, int value)
+{
+    glUniform1i(GetUniformLocation(name), value);
+}
+
+// Sets value for a uniform containing 1 float.
+void Shader::SetUniform1f(const std::string& name, float value)
+{
+    glUniform1f(GetUniformLocation(name), value);
+}
+
+// Sets values for a uniform containing 4 floats.
+void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
+{
+    glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
+}
+
+// Sets values for a uniform containing a 4x4 matrix.
+void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix)
+{
+    glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
+}
+
+// Returns the location of uniform if it exists and
+// maintains a cache of uniform locations.
+int Shader::GetUniformLocation(const std::string& name)
+{
+    // If uniform location is cached, return it.
+    if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+        return m_UniformLocationCache[name];
+
+    // If uniform location is not cached, cache and return it if it exists.
+    int location = glGetUniformLocation(m_RendererID, name.c_str());
+    if (location == -1)
+        std::cout << "Warning: uniform " << name << " doesn't exist" << "\n";
+
+    m_UniformLocationCache[name] = location;
+    return location;
 }
