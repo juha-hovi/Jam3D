@@ -11,4 +11,4 @@ set(renderer_source
 	vertexbuffer.h
 	vertexbufferlayout.h
 )
-add_library(renderer $(renderer_source))
+add_library(renderer ${renderer_source})

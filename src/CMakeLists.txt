@@ -1,9 +1,22 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 project(opengl_project_app)
 
 add_subdirectory(renderer)
+include_directories(renderer)
+
+
+find_package(glfw3 REQUIRED)
+include_directories(${GLFW_INCLUDE_DIRS})
+link_libraries(${GLFW_LIBRARY_DIRS})
+
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+
+find_package(GLEW REQUIRED)
+include_directories(${GLEW_INCLUDE_DIRS})
+
 
 set(app_source application.cpp)
 add_executable(app ${app_source})
 
-target_link_libraries(app renderer)
+target_link_libraries(app renderer glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

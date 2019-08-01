@@ -29,7 +29,6 @@ int main() {
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
-        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
         std::cout << "Error: " << glewGetErrorString(err) << std::endl;
         return 0;
     }
