@@ -4,6 +4,7 @@
 #include "GLFW/glfw3.h"
 
 #include "shader.h"
+#include "renderer.h"
 
 int main() {
     // GLFW + GLEW setup.
