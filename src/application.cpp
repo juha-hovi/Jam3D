@@ -7,6 +7,27 @@
 #include "renderer.h"
 #include "box.h"
 
+/*  TODO:
+        - Draw flowchart of OpenGL commands/tasks
+
+        - Draw Boxes
+            - Draw anything
+            - Add a way to input box corners (cin.get()?)
+            - Add support for multiple boxes
+        - Input
+            - Make ImGui work
+            - Camera control with keyboard
+                - Left, right, up, down
+                - Zoom in, zoom out
+                - Pitch, yaw
+            - Move something with mouse
+                - Mouse1 click rotates object
+                - Mouse1 click, hold, and drag rotates object
+        - Look into multiple viewport implementation
+            - 4 views: general, xy-plane, xz-plane, yz-plane
+                - Draw object by clicking mouse
+*/
+
 int main() 
 {
     /////////////////////////////////

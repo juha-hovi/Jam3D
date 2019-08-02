@@ -8,7 +8,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "command": "./build.sh",
+            "command": "./build_debug.sh",
         },
         {
             "label": "Build & run C++ project",
@@ -17,7 +17,7 @@
                 "kind": "test",
                 "isDefault": true
             },
-            "command": "./build_and_run.sh",
+            "command": "./build_and_run_debug.sh",
         }
     ]
 }

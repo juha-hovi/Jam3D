@@ -1,3 +1,3 @@
 OpenGL practice project
 
-run.sh builds and runs the program.
+.sh scripts for building and running included
