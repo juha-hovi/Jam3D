@@ -48,7 +48,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -70,16 +70,16 @@ int main()
     //// End: GLWF & GLEW setup /////
     /////////////////////////////////
 
-    Renderer renderer();
-    Box box(Box::Vec3(0, 0, 0), Box::Vec3(200, 200, 200));
+    Renderer renderer;
+    Box box(Box::Vec3(-200, -200, -200), Box::Vec3(200, 200, 200));
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
 
-    VertexArray VAO();
-    VertexBuffer VBO();
-    VertexBufferLayout layout();
+    VertexArray VAO;
+    VertexBuffer VBO(box.m_Positions, box.m_PositionsSize * sizeof(float));
+    VertexBufferLayout layout;
     layout.Push<float>(3);
     layout.Push<float>(2);
     VAO.AddBuffer(VBO, layout);
@@ -87,27 +87,26 @@ int main()
     IndexBuffer IBO(box.m_Indices, box.m_IndicesSize);
 
     Shader shader("src/shaders/basic3d.shader");
-    shader.bind();
-    shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+    shader.Bind();
 
     Texture texture("src/resources/image.png");
     shader.SetUniform1i("u_Texture", 0);
 
-    // Renderer renderer();
-    // Shader shader("src/shaders/basic3d.shader");
-    // Box box(Box::Vec3(0, 0, 0), Box::Vec3(10, 10, 10));
-    // Texture texture("src/resources/image.png");
+    glm::mat4 proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 2000.0f));
+    glm::mat4 view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1000.0f)));
+
 
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        renderer.Clear();
+        
         
         texture.Bind();
-        glm::mat4 mvp = glm::mat4(1.0f);
+        glm::mat4 mvp = proj * view;
         shader.Bind();
-        shader.SetUniform4f("u_MVP", mvp);
+        shader.SetUniformMat4f("u_MVP", mvp);
         renderer.Draw(VAO, IBO, shader);
 
 

@@ -3,6 +3,8 @@
 
 #include <GL/glew.h>
 
+#include <iostream>
+
 Texture::Texture(const std::string& fp)
 	: m_RendererID(0), m_FilePath(fp), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
 {
@@ -22,6 +24,8 @@ Texture::Texture(const std::string& fp)
 
 	if (m_LocalBuffer)
 		stbi_image_free(m_LocalBuffer);
+	else
+		std::cout << "Failed to create texture!" << std::endl;
 }
 
 Texture::~Texture()
