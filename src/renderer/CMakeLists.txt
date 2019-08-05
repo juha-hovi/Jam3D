@@ -5,6 +5,8 @@ set(renderer_source
 	renderer.h
 	shader.cpp
 	shader.h
+	texture.cpp
+	texture.h
 	vertexarray.cpp
 	vertexarray.h
 	vertexbuffer.cpp

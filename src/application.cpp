@@ -6,6 +6,7 @@
 #include "shader.h"
 #include "renderer.h"
 #include "box.h"
+#include "texture.h"
 
 /*  TODO:
         - Draw flowchart of OpenGL commands/tasks
@@ -67,6 +68,7 @@ int main()
     Renderer renderer();
     Shader shader("src/shaders/basic3d.shader");
     Box box(Box::Vec3(0, 0, 0), Box::Vec3(10, 10, 10));
+    Texture texture("src/resources/image.png");
 
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(window))
