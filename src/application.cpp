@@ -1,4 +1,7 @@
 #include <iostream>
+#include <memory>
+#include <chrono>
+#include <thread>
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
@@ -18,7 +21,6 @@
         - Draw flowchart of OpenGL commands/tasks
 
         - Draw Boxes
-            - Draw anything
             - Add a way to input box corners (cin.get()?)
             - Add support for multiple boxes
         - Input
@@ -43,10 +45,12 @@ void GLAPIENTRY openGLDebugCallback(GLenum source,
                                     const GLchar* message,
                                     const void* userParam)
 {
-    std::cout << "[GL CALLBACK]: " << (type == GL_DEBUG_TYPE_ERROR ? "**GL ERROR**" : "")
+    std::cout << "******************************************************" << "\n"
+              << "[GL CALLBACK]: " << (type == GL_DEBUG_TYPE_ERROR ? "**GL ERROR**" : "") << "\n"
               << "(Type): " << type << "\n" 
               << "(Severity): " << severity << "\n" 
-              << "(Message): " << message << std::endl;
+              << "(Message): " << message << "\n"
+              << "******************************************************" << std::endl;
 }
 
 int main() 
@@ -95,40 +99,61 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     VertexArray VAO;
-    VertexBuffer VBO(box.m_Positions, box.m_PositionsSize * sizeof(float));
+    VertexBuffer VBO(box.m_Positions.data(), box.m_PositionsSize * sizeof(float));
     VertexBufferLayout layout;
     layout.Push<float>(3);
     layout.Push<float>(2);
+
     VAO.AddBuffer(VBO, layout);
 
-    IndexBuffer IBO(box.m_Indices, box.m_IndicesSize);
+    IndexBuffer IBO(box.m_Indices.data(), box.m_IndicesSize);
 
     Shader shader("src/shaders/basic3d.shader");
     shader.Bind();
 
-    Texture texture("src/resources/image.png");
+    Texture texture("src/resources/tex_test.png");
     shader.SetUniform1i("u_Texture", 0);
 
+    float rotation = 0;
+    float increment = 0.5f;
     glm::mat4 proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 2000.0f));
     glm::mat4 view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1000.0f)));
+    glm::mat4 model(1.0f);
 
+    // Setup timer
+    int targetFps = 60;
+    std::chrono::milliseconds targetFrameTime(1000 / targetFps);
+    std::chrono::milliseconds sleepTime;
+    std::chrono::milliseconds frameTime;
+    auto frameStart = std::chrono::high_resolution_clock::now();
 
     // Loop until the window is closed by the user.
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose(window))  
     {
+        frameStart = std::chrono::high_resolution_clock::now();
+
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        renderer.Clear();
+        renderer.Clear();  
         
-        
+        model = glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
+        model = glm::translate(model, glm::vec3(-10.0f, -10.0f, -10.0f));
+        glm::mat4 mvp = proj * view * model;
         texture.Bind();
-        glm::mat4 mvp = proj * view;
         shader.Bind();
         shader.SetUniformMat4f("u_MVP", mvp);
         renderer.Draw(VAO, IBO, shader);
 
-
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        if (rotation >= 360.0f)
+            rotation = 0.0f;
+        rotation += increment;
+        std::cout << rotation << std::endl;
+
+        frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
+        sleepTime = targetFrameTime - frameTime;
+        std::this_thread::sleep_for(sleepTime);
     }
 
     glfwTerminate();

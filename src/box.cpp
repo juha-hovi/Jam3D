@@ -52,10 +52,10 @@ Box::Box(Vec3 corner0, Vec3 corner1)
 
 	for (int i = 0; i < m_PositionsSize; ++i)
 	{
-		m_Positions[i] = positions[i];
+		m_Positions.push_back(positions[i]);
 	}
 	for (int i = 0; i < m_IndicesSize; ++i)
 	{
-		m_Indices[i] = indices[i];
+		m_Indices.push_back(indices[i]);
 	}
 }

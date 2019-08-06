@@ -1,6 +1,8 @@
 #pragma once
 #include "glm/glm.hpp"
 
+#include <vector>
+
 // Simple box 3D object
 class Box
 {
@@ -20,6 +22,6 @@ public:
 	const int m_PositionsSize;
 	const int m_IndicesSize;
 
-	float m_Positions[];
-	unsigned int m_Indices[];
+	std::vector<float> m_Positions;
+	std::vector<unsigned int> m_Indices;
 };
