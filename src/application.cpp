@@ -20,6 +20,8 @@
 /*  TODO:
         - Draw flowchart of OpenGL commands/tasks
 
+        - Fix Box class, not enough vertices to have correct texture cordinates?
+
         - Draw Boxes
             - Add a way to input box corners (cin.get()?)
             - Add support for multiple boxes
@@ -118,7 +120,6 @@ int main()
     float increment = 0.5f;
     glm::mat4 proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 2000.0f));
     glm::mat4 view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1000.0f)));
-    glm::mat4 model(1.0f);
 
     // Setup timer
     int targetFps = 60;
@@ -134,9 +135,7 @@ int main()
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         renderer.Clear();  
-        
-        model = glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 1.0f));
-        model = glm::translate(model, glm::vec3(-10.0f, -10.0f, -10.0f));
+        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 0.0f));
         glm::mat4 mvp = proj * view * model;
         texture.Bind();
         shader.Bind();
@@ -149,7 +148,6 @@ int main()
         if (rotation >= 360.0f)
             rotation = 0.0f;
         rotation += increment;
-        std::cout << rotation << std::endl;
 
         frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
         sleepTime = targetFrameTime - frameTime;
