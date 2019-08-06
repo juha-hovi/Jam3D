@@ -22,6 +22,9 @@ public:
 	const int m_PositionsSize;
 	const int m_IndicesSize;
 
+	Vec3 m_Dimensions;
+	Vec3 m_Center;
+
 	std::vector<float> m_Positions;
 	std::vector<unsigned int> m_Indices;
 };

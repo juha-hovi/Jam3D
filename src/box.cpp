@@ -1,14 +1,23 @@
 #include "box.h"
+#include <cmath>
+
+// TODO: Implement proper box map for textures that care about rotation and
+//		 mirroring.
 
 // Builds a 3D box from two given corners.
-// m_PositionsSize = 40: 8 vertices, 3 coordinates, 2 texture coordinates
+// Uses minimum amount of vertices required to correctly render a texture, which 
+// can be mirrored and rotated without worry.
+
+// m_PositionsSize = 40: 16 vertices, 3 coordinates, 2 texture coordinates
 // m_IndicesSize = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
 // TODO: 8 vertices is not enough to get texture coordinates correct for all sides?
 Box::Box(Vec3 corner0, Vec3 corner1)
 	: m_Corner0(corner0), 
 	m_Corner1(corner1),
-	m_PositionsSize(8 * (3 + 2)),
-	m_IndicesSize(6 * 2 * 3)
+	m_PositionsSize(16 * (3 + 2)),
+	m_IndicesSize(6 * 2 * 3),
+	m_Dimensions({0.0f, 0.0f, 0.0f}),
+	m_Center({0.0f, 0.0f, 0.0f})
 {
 	/*
 			7-----6
@@ -17,7 +26,16 @@ Box::Box(Vec3 corner0, Vec3 corner1)
 		0-----1
 	*/
 
+	m_Dimensions.x = std::abs(m_Corner1.x - m_Corner0.x);
+	m_Dimensions.y = std::abs(m_Corner1.y - m_Corner0.y);
+	m_Dimensions.z = std::abs(m_Corner1.z - m_Corner0.z);
+
+	m_Center.x = (m_Corner0.x + m_Corner1.x) / 2.0f;
+	m_Center.y = (m_Corner0.y + m_Corner1.y) / 2.0f;
+	m_Center.z = (m_Corner0.z + m_Corner1.z) / 2.0f;
+
 	float positions[m_PositionsSize] = {
+		// Front, back, left, right
 		m_Corner0.x, m_Corner0.y, m_Corner0.z, 0.0f, 0.0f,	// 0
 		m_Corner1.x, m_Corner0.y, m_Corner0.z, 1.0f, 0.0f,	// 1
 		m_Corner1.x, m_Corner1.y, m_Corner0.z, 1.0f, 1.0f,	// 2
@@ -26,7 +44,19 @@ Box::Box(Vec3 corner0, Vec3 corner1)
 		m_Corner0.x, m_Corner0.y, m_Corner1.z, 1.0f, 0.0f,	// 4
 		m_Corner1.x, m_Corner0.y, m_Corner1.z, 0.0f, 0.0f,	// 5
 		m_Corner1.x, m_Corner1.y, m_Corner1.z, 0.0f, 1.0f,	// 6
-		m_Corner0.x, m_Corner1.y, m_Corner1.z, 1.0f, 1.0f	// 7
+		m_Corner0.x, m_Corner1.y, m_Corner1.z, 1.0f, 1.0f,	// 7
+
+		// Top
+		m_Corner1.x, m_Corner1.y, m_Corner0.z, 1.0f, 1.0f,	// 2
+		m_Corner0.x, m_Corner1.y, m_Corner0.z, 0.0f, 1.0f,	// 3
+		m_Corner1.x, m_Corner1.y, m_Corner1.z, 1.0f, 0.0f,	// 6
+		m_Corner0.x, m_Corner1.y, m_Corner1.z, 0.0f, 0.0f,	// 7
+
+		// Bottom
+		m_Corner0.x, m_Corner0.y, m_Corner0.z, 0.0f, 0.0f,	// 0
+		m_Corner1.x, m_Corner0.y, m_Corner0.z, 1.0f, 0.0f,	// 1
+		m_Corner0.x, m_Corner0.y, m_Corner1.z, 0.0f, 1.0f,	// 4
+		m_Corner1.x, m_Corner0.y, m_Corner1.z, 1.0f, 1.0f,	// 5
 	};
 
 	unsigned int indices[m_IndicesSize] = {
@@ -36,17 +66,17 @@ Box::Box(Vec3 corner0, Vec3 corner1)
 		4, 5, 7, // Back
 		5, 6, 7,
 
-		2, 3, 7, // Top
-		2, 6, 7,
-
 		0, 3, 7, // Left
 		0, 4, 7,
 
-		0, 1, 4, // Bottom
-		1, 4, 5,
-
 		1, 2, 5, // Right
-		2, 5, 6
+		2, 5, 6,
+
+		8, 9, 10, // Top
+		9, 10, 11,
+
+		12, 13, 14, // Bottom
+		13, 14, 15
 	};
 
 

@@ -20,10 +20,10 @@
 /*  TODO:
         - Draw flowchart of OpenGL commands/tasks
 
-        - Fix Box class, not enough vertices to have correct texture cordinates?
+        - Extend box class to offer 24 vertex option
 
         - Draw Boxes
-            - Add a way to input box corners (cin.get()?)
+            - Add a way to input box corners
             - Add support for multiple boxes
         - Input
             - Make ImGui work
@@ -94,7 +94,7 @@ int main()
     /////////////////////////////////
 
     Renderer renderer;
-    Box box(Box::Vec3(-200, -200, -200), Box::Vec3(200, 200, 200));
+    Box box(Box::Vec3(0.0f, 0.0f, 0.0f), Box::Vec3(200.0f, 200.0f, 200.0f));
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -118,7 +118,7 @@ int main()
 
     float rotation = 0;
     float increment = 0.5f;
-    glm::mat4 proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 0.1f, 2000.0f));
+    glm::mat4 proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 1.0f, 2000.0f));
     glm::mat4 view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1000.0f)));
 
     // Setup timer
@@ -135,7 +135,11 @@ int main()
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         renderer.Clear();  
-        glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(1.0f, 1.0f, 0.0f));
+
+        glm::mat4 model(1.0f);
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 1.0f, 0.0f));
+        glm::vec3 translation(0.0f, 0.0f, 0.0f); // TODO: Fix centering
+        model = glm::translate(model, translation);
         glm::mat4 mvp = proj * view * model;
         texture.Bind();
         shader.Bind();
