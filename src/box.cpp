@@ -1,6 +1,8 @@
 #include "box.h"
 #include <cmath>
 
+#include <iostream>
+
 // TODO: Implement proper box map for textures that care about rotation and
 //		 mirroring.
 
@@ -26,6 +28,7 @@ Box::Box(Vec3& corner0, Vec3& corner1)
 // Input: new corners
 void Box::Update(Vec3& corner0, Vec3& corner1)
 {
+	std::cout << "Box update!" << std::endl;
 	/*
 			7-----6
 		3---+-2	  |

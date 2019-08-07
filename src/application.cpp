@@ -109,6 +109,8 @@ int main()
     // Setup box test
     Box::Vec3 corner0(-200.0f, -100.0f, -100.0f);
     Box::Vec3 corner1(0.0f, 100.0f, 100.0f);
+    Box::Vec3 corner0New(-200.0f, -100.0f, -100.0f);
+    Box::Vec3 corner1New(0.0f, 100.0f, 100.0f);
     TestBox testBox(corner0, corner1);
 
     // Setup ImGui
@@ -131,16 +133,21 @@ int main()
         ImGui::NewFrame();
         {
             ImGui::Begin("OpenGL Project");
-            ImGui::SliderFloat("Corner 0: x", &corner0.x, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 0: y", &corner0.y, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 0: z", &corner0.z, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 1: x", &corner1.x, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 1: y", &corner1.y, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 1: z", &corner1.z, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 0: x", &corner0New.x, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 0: y", &corner0New.y, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 0: z", &corner0New.z, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 1: x", &corner1New.x, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 1: y", &corner1New.y, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 1: z", &corner1New.z, -500.0f, 500.0f);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
             ImGui::End();
         }
-        testBox.Update(corner0, corner1);
+        if (corner0New != corner0 || corner1New != corner1)
+        {
+            corner0 = corner0New;
+            corner1 = corner1New;
+            testBox.Update(corner0New, corner1New);
+        }
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         ////////////////////////////////////////////////

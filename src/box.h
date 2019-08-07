@@ -10,6 +10,11 @@ public:
 	struct Vec3 {
 		float x, y, z;
 		Vec3(float xx, float yy, float zz) { x = xx; y = yy; z = zz; };
+		bool operator==(const Vec3& rhs) 
+			{	return (this->x == rhs.x && this->y == rhs.y && this->z == rhs.z); };
+		bool operator!=(const Vec3& rhs) 
+			{	return !(this->x == rhs.x && this->y == rhs.y && this->z == rhs.z);  };
+
 	};
 
 	Box(Vec3& corner0, Vec3& corner1);
