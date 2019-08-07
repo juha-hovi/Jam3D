@@ -64,7 +64,7 @@ int main()
     if (!glfwInit())
         return 0;
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
@@ -77,6 +77,7 @@ int main()
 
     glfwMakeContextCurrent(window);
 
+    glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
@@ -94,7 +95,7 @@ int main()
     /////////////////////////////////
 
     Renderer renderer;
-    Box box(Box::Vec3(0.0f, 0.0f, 0.0f), Box::Vec3(200.0f, 200.0f, 200.0f));
+    Box box(Box::Vec3(-100.0f, -100.0f, -100.0f), Box::Vec3(200.0f, 200.0f, 200.0f));
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -137,9 +138,10 @@ int main()
         renderer.Clear();  
 
         glm::mat4 model(1.0f);
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(1.0f, 1.0f, 0.0f));
-        glm::vec3 translation(0.0f, 0.0f, 0.0f); // TODO: Fix centering
+        glm::vec3 translation(box.m_Center.x, box.m_Center.y, box.m_Center.z);
         model = glm::translate(model, translation);
+        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.0f, 0.0f));
+        model = glm::translate(model, -translation);
         glm::mat4 mvp = proj * view * model;
         texture.Bind();
         shader.Bind();
