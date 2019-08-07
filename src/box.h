@@ -12,9 +12,9 @@ public:
 		Vec3(float xx, float yy, float zz) { x = xx; y = yy; z = zz; };
 	};
 
-	Box(Vec3 corner0, Vec3 corner1);
+	Box(Vec3& corner0, Vec3& corner1);
 
-	void Update(Vec3 corner0, Vec3 corner1);
+	void Update(Vec3& corner0, Vec3& corner1);
 
 private:
 	Vec3 m_Corner0;

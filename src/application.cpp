@@ -15,7 +15,6 @@
         - Extend box class to offer 24 vertex option
 
         - Draw Boxes
-            - Pass references instead of copies in Box class and TestBox class
             - Add a way to input box corners
             - Add support for multiple boxes
         - Input
@@ -113,9 +112,9 @@ int main()
 
         testBox.Render();
 
-        corner0.x += 1.0f;
-        corner0.y += 1.0f;
-        corner0.z += 1.0f;
+        corner0.x += -1.0f;
+        corner0.y += -1.0f;
+        corner0.z += -1.0f;
         corner1.x += 1.0f;
         corner1.y += 1.0f;
         corner1.z += 1.0f;

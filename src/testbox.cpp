@@ -1,6 +1,6 @@
 #include "testbox.h"
 
-TestBox::TestBox(Box::Vec3 corner0, Box::Vec3 corner1)
+TestBox::TestBox(Box::Vec3& corner0, Box::Vec3& corner1)
     : m_Rotation(0.0f), m_Increment(0.5f)
 {
     m_Renderer = std::make_unique<Renderer>();
@@ -25,7 +25,7 @@ TestBox::TestBox(Box::Vec3 corner0, Box::Vec3 corner1)
     view = glm::mat4((glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1000.0f)))); 
 }
 
-void TestBox::Update(Box::Vec3 corner0, Box::Vec3 corner1)
+void TestBox::Update(Box::Vec3& corner0, Box::Vec3& corner1)
 {
     m_Box->Update(corner0, corner1);
     m_VBO->UpdateBuffer(0, m_Box->m_PositionsSize * sizeof(float), m_Box->m_Positions.data());
