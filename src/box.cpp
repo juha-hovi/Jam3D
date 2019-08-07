@@ -1,16 +1,12 @@
 #include "box.h"
 #include <cmath>
 
-// TODO: Implement proper box map for textures that care about rotation and
-//		 mirroring.
-
 // Builds a 3D box from two given corners.
 // Uses minimum amount of vertices required to correctly render a texture, which 
 // can be mirrored and rotated without worry.
 
 // m_PositionsSize = 40: 16 vertices, 3 coordinates, 2 texture coordinates
 // m_IndicesSize = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
-// TODO: 8 vertices is not enough to get texture coordinates correct for all sides?
 Box::Box(Vec3& corner0, Vec3& corner1)
 	: m_Corner0({0.0f, 0.0f, 0.0f}), 
 	m_Corner1({0.0f, 0.0f, 0.0f}),

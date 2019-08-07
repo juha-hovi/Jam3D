@@ -19,7 +19,8 @@
 
         - Draw flowchart of OpenGL commands/tasks
 
-        - Extend box class to offer 24 vertex option
+        - Add support for 24 vertex box
+        - Fix/check vertex order, front face -> counter clockwise vertices
 
         - Draw Boxes
             - Add support for multiple boxes (creation, deletion, modification)
