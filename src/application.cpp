@@ -6,16 +6,8 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "shader.h"
-#include "renderer.h"
 #include "box.h"
-#include "texture.h"
-#include "vertexarray.h"
-#include "vertexbuffer.h"
-#include "vertexbufferlayout.h"
-#include "indexbuffer.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include "testbox.h"
 
 /*  TODO:
         - Draw flowchart of OpenGL commands/tasks
@@ -92,39 +84,15 @@ int main()
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(openGLDebugCallback, 0);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+
     std::cout << "GLFW & GLEW initialized" << "\n" << "GLEW: " << glewGetString(GLEW_VERSION) << "\n"
               << "OpenGL: " << glGetString(GL_VERSION) << std::endl;
     /////////////////////////////////
     //// End: GLWF & GLEW setup /////
     /////////////////////////////////
-
-    Renderer renderer;
-    Box box(Box::Vec3(-100.0f, -100.0f, -100.0f), Box::Vec3(200.0f, 200.0f, 200.0f));
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_DEPTH_TEST);
-
-    VertexArray VAO;
-    VertexBuffer VBO(box.m_Positions.data(), box.m_PositionsSize * sizeof(float));
-    VertexBufferLayout layout;
-    layout.Push<float>(3);
-    layout.Push<float>(2);
-
-    VAO.AddBuffer(VBO, layout);
-
-    IndexBuffer IBO(box.m_Indices.data(), box.m_IndicesSize);
-
-    Shader shader("src/shaders/basic3d.shader");
-    shader.Bind();
-
-    Texture texture("src/resources/tex_test.png");
-    shader.SetUniform1i("u_Texture", 0);
-
-    float rotation = 0;
-    float increment = 0.5f;
-    glm::mat4 proj(glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 1.0f, 2000.0f));
-    glm::mat4 view(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1000.0f)));
 
     // Setup timer
     int targetFps = 60;
@@ -133,31 +101,17 @@ int main()
     std::chrono::milliseconds frameTime;
     auto frameStart = std::chrono::high_resolution_clock::now();
 
+    TestBox testBox(Box::Vec3(-100.0f, -100.0f, -100.0f), Box::Vec3(200.0f, 200.0f, 200.0f));
+
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(window))  
     {
         frameStart = std::chrono::high_resolution_clock::now();
 
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        renderer.Clear();  
-
-        glm::mat4 model(1.0f);
-        glm::vec3 translation(box.m_Center.x, box.m_Center.y, box.m_Center.z);
-        model = glm::translate(model, translation);
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.5f, 1.0f, 0.0f));
-        model = glm::translate(model, -translation);
-        glm::mat4 mvp = proj * view * model;
-        texture.Bind();
-        shader.Bind();
-        shader.SetUniformMat4f("u_MVP", mvp);
-        renderer.Draw(VAO, IBO, shader);
+        testBox.Render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
-
-        if (rotation >= 360.0f)
-            rotation = 0.0f;
-        rotation += increment;
 
         frameTime = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - frameStart);
         sleepTime = targetFrameTime - frameTime;

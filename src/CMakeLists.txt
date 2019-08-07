@@ -19,7 +19,9 @@ include_directories(${GLEW_INCLUDE_DIRS})
 set(app_source 
 	application.cpp
 	box.cpp
-	box.h)
+	box.h
+	testbox.cpp
+	testbox.h)
 add_executable(app ${app_source})
 
 target_link_libraries(app renderer stb_image glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
