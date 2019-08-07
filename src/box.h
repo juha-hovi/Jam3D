@@ -14,6 +14,8 @@ public:
 
 	Box(Vec3 corner0, Vec3 corner1);
 
+	void Update(Vec3 corner0, Vec3 corner1);
+
 private:
 	Vec3 m_Corner0;
 	Vec3 m_Corner1;

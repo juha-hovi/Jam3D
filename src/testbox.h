@@ -19,6 +19,7 @@ class TestBox
 public:
     TestBox(Box::Vec3 corner0, Box::Vec3 corner1);
 
+    void Update();
     void Render();
 
     float m_Rotation;

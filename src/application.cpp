@@ -15,6 +15,7 @@
         - Extend box class to offer 24 vertex option
 
         - Draw Boxes
+            - Pass references instead of copies in Box class and TestBox class
             - Add a way to input box corners
             - Add support for multiple boxes
         - Input
@@ -101,7 +102,9 @@ int main()
     std::chrono::milliseconds frameTime;
     auto frameStart = std::chrono::high_resolution_clock::now();
 
-    TestBox testBox(Box::Vec3(-100.0f, -100.0f, -100.0f), Box::Vec3(200.0f, 200.0f, 200.0f));
+    Box::Vec3 corner0(-100.0f, -100.0f, -100.0f);
+    Box::Vec3 corner1(100.0f, 100.0f, 100.0f);
+    TestBox testBox(corner0, corner1);
 
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(window))  
@@ -109,6 +112,14 @@ int main()
         frameStart = std::chrono::high_resolution_clock::now();
 
         testBox.Render();
+
+        corner0.x += 1.0f;
+        corner0.y += 1.0f;
+        corner0.z += 1.0f;
+        corner1.x += 1.0f;
+        corner1.y += 1.0f;
+        corner1.z += 1.0f;
+        testBox.Update(corner0, corner1);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
