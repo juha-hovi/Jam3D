@@ -11,7 +11,7 @@
 // m_PositionsSize = 40: 16 vertices, 3 coordinates, 2 texture coordinates
 // m_IndicesSize = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
 // TODO: 8 vertices is not enough to get texture coordinates correct for all sides?
-Box::Box(Vec3 corner0, Vec3 corner1)
+Box::Box(Vec3& corner0, Vec3& corner1)
 	: m_Corner0({0.0f, 0.0f, 0.0f}), 
 	m_Corner1({0.0f, 0.0f, 0.0f}),
 	m_PositionsSize(16 * (3 + 2)),
@@ -24,7 +24,7 @@ Box::Box(Vec3 corner0, Vec3 corner1)
 
 // Update the box.
 // Input: new corners
-void Box::Update(Vec3 corner0, Vec3 corner1)
+void Box::Update(Vec3& corner0, Vec3& corner1)
 {
 	/*
 			7-----6

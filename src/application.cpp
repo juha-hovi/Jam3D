@@ -6,6 +6,11 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+#define IMGUI_IMPL_OPENGL_LOADER_GLEW
+
 #include "box.h"
 #include "testbox.h"
 
@@ -17,11 +22,8 @@
         - Extend box class to offer 24 vertex option
 
         - Draw Boxes
-            - Pass references instead of copies in Box class and TestBox class
-            - Add a way to input box corners
-            - Add support for multiple boxes
+            - Add support for multiple boxes (creation, deletion, modification)
         - Input
-            - Make ImGui work
             - Camera control with keyboard
                 - Left, right, up, down
                 - Zoom in, zoom out
@@ -67,7 +69,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(960, 540, "OpenGL Project", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -104,24 +106,51 @@ int main()
     std::chrono::milliseconds frameTime;
     auto frameStart = std::chrono::high_resolution_clock::now();
 
-    Box::Vec3 corner0(-100.0f, -100.0f, -100.0f);
-    Box::Vec3 corner1(100.0f, 100.0f, 100.0f);
+    // Setup box test
+    Box::Vec3 corner0(-200.0f, -100.0f, -100.0f);
+    Box::Vec3 corner1(0.0f, 100.0f, 100.0f);
+    Box::Vec3 corner0New(-200.0f, -100.0f, -100.0f);
+    Box::Vec3 corner1New(0.0f, 100.0f, 100.0f);
     TestBox testBox(corner0, corner1);
+
+    // Setup ImGui
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    const char* glsl_version = "#version 330";
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
 
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(window))  
     {
         frameStart = std::chrono::high_resolution_clock::now();
 
+        ////////////////////////////////////////////////
         testBox.Render();
-
-        corner0.x += 1.0f;
-        corner0.y += 1.0f;
-        corner0.z += 1.0f;
-        corner1.x += 1.0f;
-        corner1.y += 1.0f;
-        corner1.z += 1.0f;
-        testBox.Update(corner0, corner1);
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        {
+            ImGui::Begin("OpenGL Project");
+            ImGui::SliderFloat("Corner 0: x", &corner0New.x, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 0: y", &corner0New.y, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 0: z", &corner0New.z, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 1: x", &corner1New.x, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 1: y", &corner1New.y, -500.0f, 500.0f);
+            ImGui::SliderFloat("Corner 1: z", &corner1New.z, -500.0f, 500.0f);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+        }
+        if (corner0New != corner0 || corner1New != corner1)
+        {
+            corner0 = corner0New;
+            corner1 = corner1New;
+            testBox.Update(corner0New, corner1New);
+        }
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        ////////////////////////////////////////////////
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -130,6 +159,9 @@ int main()
         sleepTime = targetFrameTime - frameTime;
         std::this_thread::sleep_for(sleepTime);
     }
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;
