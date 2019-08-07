@@ -24,4 +24,4 @@ set(app_source
 	testbox.h)
 add_executable(app ${app_source})
 
-target_link_libraries(app renderer stb_image glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_link_libraries(app renderer imgui stb_image glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

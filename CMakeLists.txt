@@ -6,3 +6,4 @@ include_directories(vendor)
 
 add_subdirectory(src)
 add_subdirectory(vendor/stb_image)
+add_subdirectory(vendor/imgui)
