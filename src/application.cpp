@@ -10,6 +10,8 @@
 #include "testbox.h"
 
 /*  TODO:
+        - Change timer milli -> micro
+
         - Draw flowchart of OpenGL commands/tasks
 
         - Extend box class to offer 24 vertex option
