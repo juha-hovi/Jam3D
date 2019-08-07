@@ -21,6 +21,7 @@
 
         - Add support for 24 vertex box
         - Fix/check vertex order, front face -> counter clockwise vertices
+        - Enable facet culling: glEnable(GL_CULL_FACE)
 
         - Draw Boxes
             - Add support for multiple boxes (creation, deletion, modification)
