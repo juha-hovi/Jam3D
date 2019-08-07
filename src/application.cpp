@@ -107,8 +107,8 @@ int main()
     auto frameStart = std::chrono::high_resolution_clock::now();
 
     // Setup box test
-    Box::Vec3 corner0(-100.0f, -100.0f, -100.0f);
-    Box::Vec3 corner1(100.0f, 100.0f, 100.0f);
+    Box::Vec3 corner0(-200.0f, -100.0f, -100.0f);
+    Box::Vec3 corner1(0.0f, 100.0f, 100.0f);
     TestBox testBox(corner0, corner1);
 
     // Setup ImGui
