@@ -47,12 +47,16 @@ void GLAPIENTRY openGLDebugCallback(GLenum source,
                                     const GLchar* message,
                                     const void* userParam)
 {
-    std::cout << "******************************************************" << "\n"
-              << "[GL CALLBACK]: " << (type == GL_DEBUG_TYPE_ERROR ? "**GL ERROR**" : "") << "\n"
-              << "(Type): " << type << "\n" 
-              << "(Severity): " << severity << "\n" 
-              << "(Message): " << message << "\n"
-              << "******************************************************" << std::endl;
+    // Only report errors
+    if (type == GL_DEBUG_TYPE_ERROR)
+    {
+        std::cout << "******************************************************" << "\n"
+                << "**GL ERROR**" << "\n"
+                << "(Type): " << type << "\n" 
+                << "(Severity): " << severity << "\n" 
+                << "(Message): " << message << "\n"
+                << "******************************************************" << std::endl;
+    }
 }
 
 int main() 
