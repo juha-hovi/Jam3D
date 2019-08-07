@@ -20,10 +20,8 @@
         - Extend box class to offer 24 vertex option
 
         - Draw Boxes
-            - Add a way to input box corners
-            - Add support for multiple boxes
+            - Add support for multiple boxes (creation, deletion, modification)
         - Input
-            - Make ImGui work
             - Camera control with keyboard
                 - Left, right, up, down
                 - Zoom in, zoom out
