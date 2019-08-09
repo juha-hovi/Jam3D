@@ -16,6 +16,7 @@
 
 /*  TODO:
         - Change timer milli -> micro
+        - Change Application into class
 
         - Draw flowchart of OpenGL commands/tasks
 
@@ -30,6 +31,7 @@
                 - Left, right, up, down
                 - Zoom in, zoom out
                 - Pitch, yaw
+                - Rotation
             - Move something with mouse
                 - Mouse1 click rotates object
                 - Mouse1 click, hold, and drag rotates object
