@@ -34,6 +34,10 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
+        - Give the application a name
+            - Wrap everything into namespaces
+            - Create maths library starting with vec3 (replace Box::Vec3)
+
         - Draw flowchart of OpenGL commands/tasks
 
         - Add support for 24 vertex box

@@ -14,3 +14,4 @@ set(renderer_source
 	vertexbufferlayout.h
 )
 add_library(renderer ${renderer_source})
+target_link_libraries(renderer stb_image)

@@ -4,6 +4,11 @@ project(opengl_project_app)
 add_subdirectory(renderer)
 include_directories(renderer)
 
+add_subdirectory(shapes)
+include_directories(shapes)
+
+add_subdirectory(tests)
+include_directories(tests)
 
 find_package(glfw3 REQUIRED)
 include_directories(${GLFW_INCLUDE_DIRS})
@@ -19,11 +24,7 @@ include_directories(${GLEW_INCLUDE_DIRS})
 set(app_source 
 	entrypoint.cpp
 	application.cpp
-	application.h
-	box.cpp
-	box.h
-	testbox.cpp
-	testbox.h)
+	application.h)
 add_executable(app ${app_source})
 
-target_link_libraries(app renderer imgui stb_image glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_link_libraries(app tests imgui glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
