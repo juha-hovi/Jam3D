@@ -36,15 +36,10 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
-        - Name the program
-            - Wrap everything into namespaces
-            - Create maths library starting with vec3 (replace Box::Vec3)
-
         - Draw flowchart of OpenGL commands/tasks
 
         - Add support for 24 vertex box
         - Fix/check vertex order, front face -> counter clockwise vertices
-        - Enable facet culling: glEnable(GL_CULL_FACE)
 
         - Draw Boxes
             - Add support for multiple boxes (creation, deletion, modification)
@@ -80,7 +75,7 @@ Jam3D::~Jam3D()
 void Jam3D::Run()
 {
     // Setup timer
-    int targetFps = 120;
+    int targetFps = 60;
     std::chrono::microseconds targetFrameDuration(1000000 / targetFps);
     std::chrono::microseconds sleepDuration;
     std::chrono::microseconds frameDuration;
