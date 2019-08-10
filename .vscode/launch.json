@@ -5,7 +5,7 @@
             "name": "C++ Debug (gdb)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/src/app",
+            "program": "${workspaceFolder}/bin/src/Jam3D",
             "preLaunchTask": "Build C++ project",
             "args": [],
             "stopAtEntry": false,

@@ -4,11 +4,11 @@
 
 #include <string>
 
-class Application
+class Jam3D
 {
 public:
-	Application();
-	~Application();
+	Jam3D();
+	~Jam3D();
 
 	void Run();
 	int InitOpenGL();

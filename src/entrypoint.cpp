@@ -1,8 +1,8 @@
-#include "application.h"
+#include "jam3d.h"
 
 int main() 
 {
-    Application app;
-    app.Run();
+    Jam3D application;
+    application.Run();
     return 0;
 }

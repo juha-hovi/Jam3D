@@ -10,7 +10,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
-#include "application.h"
+#include "jam3d.h"
 #include "testbox.h"
 
 void GLAPIENTRY OpenGLDebugCallback(GLenum source,
@@ -34,7 +34,7 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
-        - Give the application a name
+        - Name the program
             - Wrap everything into namespaces
             - Create maths library starting with vec3 (replace Box::Vec3)
 
@@ -61,7 +61,7 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
                 - Draw object by clicking mouse
 */
 
-Application::Application()
+Jam3D::Jam3D()
     : m_Window(nullptr), m_Width(960), m_Height(540), m_Title("OpenGL Project")
 {
     InitOpenGL();
@@ -70,12 +70,12 @@ Application::Application()
     glDebugMessageCallback(OpenGLDebugCallback, 0);
 }
 
-Application::~Application()
+Jam3D::~Jam3D()
 {
     glfwTerminate();
 }
 
-void Application::Run()
+void Jam3D::Run()
 {
     // Setup timer
     int targetFps = 120;
@@ -111,7 +111,7 @@ void Application::Run()
     }
 }
 
-int Application::InitOpenGL()
+int Jam3D::InitOpenGL()
 {
     if (!glfwInit())
         return 0;

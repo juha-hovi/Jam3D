@@ -21,10 +21,10 @@ find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
 
 
-set(app_source 
+set(jam3d_source 
 	entrypoint.cpp
-	application.cpp
-	application.h)
-add_executable(app ${app_source})
+	jam3d.cpp
+	jam3d.h)
+add_executable(Jam3D ${jam3d_source})
 
-target_link_libraries(app tests imgui glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_link_libraries(Jam3D tests imgui glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
