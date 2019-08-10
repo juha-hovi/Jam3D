@@ -75,9 +75,9 @@ void Application::Run()
 {
     // Setup timer
     int targetFps = 120;
-    std::chrono::microseconds targetFrameTime(1000000 / targetFps);
-    std::chrono::microseconds sleepTime;
-    std::chrono::microseconds frameTime;
+    std::chrono::microseconds targetFrameDuration(1000000 / targetFps);
+    std::chrono::microseconds sleepDuration;
+    std::chrono::microseconds frameDuration;
     auto frameStart = std::chrono::high_resolution_clock::now();
 
     // Setup ImGui
@@ -101,9 +101,9 @@ void Application::Run()
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
 
-        frameTime = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - frameStart);
-        sleepTime = targetFrameTime - frameTime;
-        std::this_thread::sleep_for(sleepTime);
+        frameDuration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - frameStart);
+        sleepDuration = targetFrameDuration - frameDuration;
+        std::this_thread::sleep_for(sleepDuration);
     }
 }
 
