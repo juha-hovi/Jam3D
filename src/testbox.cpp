@@ -33,6 +33,10 @@ void TestBox::Update(Box::Vec3& corner0, Box::Vec3& corner1)
 
 void TestBox::Render()
 {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    
     m_Renderer->Clear();
     glm::mat4 model(1.0f);
     glm::vec3 translation(m_Box->m_Center.x, m_Box->m_Center.y, m_Box->m_Center.z);

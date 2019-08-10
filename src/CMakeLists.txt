@@ -17,7 +17,9 @@ include_directories(${GLEW_INCLUDE_DIRS})
 
 
 set(app_source 
+	entrypoint.cpp
 	application.cpp
+	application.h
 	box.cpp
 	box.h
 	testbox.cpp
