@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+namespace Jam3D {
+
 Texture::Texture(const std::string& fp)
 	: m_RendererID(0), m_FilePath(fp), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0)
 {
@@ -42,4 +44,6 @@ void Texture::Bind(unsigned int slot) const
 void Texture::Unbind() const
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 }

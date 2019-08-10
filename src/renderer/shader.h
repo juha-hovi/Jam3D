@@ -5,6 +5,8 @@
 
 #include <glm/glm.hpp>
 
+namespace Jam3D {
+
 // Interface for OpenGL shader program. 
 class Shader
 {
@@ -40,3 +42,5 @@ private:
     int CompileShader(unsigned int type, const std::string& source);
     ShaderSources ParseShader(const std::string& fp);
 };
+
+}

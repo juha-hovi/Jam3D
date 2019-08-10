@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Jam3D {
+
 // Interface for OpenGL buffer containing vertex data.
 class VertexBuffer
 {
@@ -14,3 +16,5 @@ public:
 	void Unbind() const;
 	void UpdateBuffer(unsigned int offset, unsigned int size, const void* data);
 };
+
+}

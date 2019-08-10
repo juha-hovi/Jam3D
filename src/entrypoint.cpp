@@ -2,7 +2,7 @@
 
 int main() 
 {
-    Jam3D application;
+    Jam3D::Jam3D application;
     application.Run();
     return 0;
 }

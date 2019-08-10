@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+namespace Jam3D {
+
 // Creates OpenGL buffer with index data.
 // Input:
 // 	  -data: pointer to index data
@@ -30,4 +32,6 @@ void IndexBuffer::Bind() const
 void IndexBuffer::Unbind() const
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+namespace Jam3D {
+
 // Interface for OpenGL buffer containing index data.
 class IndexBuffer
 {
@@ -16,3 +18,5 @@ public:
 	
 	inline unsigned int GetCount() const { return m_Count; };
 };
+
+}

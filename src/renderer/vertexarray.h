@@ -3,6 +3,8 @@
 #include "vertexbuffer.h"
 #include "vertexbufferlayout.h"
 
+namespace Jam3D {
+
 // Interface for OpenGL vertex array object
 class VertexArray
 {
@@ -18,3 +20,5 @@ public:
 	void Bind() const;
 	void Unbind() const;
 };
+
+}

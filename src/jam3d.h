@@ -4,6 +4,8 @@
 
 #include <string>
 
+namespace Jam3D {
+
 class Jam3D
 {
 public:
@@ -18,3 +20,5 @@ public:
 	unsigned int m_Height;
 	std::string m_Title;
 };
+
+}

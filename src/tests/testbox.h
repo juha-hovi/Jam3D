@@ -14,6 +14,8 @@
 
 #include <memory>
 
+namespace Jam3D {
+
 class TestBox
 {
 public:
@@ -40,3 +42,5 @@ private:
     glm::mat4 proj;
     glm::mat4 view;
 };
+
+}

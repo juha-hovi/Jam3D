@@ -5,6 +5,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
+namespace Jam3D {
+
 TestBox::TestBox()
     : m_Rotation(0.0f), m_Increment(0.5f)
 {
@@ -87,4 +89,6 @@ void TestBox::RenderImGui()
     }
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 }

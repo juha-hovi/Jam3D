@@ -13,6 +13,8 @@
 #include "jam3d.h"
 #include "testbox.h"
 
+namespace Jam3D {
+
 void GLAPIENTRY OpenGLDebugCallback(GLenum source,
                                     GLenum type,
                                     GLuint id,
@@ -139,4 +141,6 @@ int Jam3D::InitOpenGL()
     }
 
     return 1;
+}
+
 }

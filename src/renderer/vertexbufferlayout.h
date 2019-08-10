@@ -4,6 +4,8 @@
 
 #include <GL/glew.h>
 
+namespace Jam3D {
+
 class VertexBufferLayout
 {
 public:
@@ -64,4 +66,6 @@ inline void VertexBufferLayout::Push<unsigned char>(unsigned int count)
 {
 	m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_FALSE });
 	m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
+}
+
 }

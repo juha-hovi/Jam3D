@@ -1,5 +1,7 @@
 #include "renderer.h"
 
+namespace Jam3D {
+
 // Clears the screen.
 void Renderer::Clear() const
 {
@@ -18,4 +20,6 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
 	ib.Bind();
 
 	glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+}
+
 }

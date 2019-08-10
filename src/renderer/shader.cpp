@@ -6,6 +6,8 @@
 
 #include <GL/glew.h>
 
+namespace Jam3D {
+
 // Creates OpenGL shader program from text file.
 // Input:
 //    - fp: reference to a filepath string
@@ -171,4 +173,6 @@ int Shader::GetUniformLocation(const std::string& name)
 
     m_UniformLocationCache[name] = location;
     return location;
+}
+
 }

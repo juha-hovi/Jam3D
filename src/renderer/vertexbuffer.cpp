@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+namespace Jam3D {
+
 // Creates OpenGL buffer with vertex data.
 // Input:
 // 	  -data: pointer to vertex data
@@ -35,4 +37,6 @@ void VertexBuffer::UpdateBuffer(unsigned int offset, unsigned int size, const vo
 {
 	glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 	glBufferSubData(GL_ARRAY_BUFFER, offset, size, data);
+}
+
 }

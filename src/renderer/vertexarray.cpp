@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+namespace Jam3D {
+
 // Creates OpenGL vertex array object.
 VertexArray::VertexArray()
 {
@@ -45,4 +47,6 @@ void VertexArray::Bind() const
 void VertexArray::Unbind() const
 {
 	glBindVertexArray(0);
+}
+
 }

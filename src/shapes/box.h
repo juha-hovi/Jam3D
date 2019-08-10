@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace Jam3D {
+
 // Simple box 3D object
 class Box
 {
@@ -33,3 +35,5 @@ public:
 	std::vector<float> m_Positions;
 	std::vector<unsigned int> m_Indices;
 };
+
+}

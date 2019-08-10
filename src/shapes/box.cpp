@@ -1,6 +1,8 @@
 #include "box.h"
 #include <cmath>
 
+namespace Jam3D {
+
 // Builds a 3D box from two given corners.
 // Uses minimum amount of vertices required to correctly render a texture, which 
 // can be mirrored and rotated without worry.
@@ -94,4 +96,6 @@ void Box::Update()
 	{
 		m_Indices.push_back(indices[i]);
 	}
+}
+
 }
