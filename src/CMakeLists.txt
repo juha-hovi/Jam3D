@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(opengl_project_app)
 
+add_subdirectory(math)
+include_directories(math)
+
 add_subdirectory(renderer)
 include_directories(renderer)
 

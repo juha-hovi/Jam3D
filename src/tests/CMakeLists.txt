@@ -3,4 +3,4 @@ set(tests_source
     testbox.h
 )
 add_library(tests ${tests_source})
-target_link_libraries(tests renderer shapes)
+target_link_libraries(tests math renderer shapes)

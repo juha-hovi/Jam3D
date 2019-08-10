@@ -1,4 +1,5 @@
 #include "testbox.h"
+#include "vec3.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -11,7 +12,7 @@ TestBox::TestBox()
     : m_Rotation(0.0f), m_Increment(0.5f)
 {
     m_Renderer = std::make_unique<Renderer>();
-    m_Box = std::make_unique<Box>(Box::Vec3(-200.0f, -100.0f, -100.0f), Box::Vec3(0.0f, 100.0f, 100.0f));
+    m_Box = std::make_unique<Box>(Vec3(-200.0f, -100.0f, -100.0f), Vec3(0.0f, 100.0f, 100.0f));
 
     m_VAO = std::make_unique<VertexArray>();
     m_VBO = std::make_unique<VertexBuffer>(m_Box->m_Positions.data(), m_Box->m_PositionsSize * sizeof(float));
