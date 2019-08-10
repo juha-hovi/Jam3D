@@ -59,7 +59,7 @@ void TestBox::Render()
     glm::mat4 model(1.0f);
     glm::vec3 translation(m_Box->m_Center.x, m_Box->m_Center.y, m_Box->m_Center.z);
     model = glm::translate(model, translation);
-    model = glm::rotate(model, glm::radians(m_Rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(m_Rotation), glm::vec3(0.5f, 1.0f, 0.0f));
     model = glm::translate(model, -translation);
     glm::mat4 mvp = proj * view * model;
     m_Texture->Bind();
