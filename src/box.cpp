@@ -7,20 +7,20 @@
 
 // m_PositionsSize = 40: 16 vertices, 3 coordinates, 2 texture coordinates
 // m_IndicesSize = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
-Box::Box(Vec3& corner0, Vec3& corner1)
-	: m_Corner0({0.0f, 0.0f, 0.0f}), 
-	m_Corner1({0.0f, 0.0f, 0.0f}),
+Box::Box(Vec3 corner0, Vec3 corner1)
+	: m_Corner0(corner0), 
+	m_Corner1(corner1),
 	m_PositionsSize(16 * (3 + 2)),
 	m_IndicesSize(6 * 2 * 3),
 	m_Dimensions({0.0f, 0.0f, 0.0f}),
 	m_Center({0.0f, 0.0f, 0.0f})
 {
-	Update(corner0, corner1);
+	Update();
 }
 
 // Update the box.
 // Input: new corners
-void Box::Update(Vec3& corner0, Vec3& corner1)
+void Box::Update()
 {
 	/*
 			7-----6
@@ -28,8 +28,8 @@ void Box::Update(Vec3& corner0, Vec3& corner1)
 		|	4-+---5
 		0-----1
 	*/
-	m_Corner0 = corner0;
-	m_Corner1 = corner1;
+	m_Corner0 = m_Corner0;
+	m_Corner1 = m_Corner1;
 
 	m_Dimensions.x = std::abs(m_Corner1.x - m_Corner0.x);
 	m_Dimensions.y = std::abs(m_Corner1.y - m_Corner0.y);

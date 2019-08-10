@@ -1,8 +1,8 @@
-#import "application.h"
+#include "application.h"
 
 int main() 
 {
-    app = Application();
+    Application app;
     app.Run();
     return 0;
 }

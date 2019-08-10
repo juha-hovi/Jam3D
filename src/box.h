@@ -17,15 +17,13 @@ public:
 
 	};
 
-	Box(Vec3& corner0, Vec3& corner1);
+	Box(Vec3 corner0, Vec3 corner1);
 
-	void Update(Vec3& corner0, Vec3& corner1);
+	void Update();
 
-private:
 	Vec3 m_Corner0;
 	Vec3 m_Corner1;
 
-public:
 	const int m_PositionsSize;
 	const int m_IndicesSize;
 

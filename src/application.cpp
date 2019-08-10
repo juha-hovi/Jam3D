@@ -3,17 +3,37 @@
 #include <chrono>
 #include <thread>
 
+#include "GL/glew.h"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
-#include "box.h"
+#include "application.h"
 #include "testbox.h"
 
-/*  TODO:
-        - Change Application into class
+void GLAPIENTRY OpenGLDebugCallback(GLenum source,
+                                    GLenum type,
+                                    GLuint id,
+                                    GLenum severity,
+                                    GLsizei length,
+                                    const GLchar* message,
+                                    const void* userParam)
+{
+    // Only report errors
+    if (type == GL_DEBUG_TYPE_ERROR)
+    {
+        std::cout << "******************************************************" << "\n"
+                << "**GL ERROR**" << "\n"
+                << "(Type): " << type << "\n" 
+                << "(Severity): " << severity << "\n" 
+                << "(Message): " << message << "\n"
+                << "******************************************************" << std::endl;
+    }
+}
 
+/*  TODO:
         - Draw flowchart of OpenGL commands/tasks
 
         - Add support for 24 vertex box
@@ -54,57 +74,29 @@ Application::~Application()
 void Application::Run()
 {
     // Setup timer
-    int targetFps = 60;
-    std::chrono::microseconds targetFrameTime(1000 / targetFps);
+    int targetFps = 120;
+    std::chrono::microseconds targetFrameTime(1000000 / targetFps);
     std::chrono::microseconds sleepTime;
     std::chrono::microseconds frameTime;
     auto frameStart = std::chrono::high_resolution_clock::now();
-
-    // Setup box test
-    Box::Vec3 corner0(-200.0f, -100.0f, -100.0f);
-    Box::Vec3 corner1(0.0f, 100.0f, 100.0f);
-    Box::Vec3 corner0New(-200.0f, -100.0f, -100.0f);
-    Box::Vec3 corner1New(0.0f, 100.0f, 100.0f);
-    TestBox testBox(corner0, corner1);
 
     // Setup ImGui
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
     const char* glsl_version = "#version 330";
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
+
+    TestBox test;
     
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(m_Window))  
     {
         frameStart = std::chrono::high_resolution_clock::now();
 
-        ////////////////////////////////////////////////
-        testBox.Render();
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        {
-            ImGui::Begin("OpenGL Project");
-            ImGui::SliderFloat("Corner 0: x", &corner0New.x, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 0: y", &corner0New.y, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 0: z", &corner0New.z, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 1: x", &corner1New.x, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 1: y", &corner1New.y, -500.0f, 500.0f);
-            ImGui::SliderFloat("Corner 1: z", &corner1New.z, -500.0f, 500.0f);
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            ImGui::End();
-        }
-        if (corner0New != corner0 || corner1New != corner1)
-        {
-            corner0 = corner0New;
-            corner1 = corner1New;
-            testBox.Update(corner0New, corner1New);
-        }
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        ////////////////////////////////////////////////
+        test.Render();
+        test.RenderImGui();
 
         glfwSwapBuffers(m_Window);
         glfwPollEvents();
@@ -113,10 +105,6 @@ void Application::Run()
         sleepTime = targetFrameTime - frameTime;
         std::this_thread::sleep_for(sleepTime);
     }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
 }
 
 int Application::InitOpenGL()
@@ -147,24 +135,4 @@ int Application::InitOpenGL()
     }
 
     return 1;
-}
-
-void GLAPIENTRY Application::OpenGLDebugCallback(GLenum source,
-                                                 GLenum type,
-                                                 GLuint id,
-                                                 GLenum severity,
-                                                 GLsizei length,
-                                                 const GLchar* message,
-                                                 const void* userParam)
-{
-    // Only report errors
-    if (type == GL_DEBUG_TYPE_ERROR)
-    {
-        std::cout << "******************************************************" << "\n"
-                << "**GL ERROR**" << "\n"
-                << "(Type): " << type << "\n" 
-                << "(Severity): " << severity << "\n" 
-                << "(Message): " << message << "\n"
-                << "******************************************************" << std::endl;
-    }
 }

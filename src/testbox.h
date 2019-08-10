@@ -17,10 +17,12 @@
 class TestBox
 {
 public:
-    TestBox(Box::Vec3& corner0, Box::Vec3& corner1);
+    TestBox();
+    ~TestBox();
 
-    void Update(Box::Vec3& corner0, Box::Vec3& corner1);
+    void Update();
     void Render();
+    void RenderImGui();
 
     float m_Rotation;
     float m_Increment;
