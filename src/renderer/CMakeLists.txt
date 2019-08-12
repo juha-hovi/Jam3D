@@ -1,4 +1,6 @@
 set(renderer_source
+	camera.cpp
+	camera.h
 	indexbuffer.cpp
 	indexbuffer.h
 	renderer.cpp
