@@ -6,7 +6,7 @@
 #include <string>
 #include <memory>
 
-#include "testbox.h"
+#include "camera.h"
 
 namespace Jam3D {
 
@@ -14,15 +14,16 @@ class GLWindow
 {
 public:
     GLWindow(int width, int height, std::string title);
-    void SetTest(std::shared_ptr<TestBox> test);
+    void SetCamera(std::shared_ptr<Camera> camera);
     void CursorPosCallback(double xPos, double yPos);
+    void ScrollCallback(double yOffset);
 
     int m_Width;
     int m_Height;
     std::string m_Title;
     GLFWwindow* m_Window;
 
-    std::shared_ptr<TestBox> m_Test;
+    std::shared_ptr<Camera> m_Camera;
 };
 
 }

@@ -57,7 +57,7 @@ private:
     glm::mat4 view;
 
 public:
-    std::unique_ptr<Camera> m_Camera;
+    std::shared_ptr<Camera> m_Camera;
 };
 
 }

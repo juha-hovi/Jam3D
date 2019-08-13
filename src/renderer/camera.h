@@ -17,6 +17,7 @@ public:
 	Camera(float fov, float near, float far, Vec2 windowDim, GLFWwindow* window);
 	void Update();
 	void CursorPosCallback(double xPos, double yPos);
+	void ScrollCallback(double yOffset);
 
 	GLFWwindow* m_Window;
 
@@ -35,6 +36,7 @@ public:
 	glm::mat4 m_ViewMatrix;
 
 	double m_RotationSensitivity;
+	double m_ScrollSensitivity;
 
 	double m_CursorOriginX;
 	double m_CursorOriginY;

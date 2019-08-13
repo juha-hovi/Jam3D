@@ -1,11 +1,14 @@
 #include "camera.h"
 
+#include <iostream>
+
 namespace Jam3D {
 
 Camera::Camera(float fov, float near, float far, Jam3D::Vec2 windowDim, GLFWwindow* window)
 	: m_Window(window), m_FoV(fov), m_Near(near), m_Far(far), m_WindowDimension(windowDim),
 	m_FocusPoint({0.0f, 0.0f}), m_FocusPointDistance(1000.0f), m_Rotation({0.0f, 0.0f, 0.0f}),
-	m_RotationOld({0.0f, 0.0f, 0.0f}), m_RotationSensitivity(0.5), m_CursorOriginX(0.0), m_CursorOriginY(0.0)
+	m_RotationOld({0.0f, 0.0f, 0.0f}), m_RotationSensitivity(0.5), m_ScrollSensitivity(100),
+	m_CursorOriginX(0.0), m_CursorOriginY(0.0)
 {
 	m_ProjectionMatrix = glm::mat4(glm::perspective(glm::radians(m_FoV), m_WindowDimension.x / m_WindowDimension.y, m_Near, m_Far));
 	m_ViewMatrix = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -m_FocusPointDistance)));
@@ -43,6 +46,11 @@ void Camera::CursorPosCallback(double xPos, double yPos)
 		m_Rotation.x = 90;
 	if (m_Rotation.x < -90)
 		m_Rotation.x = -90;
+}
+
+void Camera::ScrollCallback(double yOffset)
+{
+	m_FocusPointDistance -= yOffset * m_ScrollSensitivity;
 }
 
 }

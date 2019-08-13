@@ -12,7 +12,6 @@
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
 #include "jam3d.h"
-#include "testbox.h"
 
 namespace Jam3D {
 
@@ -93,8 +92,8 @@ void Jam3D::Run()
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     //TestBox test(m_GLWindow->m_Window);
-    m_Test = std::make_shared<TestBox>(m_GLWindow->m_Window);
-    m_GLWindow->SetTest(m_Test);
+    m_Test = std::make_unique<TestBox>(m_GLWindow->m_Window);
+    m_GLWindow->SetCamera(m_Test->m_Camera);
     
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(m_GLWindow->m_Window))  

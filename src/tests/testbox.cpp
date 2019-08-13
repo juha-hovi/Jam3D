@@ -44,7 +44,7 @@ TestBox::TestBox(GLFWwindow* window)
     float near = 1.0f;
     float far = 5000.0f;
     Vec2 windowDim({960.0f, 540.0f});
-    m_Camera = std::make_unique<Camera>(fov, near, far, windowDim, m_Window);
+    m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window);
 }
 
 TestBox::~TestBox()

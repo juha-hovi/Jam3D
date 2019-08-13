@@ -43,7 +43,8 @@
         "memory": "cpp",
         "optional": "cpp",
         "tuple": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "functional": "cpp"
     },
     "terminal.integrated.shell.windows": "cmd.exe"
 }
