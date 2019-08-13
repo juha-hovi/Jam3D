@@ -15,8 +15,6 @@ class Camera
 {
 public:
 	Camera(float fov, float near, float far, Vec2 windowDim, GLFWwindow* window);
-	void Move(Vec3 moveVec);
-	void Zoom(float zoom);
 	void Update();
 	void HandleMouse();
 

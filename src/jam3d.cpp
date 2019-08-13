@@ -2,6 +2,7 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <functional>
 
 #include "GL/glew.h"
 
@@ -39,19 +40,11 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
         - Draw flowchart of OpenGL commands/tasks
         - Fix includes with GLEW/GLFW, removing glew breaks build but isn't needed in all files
         - Clean Camera class variables using vectors, add double vectors by templating math?
+        - Figure out callbacks to member functions
 
         - Draw Boxes
             - Add support for multiple boxes (creation, deletion, modification)
-        - Input
-            - Camera control with keyboard
-                - Camera class
-                - Left, right, up, down
-                - Zoom in, zoom out
-                - Pitch, yaw
-                - Rotation
-            - Move something with mouse
-                - Mouse1 click rotates object
-                - Mouse1 click, hold, and drag rotates object
+        - Input?
         - Look into multiple viewport implementation
             - 4 views: general, xy-plane, xz-plane, yz-plane
                 - Draw object by clicking mouse

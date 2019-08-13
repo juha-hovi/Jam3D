@@ -12,16 +12,6 @@ Camera::Camera(float fov, float near, float far, Jam3D::Vec2 windowDim, GLFWwind
 	m_ViewMatrix = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -m_FocusPointDistance)));
 }
 
-void Camera::Move(Jam3D::Vec3 moveVec)
-{
-
-}
-
-void Camera::Zoom(float zoom)
-{
-
-}
-
 void Camera::Update()
 {
 	m_ViewMatrix = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -m_FocusPointDistance)));
@@ -40,8 +30,8 @@ void Camera::HandleMouse()
 	{
 		glfwGetCursorPos(m_Window, &m_CursorPosX, &m_CursorPosY);
 
-	    m_Rotation.y = m_RotationOld.y + m_CursorPosX - m_CursorOriginX;
-		m_Rotation.x = m_RotationOld.x + m_CursorPosY - m_CursorOriginY;
+	    m_Rotation.y = m_RotationOld.y + m_RotationSensitivity * (m_CursorPosX - m_CursorOriginX);
+		m_Rotation.x = m_RotationOld.x + m_RotationSensitivity * (m_CursorPosY - m_CursorOriginY);
 	}
 	else
 	{
