@@ -89,7 +89,6 @@ void TestBox::UpdateNewBoxes()
 void TestBox::UpdateExistingBoxes()
 {
     m_VBO->UpdateBuffer(0, m_PositionsSize * sizeof(float), m_Positions.data());
-    m_Camera->Update();
 }
 
 void TestBox::Render()

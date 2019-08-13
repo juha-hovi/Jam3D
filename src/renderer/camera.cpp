@@ -62,7 +62,8 @@ void Camera::CursorPosCallback(double xPos, double yPos)
 		m_FocusPointOld.x = m_FocusPoint.x;
 		m_FocusPointOld.y = m_FocusPoint.y;
 	}
-	
+
+	Update();	
 }
 
 void Camera::ScrollCallback(double yOffset)
@@ -70,6 +71,8 @@ void Camera::ScrollCallback(double yOffset)
 	m_FocusPointDistance -= yOffset * m_ScrollSensitivity;
 	if (m_FocusPointDistance < 0)
 		m_FocusPointDistance = 0;
+	
+	Update();
 }
 
 void Camera::MouseButtonCallback(int button, int action, int mods)
@@ -79,7 +82,7 @@ void Camera::MouseButtonCallback(int button, int action, int mods)
 	if (stateLeft == GLFW_PRESS || stateMiddle == GLFW_PRESS)
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	else
-		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);	
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 }
