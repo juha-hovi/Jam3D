@@ -7,17 +7,24 @@ namespace Jam3D {
 GLWindow::GLWindow(int width, int height, std::string title)
     : m_Width(width), m_Height(height), m_Title(title), m_Camera(nullptr)
 {
-    // Initialize GLFW
-    m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
+    InitGLFW();
+    InitCallbacks();
+    glfwSetWindowUserPointer(m_Window, this);
+}
+
+void GLWindow::InitGLFW()
+{
+     m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
     if (!m_Window)
     {
         std::cout << "Error: " << "GLFW window creation failed!" << std::endl;
         glfwTerminate();
     }
     glfwMakeContextCurrent(m_Window);
+}
 
-    // Set up callbacks
-    glfwSetWindowUserPointer(m_Window, this);
+void GLWindow::InitCallbacks()
+{
     auto cursorPosFunc = [](GLFWwindow* window, double xPos, double yPos)
     {
         static_cast<GLWindow*>(glfwGetWindowUserPointer(window))->CursorPosCallback(xPos, yPos);

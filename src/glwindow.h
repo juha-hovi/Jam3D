@@ -14,6 +14,8 @@ class GLWindow
 {
 public:
     GLWindow(int width, int height, std::string title);
+    void InitGLFW();
+    void InitCallbacks();
     void SetCamera(std::shared_ptr<Camera> camera);
     void CursorPosCallback(double xPos, double yPos);
     void ScrollCallback(double yOffset);
