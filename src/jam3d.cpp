@@ -41,7 +41,7 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
         - Clean Camera class variables using vectors, add double vectors by templating math?
 
         - Draw Boxes
-            - Add support for multiple boxes (creation, deletion, modification)
+            - Add support boxe (creation, deletion, modification)
         - Look into multiple viewport implementation
             - 4 views: general, xy-plane, xz-plane, yz-plane
                 - Draw object by clicking mouse
@@ -108,6 +108,10 @@ void Jam3D::Run()
         sleepDuration = targetFrameDuration - frameDuration;
         std::this_thread::sleep_for(sleepDuration);
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 }

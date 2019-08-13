@@ -4,11 +4,12 @@
 namespace Jam3D {
 
 // Builds a 3D box from two given corners. See tex_example_full.png for texture layout.
-// m_PositionsSize = 40: 24 vertices, 3 coordinates, 2 texture coordinates
+// m_PositionsSize = 120: 24 vertices, 3 coordinates, 2 texture coordinates
 // m_IndicesSize = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
 Box::Box(Vec3 corner0, Vec3 corner1)
 	: m_Corner0(corner0), 
 	m_Corner1(corner1),
+	m_Vertices(24),
 	m_PositionsSize(24 * (3 + 2)),
 	m_IndicesSize(6 * 2 * 3),
 	m_Dimensions({0.0f, 0.0f, 0.0f}),

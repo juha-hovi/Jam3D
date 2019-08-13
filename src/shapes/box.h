@@ -19,6 +19,7 @@ public:
 	Vec3 m_Corner0;
 	Vec3 m_Corner1;
 
+	const int m_Vertices;
 	const int m_PositionsSize;
 	const int m_IndicesSize;
 

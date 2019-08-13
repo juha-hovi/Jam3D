@@ -9,7 +9,6 @@ GLWindow::GLWindow(int width, int height, std::string title)
 {
     InitGLFW();
     InitCallbacks();
-    glfwSetWindowUserPointer(m_Window, this);
 }
 
 void GLWindow::InitGLFW()
@@ -25,6 +24,7 @@ void GLWindow::InitGLFW()
 
 void GLWindow::InitCallbacks()
 {
+    glfwSetWindowUserPointer(m_Window, this);
     auto cursorPosFunc = [](GLFWwindow* window, double xPos, double yPos)
     {
         static_cast<GLWindow*>(glfwGetWindowUserPointer(window))->CursorPosCallback(xPos, yPos);
