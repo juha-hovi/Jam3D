@@ -18,6 +18,7 @@ public:
 	void Update();
 	void CursorPosCallback(double xPos, double yPos);
 	void ScrollCallback(double yOffset);
+	void MouseButtonCallback(int button, int action, int mods);
 
 	GLFWwindow* m_Window;
 
@@ -27,6 +28,7 @@ public:
 	Vec2 m_WindowDimension;
 
 	Vec2 m_FocusPoint;
+	Vec2 m_FocusPointOld;
 	float m_FocusPointDistance;
 	
 	glm::vec3 m_Rotation;
@@ -36,10 +38,14 @@ public:
 	glm::mat4 m_ViewMatrix;
 
 	double m_RotationSensitivity;
+	double m_TranslationSensitivity;
 	double m_ScrollSensitivity;
 
-	double m_CursorOriginX;
-	double m_CursorOriginY;
+	double m_RotationCursorOriginX;
+	double m_RotationCursorOriginY;
+
+	double m_TranslationCursorOriginX;
+	double m_TranslationCursorOriginY;
 };
 
 }

@@ -17,6 +17,7 @@ public:
     void SetCamera(std::shared_ptr<Camera> camera);
     void CursorPosCallback(double xPos, double yPos);
     void ScrollCallback(double yOffset);
+    void MouseButtonCallback(int button, int action, int mods);
 
     int m_Width;
     int m_Height;
