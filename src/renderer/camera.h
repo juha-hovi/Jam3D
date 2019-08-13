@@ -16,7 +16,7 @@ class Camera
 public:
 	Camera(float fov, float near, float far, Vec2 windowDim, GLFWwindow* window);
 	void Update();
-	void HandleMouse();
+	void CursorPosCallback(double xPos, double yPos);
 
 	GLFWwindow* m_Window;
 
@@ -33,9 +33,6 @@ public:
 	
 	glm::mat4 m_ProjectionMatrix;
 	glm::mat4 m_ViewMatrix;
-
-	double m_CursorPosX;
-	double m_CursorPosY;
 
 	double m_RotationSensitivity;
 

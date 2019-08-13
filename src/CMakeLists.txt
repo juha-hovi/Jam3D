@@ -26,6 +26,8 @@ include_directories(${GLEW_INCLUDE_DIRS})
 
 set(jam3d_source 
 	entrypoint.cpp
+	glwindow.cpp
+	glwindow.h
 	jam3d.cpp
 	jam3d.h)
 add_executable(Jam3D ${jam3d_source})

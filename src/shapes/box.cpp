@@ -70,10 +70,10 @@ void Box::Update()
 		m_Corner0.x, m_Corner1.y, m_Corner0.z, 0.0f, 0.5f,			// 7
 
 		// Bottom
-		m_Corner1.x, m_Corner0.y, m_Corner1.z, 2.0f / 3.0f, 1.0f,	// 1
-		m_Corner0.x, m_Corner0.y, m_Corner1.z, 1.0f, 1.0f,			// 0
-		m_Corner0.x, m_Corner0.y, m_Corner0.z, 1.0f, 0.5f,			// 4
-		m_Corner1.x, m_Corner0.y, m_Corner0.z, 2.0f / 3.0f, 0.5f	// 5
+		m_Corner1.x, m_Corner0.y, m_Corner1.z, 1.0f, 1.0f,			// 1
+		m_Corner0.x, m_Corner0.y, m_Corner1.z, 2.0f / 3.0f, 1.0f,	// 0
+		m_Corner0.x, m_Corner0.y, m_Corner0.z, 2.0f / 3.0f, 0.5f,	// 4
+		m_Corner1.x, m_Corner0.y, m_Corner0.z, 1.0f, 0.5f			// 5
 	};
 
 	unsigned int indices[m_IndicesSize] = {

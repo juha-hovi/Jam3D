@@ -1,8 +1,11 @@
 #pragma once
 
+#include "glwindow.h"
+
 #include "GLFW/glfw3.h"
 
 #include <string>
+#include <memory>
 
 namespace Jam3D {
 
@@ -13,12 +16,9 @@ public:
 	~Jam3D();
 
 	void Run();
-	int InitOpenGL();
 
-	GLFWwindow* m_Window;
-	unsigned int m_Width;
-	unsigned int m_Height;
-	std::string m_Title;
+	std::unique_ptr<GLWindow> m_GLWindow;
+	std::shared_ptr<TestBox> m_Test;
 };
 
 }

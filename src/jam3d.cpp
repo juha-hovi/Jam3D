@@ -51,9 +51,20 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 */
 
 Jam3D::Jam3D()
-    : m_Window(nullptr), m_Width(960), m_Height(540), m_Title("OpenGL Project")
 {
-    InitOpenGL();
+    if (!glfwInit())
+        std::cout << "Error: glfwInit failed!" << std::endl;
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    m_GLWindow = std::make_unique<GLWindow>(960, 540, "Jam3D");
+
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+        std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(OpenGLDebugCallback, 0);
@@ -78,57 +89,28 @@ void Jam3D::Run()
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
     const char* glsl_version = "#version 330";
-    ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
+    ImGui_ImplGlfw_InitForOpenGL(m_GLWindow->m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    TestBox test(m_Window);
+    //TestBox test(m_GLWindow->m_Window);
+    m_Test = std::make_shared<TestBox>(m_GLWindow->m_Window);
+    m_GLWindow->SetTest(m_Test);
     
     // Loop until the window is closed by the user.
-    while (!glfwWindowShouldClose(m_Window))  
+    while (!glfwWindowShouldClose(m_GLWindow->m_Window))  
     {
         frameStart = std::chrono::high_resolution_clock::now();
 
-        test.Render();
-        test.RenderImGui();
-        test.m_Camera->HandleMouse();
+        m_Test->Render();
+        m_Test->RenderImGui();
 
-        glfwSwapBuffers(m_Window);
+        glfwSwapBuffers(m_GLWindow->m_Window);
         glfwPollEvents();
 
         frameDuration = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - frameStart);
         sleepDuration = targetFrameDuration - frameDuration;
         std::this_thread::sleep_for(sleepDuration);
     }
-}
-
-int Jam3D::InitOpenGL()
-{
-    if (!glfwInit())
-        return 0;
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
-    if (!m_Window)
-    {
-        std::cout << "Error: " << "GLFW window creation failed!" << std::endl;
-        glfwTerminate();
-        return 0;
-    }
-
-    glfwMakeContextCurrent(m_Window);
-
-    glewExperimental = GL_TRUE;
-    GLenum err = glewInit();
-    if (GLEW_OK != err)
-    {
-        std::cout << "Error: " << glewGetErrorString(err) << std::endl;
-        return 0;
-    }
-
-    return 1;
 }
 
 }
