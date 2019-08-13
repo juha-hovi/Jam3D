@@ -39,7 +39,6 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
         - Draw flowchart of OpenGL commands/tasks
         - Fix includes with GLEW/GLFW, removing glew breaks build but isn't needed in all files
         - Clean Camera class variables using vectors, add double vectors by templating math?
-        - Hide cursor while moving camera
 
         - Draw Boxes
             - Add support for multiple boxes (creation, deletion, modification)

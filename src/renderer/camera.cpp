@@ -74,7 +74,12 @@ void Camera::ScrollCallback(double yOffset)
 
 void Camera::MouseButtonCallback(int button, int action, int mods)
 {
-	// NYI
+	int stateLeft = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT);
+	int stateMiddle = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_MIDDLE);
+	if (stateLeft == GLFW_PRESS || stateMiddle == GLFW_PRESS)
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	else
+		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);	
 }
 
 }
