@@ -1,6 +1,7 @@
 #pragma once
 
 #include "box.h"
+#include "camera.h"
 #include "renderer.h"
 #include "vertexarray.h"
 #include "vertexbuffer.h"
@@ -41,6 +42,9 @@ private:
 
     glm::mat4 proj;
     glm::mat4 view;
+
+public:
+    std::unique_ptr<Camera> m_Camera;
 };
 
 }

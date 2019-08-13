@@ -1,4 +1,5 @@
 #include "testbox.h"
+#include "vec2.h"
 #include "vec3.h"
 
 #include "imgui/imgui.h"
@@ -30,8 +31,11 @@ TestBox::TestBox()
     m_Texture = std::make_unique<Texture>("src/resources/tex_test_full.png");
     m_Shader->SetUniform1i("u_Texture", 0);
 
-    proj = glm::mat4((glm::perspective(glm::radians(45.0f), 960.0f / 540.0f, 1.0f, 2000.0f)));
-    view = glm::mat4((glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -1000.0f)))); 
+    float fov = 45.0f;
+    float near = 1.0f;
+    float far = 2000.0f;
+    Vec2 windowDim({960.0f, 540.0f});
+    m_Camera = std::make_unique<Camera>(fov, near, far, windowDim);
 }
 
 TestBox::~TestBox()
@@ -45,6 +49,7 @@ void TestBox::Update()
 {
     m_Box->Update();
     m_VBO->UpdateBuffer(0, m_Box->m_PositionsSize * sizeof(float), m_Box->m_Positions.data());
+    m_Camera->Update();
 }
 
 void TestBox::Render()
@@ -62,7 +67,7 @@ void TestBox::Render()
     model = glm::translate(model, translation);
     model = glm::rotate(model, glm::radians(m_Rotation), glm::vec3(0.5f, 1.0f, 0.0f));
     model = glm::translate(model, -translation);
-    glm::mat4 mvp = proj * view * model;
+    glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
     m_Texture->Bind();
     m_Shader->Bind();
     m_Shader->SetUniformMat4f("u_MVP", mvp);
@@ -80,12 +85,16 @@ void TestBox::RenderImGui()
     ImGui::NewFrame();
     {
         ImGui::Begin("OpenGL Project");
+
         ImGui::SliderFloat("Corner 0: x", &m_Box->m_Corner0.x, -500.0f, 500.0f);
         ImGui::SliderFloat("Corner 0: y", &m_Box->m_Corner0.y, -500.0f, 500.0f);
         ImGui::SliderFloat("Corner 0: z", &m_Box->m_Corner0.z, -500.0f, 500.0f);
         ImGui::SliderFloat("Corner 1: x", &m_Box->m_Corner1.x, -500.0f, 500.0f);
         ImGui::SliderFloat("Corner 1: y", &m_Box->m_Corner1.y, -500.0f, 500.0f);
         ImGui::SliderFloat("Corner 1: z", &m_Box->m_Corner1.z, -500.0f, 500.0f);
+
+        ImGui::SliderFloat("Zoom", &m_Camera->m_FocusPointDistance, 0.0f, 2000.0f);
+
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
     }

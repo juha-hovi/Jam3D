@@ -20,4 +20,9 @@ void Camera::Zoom(float zoom)
 
 }
 
+void Camera::Update()
+{
+	m_ViewMatrix = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -m_FocusPointDistance)));
+}
+
 }

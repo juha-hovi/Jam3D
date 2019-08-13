@@ -2,19 +2,18 @@
 
 namespace Jam3D {
 
-Vec2::Vec2(float first, float second, float third)
+Vec2::Vec2(float first, float second)
 {
     x = first;
     y = second;
-    z = third;
 }
 
-bool Vec2::operator==(const Vec3& rhs)
+bool Vec2::operator==(const Vec2& rhs)
 {
     return (this->x == rhs.x && this->y == rhs.y);
 }
 
-bool Vec2::operator!=(const Vec3& rhs)
+bool Vec2::operator!=(const Vec2& rhs)
 {
     return !(this->x == rhs.x && this->y == rhs.y);
 }
