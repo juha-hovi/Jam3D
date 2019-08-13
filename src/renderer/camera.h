@@ -21,8 +21,10 @@ public:
 	float m_Far;
 	Vec2 m_WindowDimension;
 
-	Vec3 m_FocusPoint;
+	Vec2 m_FocusPoint;
 	float m_FocusPointDistance;
+	
+	glm::vec3 m_Rotation;
 	
 	glm::mat4 m_ProjectionMatrix;
 	glm::mat4 m_ViewMatrix;

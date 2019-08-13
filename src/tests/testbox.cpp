@@ -13,17 +13,26 @@ TestBox::TestBox()
     : m_Rotation(0.0f), m_Increment(0.5f)
 {
     m_Renderer = std::make_unique<Renderer>();
-    m_Box = std::make_unique<Box>(Vec3(-200.0f, -100.0f, -100.0f), Vec3(0.0f, 100.0f, 100.0f));
 
+    // For drawing a box
+    m_Box = std::make_unique<Box>(Vec3(-100.0f, -100.0f, -100.0f), Vec3(100.0f, 100.0f, 100.0f));
     m_VAO = std::make_unique<VertexArray>();
     m_VBO = std::make_unique<VertexBuffer>(m_Box->m_Positions.data(), m_Box->m_PositionsSize * sizeof(float));
     m_Layout = std::make_unique<VertexBufferLayout>();
     m_Layout->Push<float>(3);
     m_Layout->Push<float>(2);
-
     m_VAO->AddBuffer(*m_VBO, *m_Layout);
-
     m_IBO = std::make_unique<IndexBuffer>(m_Box->m_Indices.data(), m_Box->m_IndicesSize);
+
+    // For drawing axes
+    m_Axes = std::make_unique<Axes>();
+    m_VAO_axes = std::make_unique<VertexArray>();
+    m_VBO_axes = std::make_unique<VertexBuffer>(m_Axes->m_Positions.data(), m_Axes->m_PositionsSize * sizeof(float));
+    m_Layout_axes = std::make_unique<VertexBufferLayout>();
+    m_Layout_axes->Push<float>(3);
+    m_Layout_axes->Push<float>(2);
+    m_VAO_axes->AddBuffer(*m_VBO_axes, *m_Layout_axes);
+    m_IBO_axes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_IndicesSize);
 
     m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader");
     m_Shader->Bind();
@@ -33,7 +42,7 @@ TestBox::TestBox()
 
     float fov = 45.0f;
     float near = 1.0f;
-    float far = 2000.0f;
+    float far = 5000.0f;
     Vec2 windowDim({960.0f, 540.0f});
     m_Camera = std::make_unique<Camera>(fov, near, far, windowDim);
 }
@@ -71,11 +80,12 @@ void TestBox::Render()
     m_Texture->Bind();
     m_Shader->Bind();
     m_Shader->SetUniformMat4f("u_MVP", mvp);
-    m_Renderer->Draw(*m_VAO, *m_IBO, *m_Shader);
+    m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+    m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
 
     if (m_Rotation >= 360.0f)
             m_Rotation = 0.0f;
-    m_Rotation += m_Increment;
+    //m_Rotation += m_Increment;
 }
 
 void TestBox::RenderImGui()
@@ -94,6 +104,11 @@ void TestBox::RenderImGui()
         ImGui::SliderFloat("Corner 1: z", &m_Box->m_Corner1.z, -500.0f, 500.0f);
 
         ImGui::SliderFloat("Zoom", &m_Camera->m_FocusPointDistance, 0.0f, 2000.0f);
+        ImGui::SliderFloat("Rotation: x", &m_Camera->m_Rotation.x, 0.0f, 90.0f);
+        ImGui::SliderFloat("Rotation: y", &m_Camera->m_Rotation.y, 0.0f, 90.0f);
+        ImGui::SliderFloat("Rotation: z", &m_Camera->m_Rotation.z, 0.0f, 90.0f);
+        ImGui::SliderFloat("FocusPoint: x", &m_Camera->m_FocusPoint.x, -100.0f, 100.0f);
+        ImGui::SliderFloat("FocusPoint: y", &m_Camera->m_FocusPoint.y, -100.0f, 100.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();

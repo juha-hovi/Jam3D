@@ -13,13 +13,13 @@ void Renderer::Clear() const
 // 	  -va: reference to a VertexArray object
 // 	  -ib: reference to IndexBuffer object
 // 	  -shader: reference to Shader object
-void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const
+void Renderer::Draw(GLenum type, const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const
 {
 	shader.Bind();
 	va.Bind();
 	ib.Bind();
 
-	glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(type, ib.GetCount(), GL_UNSIGNED_INT, nullptr);
 }
 
 }

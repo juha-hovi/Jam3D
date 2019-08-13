@@ -1,6 +1,8 @@
 #pragma once
 
 #include "box.h"
+#include "axes.h"
+
 #include "camera.h"
 #include "renderer.h"
 #include "vertexarray.h"
@@ -39,6 +41,12 @@ private:
     std::unique_ptr<IndexBuffer> m_IBO;
     std::unique_ptr<Shader> m_Shader;
     std::unique_ptr<Texture> m_Texture;
+
+    std::unique_ptr<Axes> m_Axes;
+    std::unique_ptr<VertexArray> m_VAO_axes;
+    std::unique_ptr<VertexBuffer> m_VBO_axes;
+    std::unique_ptr<VertexBufferLayout> m_Layout_axes;
+    std::unique_ptr<IndexBuffer> m_IBO_axes;
 
     glm::mat4 proj;
     glm::mat4 view;
