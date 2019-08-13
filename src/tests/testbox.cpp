@@ -9,8 +9,8 @@
 
 namespace Jam3D {
 
-TestBox::TestBox()
-    : m_Rotation(0.0f), m_Increment(0.5f)
+TestBox::TestBox(GLFWwindow* window)
+    : m_Rotation(0.0f), m_Increment(0.5f), m_Window(window)
 {
     m_Renderer = std::make_unique<Renderer>();
 
@@ -44,7 +44,7 @@ TestBox::TestBox()
     float near = 1.0f;
     float far = 5000.0f;
     Vec2 windowDim({960.0f, 540.0f});
-    m_Camera = std::make_unique<Camera>(fov, near, far, windowDim);
+    m_Camera = std::make_unique<Camera>(fov, near, far, windowDim, m_Window);
 }
 
 TestBox::~TestBox()

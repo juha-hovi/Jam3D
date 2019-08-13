@@ -37,6 +37,8 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 
 /*  TODO:
         - Draw flowchart of OpenGL commands/tasks
+        - Fix includes with GLEW/GLFW, removing glew breaks build but isn't needed in all files
+        - Clean Camera class variables using vectors, add double vectors by templating math?
 
         - Draw Boxes
             - Add support for multiple boxes (creation, deletion, modification)
@@ -86,7 +88,7 @@ void Jam3D::Run()
     ImGui_ImplGlfw_InitForOpenGL(m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    TestBox test;
+    TestBox test(m_Window);
     
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(m_Window))  
@@ -95,6 +97,7 @@ void Jam3D::Run()
 
         test.Render();
         test.RenderImGui();
+        test.m_Camera->HandleMouse();
 
         glfwSwapBuffers(m_Window);
         glfwPollEvents();

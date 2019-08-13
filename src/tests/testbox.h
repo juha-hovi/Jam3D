@@ -1,5 +1,8 @@
 #pragma once
 
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
+
 #include "box.h"
 #include "axes.h"
 
@@ -22,7 +25,7 @@ namespace Jam3D {
 class TestBox
 {
 public:
-    TestBox();
+    TestBox(GLFWwindow* window);
     ~TestBox();
 
     void Update();
@@ -33,6 +36,8 @@ public:
     float m_Increment;
 
 private:
+    GLFWwindow* m_Window;
+
     std::unique_ptr<Renderer> m_Renderer;
     std::unique_ptr<Box> m_Box;
     std::unique_ptr<VertexArray> m_VAO;
