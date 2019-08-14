@@ -44,6 +44,9 @@ private:
     int m_PositionsSize;
     int m_IndicesSize;
 
+    Vec3 m_Corner0;
+    Vec3 m_Corner1;
+
     GLFWwindow* m_Window;
 
     std::unique_ptr<Renderer> m_Renderer;

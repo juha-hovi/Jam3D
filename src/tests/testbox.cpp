@@ -11,14 +11,13 @@ namespace Jam3D {
 
 TestBox::TestBox(GLFWwindow* window)
     : m_Rotation(0.0f), m_Increment(0.5f), m_Window(window), m_PositionsSize(0),
-    m_IndicesSize(0)
+    m_IndicesSize(0), m_Corner0(0.0f, 0.0f, 0.0f), m_Corner1(0.0f, 0.0f, 0.0f)
 {
     InitRendering();
     InitAxes();
 
     AddBox(Vec3(-300.0f, -300.0f, -300.0f), Vec3(-100.0f, -100.0f, -100.0f));
     AddBox(Vec3(100.0f, 100.0f, 100.0f), Vec3(300.0f, 300.0f, 300.0f));
-    UpdateNewBoxes();
 }
 
 void TestBox::InitRendering()
@@ -56,6 +55,7 @@ void TestBox::InitAxes()
 void TestBox::AddBox(Vec3 corner0, Vec3 corner1)
 {
     m_Boxes.push_back(Box(corner0, corner1));
+    UpdateNewBoxes();
 }
 
 void TestBox::UpdateNewBoxes()
@@ -112,12 +112,6 @@ void TestBox::Render()
     m_Shader->SetUniformMat4f("u_MVP", mvp);
     m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
-
-    /*
-    if (m_Rotation >= 360.0f)
-            m_Rotation = 0.0f;
-    m_Rotation += m_Increment;
-    */
 }
 
 void TestBox::RenderImGui()
@@ -125,15 +119,20 @@ void TestBox::RenderImGui()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+
     {
         ImGui::Begin("Jam3D");
 
-        ImGui::SliderFloat("Zoom", &m_Camera->m_FocusPointDistance, 0.0f, 2000.0f);
-        ImGui::SliderFloat("Rotation: x", &m_Camera->m_Rotation.x, 0.0f, 90.0f);
-        ImGui::SliderFloat("Rotation: y", &m_Camera->m_Rotation.y, 0.0f, 90.0f);
-        ImGui::SliderFloat("Rotation: z", &m_Camera->m_Rotation.z, 0.0f, 90.0f);
-        ImGui::SliderFloat("FocusPoint: x", &m_Camera->m_FocusPoint.x, -100.0f, 100.0f);
-        ImGui::SliderFloat("FocusPoint: y", &m_Camera->m_FocusPoint.y, -100.0f, 100.0f);
+        ImGui::InputFloat("c0: x", &m_Corner0.x, 0.1f, 1.0f);
+        ImGui::InputFloat("c0: y", &m_Corner0.y, 0.1f, 1.0f);
+        ImGui::InputFloat("c0: z", &m_Corner0.z, 0.1f, 1.0f);
+        ImGui::InputFloat("c1: x", &m_Corner1.x, 0.1f, 1.0f);
+        ImGui::InputFloat("c1: y", &m_Corner1.y, 0.1f, 1.0f);
+        ImGui::InputFloat("c1: z", &m_Corner1.z, 0.1f, 1.0f);
+        if (ImGui::Button("Add box"))
+        {
+            AddBox(m_Corner0, m_Corner1);
+        }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
