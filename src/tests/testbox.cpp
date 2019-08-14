@@ -7,6 +7,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
+#include <string>
+
 namespace Jam3D {
 
 TestBox::TestBox(GLFWwindow* window)
@@ -132,6 +134,19 @@ void TestBox::RenderImGui()
         if (ImGui::Button("Add box"))
         {
             AddBox(m_Corner0, m_Corner1);
+        }
+
+        if (ImGui::Button("Delete box"))
+        {
+            ImGui::OpenPopup("Box list")
+        }
+        if (ImGui::BeginPopup("Box list"))
+        {
+            for (int i = 0; i < m_Boxes.size(); ++i)
+            {
+                if (ImGui::Button(std::to_string(i)))
+                    m_Boxes.erase(i);
+            }
         }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
