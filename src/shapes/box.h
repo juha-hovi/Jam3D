@@ -13,6 +13,8 @@ class Box
 {
 public:
 	Box(Vec3 corner0, Vec3 corner1);
+	Box(const Box& orig);
+	bool operator=(const Box& rhs);
 
 	void Update();
 

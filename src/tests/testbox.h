@@ -29,6 +29,7 @@ public:
     TestBox(GLFWwindow* window);
 
     void AddBox(Vec3 corner0, Vec3 corner1);
+    void DeleteBox(int index);
     void InitAxes();
     void InitRendering();
 

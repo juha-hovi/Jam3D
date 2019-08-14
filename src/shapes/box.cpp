@@ -18,6 +18,25 @@ Box::Box(Vec3 corner0, Vec3 corner1)
 	Update();
 }
 
+Box::Box(const Box& orig)
+	: m_Corner0(orig.m_Corner0), 
+	m_Corner1(orig.m_Corner1),
+	m_Vertices(24),
+	m_PositionsSize(24 * (3 + 2)),
+	m_IndicesSize(6 * 2 * 3),
+	m_Dimensions({0.0f, 0.0f, 0.0f}),
+	m_Center({0.0f, 0.0f, 0.0f})
+{
+	Update();
+}
+
+bool Box::operator=(const Box& rhs)
+{
+	m_Corner0 = rhs.m_Corner0;
+	m_Corner1 = rhs.m_Corner1;
+	Update();
+}
+
 // Update the box.
 // Input: new corners
 void Box::Update()

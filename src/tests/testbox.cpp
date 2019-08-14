@@ -60,6 +60,12 @@ void TestBox::AddBox(Vec3 corner0, Vec3 corner1)
     UpdateNewBoxes();
 }
 
+void TestBox::DeleteBox(int index)
+{
+    m_Boxes.erase(m_Boxes.begin() + index);
+    UpdateNewBoxes();
+}
+
 void TestBox::UpdateNewBoxes()
 {
     m_Positions.clear();
@@ -136,17 +142,10 @@ void TestBox::RenderImGui()
             AddBox(m_Corner0, m_Corner1);
         }
 
-        if (ImGui::Button("Delete box"))
+        for (int i = 0; i < m_Boxes.size(); ++i)
         {
-            ImGui::OpenPopup("Box list")
-        }
-        if (ImGui::BeginPopup("Box list"))
-        {
-            for (int i = 0; i < m_Boxes.size(); ++i)
-            {
-                if (ImGui::Button(std::to_string(i)))
-                    m_Boxes.erase(i);
-            }
+            if (ImGui::Button(("Delete box: " + std::to_string(i)).c_str()))
+                DeleteBox(i);
         }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
