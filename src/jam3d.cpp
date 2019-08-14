@@ -41,7 +41,8 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
         - Clean Camera class variables using vectors, add double vectors by templating math?
 
         - Draw Boxes
-            - Add support boxe (creation, deletion, modification)
+            - Add support for box deletion & modification
+            - Add a way to individually rotate boxes
         - Look into multiple viewport implementation
             - 4 views: general, xy-plane, xz-plane, yz-plane
                 - Draw object by clicking mouse
