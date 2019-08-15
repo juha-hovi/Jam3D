@@ -48,15 +48,21 @@ private:
     Vec3 m_Corner0;
     Vec3 m_Corner1;
 
+    Vec3 m_Center;
+    float m_Radius;
+    int m_SectorCount;
+    int m_StackCount;
+
     std::shared_ptr<GLWindow> m_Window;
 
     std::unique_ptr<Renderer> m_Renderer;
+    std::unique_ptr<Shader> m_Shader;
+    std::unique_ptr<Texture> m_Texture;
+
     std::unique_ptr<VertexArray> m_VAO;
     std::unique_ptr<VertexBuffer> m_VBO;
     std::unique_ptr<VertexBufferLayout> m_Layout;
     std::unique_ptr<IndexBuffer> m_IBO;
-    std::unique_ptr<Shader> m_Shader;
-    std::unique_ptr<Texture> m_Texture;
 
     std::unique_ptr<Axes> m_Axes;
     std::unique_ptr<VertexArray> m_VAO_axes;
@@ -66,9 +72,6 @@ private:
 
     std::vector<Box> m_Boxes;
     std::vector<Sphere> m_Spheres;
-
-    glm::mat4 proj;
-    glm::mat4 view;
 
 public:
     std::shared_ptr<Camera> m_Camera;

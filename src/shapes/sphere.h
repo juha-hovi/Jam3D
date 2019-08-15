@@ -15,6 +15,7 @@ public:
 
 	void Move(Vec3 translation);
 	void Resize(float radius);
+	void Rotate(Vec3 rotation);
 	void Update();
 
 	int m_SectorCount;
@@ -22,6 +23,7 @@ public:
 
 	float m_Radius;
 	Vec3 m_Center;
+	Vec3 m_Rotation;
 
 	int m_PositionsSize;
 	int m_IndicesSize;

@@ -13,14 +13,14 @@
 namespace Jam3D {
 
 TestBox::TestBox(std::shared_ptr<GLWindow> window)
-    : m_Window(window), m_Corner0(0.0f, 0.0f, 0.0f), m_Corner1(0.0f, 0.0f, 0.0f)
+    : m_Window(window), m_Corner0(0.0f, 0.0f, 0.0f), m_Corner1(0.0f, 0.0f, 0.0f), 
+    m_Center(0.0f, 0.0f, 0.0f), m_Radius(100.0f), m_SectorCount(10), m_StackCount(10)
 {
     InitRendering();
     InitAxes();
 
-    AddBox(Vec3(-300.0f, -300.0f, -300.0f), Vec3(-100.0f, -100.0f, -100.0f));
-    AddBox(Vec3(100.0f, 100.0f, 100.0f), Vec3(300.0f, 300.0f, 300.0f));
-    AddSphere(100.0f, Vec3(0.0f, 0.0f, 0.0f), 10, 10);
+    AddBox(Vec3(100.0f, 100.0f, -100.0f), Vec3(300.0f, 300.0f, 100.0f));
+    AddSphere(100.0f, Vec3(-200.0f, -200.0f, 0.0f), 20, 20);
 }
 
 void TestBox::InitRendering()
@@ -100,14 +100,14 @@ void TestBox::Render()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);    
+    glEnable(GL_CULL_FACE);    
 
     // 2nd loop
     m_Texture->Bind();
     m_Shader->Bind();
     
     // 3rd loop
-    for (int i = 0; i < m_Boxes.size(); i++)
+    for (int i = 0; i < m_Boxes.size(); ++i)
     {
         BufferBox(m_Boxes[i]);
 
@@ -123,21 +123,29 @@ void TestBox::Render()
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     }
-    for (int i = 0; i < m_Spheres.size(); i++)
+
+    for (int i = 0; i < m_Spheres.size(); ++i)
     {
         BufferSphere(m_Spheres[i]);
 
         glm::mat4 model(1.0f);
         glm::vec3 translation(m_Spheres[i].m_Center.x, m_Spheres[i].m_Center.y, m_Spheres[i].m_Center.z);
         model = glm::translate(model, translation);
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
         glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
         m_Shader->SetUniformMat4f("u_MVP", mvp);
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     }
-
-    // Draw axis lines
-    m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
+    
+    {
+        glm::mat4 model(1.0f);
+        glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
+        m_Shader->SetUniformMat4f("u_MVP", mvp);
+        m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
+    }
 }
 
 void TestBox::RenderImGui()
@@ -147,33 +155,54 @@ void TestBox::RenderImGui()
     ImGui::NewFrame();
 
     {
-        ImGui::Begin("Jam3D");
-        ImGui::Text("Add box");
+        ImGui::Begin("Boxes");
         ImGui::InputFloat3("Corner 0", &m_Corner0.x, 1.0f, 1.0f);
         ImGui::InputFloat3("Corner 1", &m_Corner1.x, 1.0f, 1.0f);
-        if (ImGui::Button("Add box"))
+        if (ImGui::Button("Add"))
         {
             AddBox(m_Corner0, m_Corner1);
         }
         
         ImGui::Text("================");
-        ImGui::Text("Delete box");
         for (int i = 0; i < m_Boxes.size(); ++i)
         {
-            if (ImGui::Button(("Delete box: " + std::to_string(i)).c_str()))
+            if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
                 DeleteBox(i);
         }
 
         ImGui::Text("================");
-        ImGui::Text("Rotate box");
         for (int i = 0; i < m_Boxes.size(); ++i)
         {
             ImGui::SliderFloat3(("Box " + std::to_string(i)).c_str(), &m_Boxes[i].m_Rotation.x, 0.0f, 360.0f);
         }
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
     }
+
+    {
+        ImGui::Begin("Spheres");
+        ImGui::InputFloat3("Center", &m_Center.x, 1.0f, 1.0f);
+        ImGui::InputFloat("Radius", &m_Radius, 1.0f, 1.0f);
+        ImGui::InputInt("Sectors", &m_SectorCount);
+        ImGui::InputInt("Stacks", &m_StackCount);
+        if (ImGui::Button("Add"))
+        {
+            AddSphere(m_Radius, m_Center, m_SectorCount, m_StackCount);
+        }
+        ImGui::Text("================");
+        for (int i = 0; i < m_Spheres.size(); ++i)
+        {
+            if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
+                DeleteSphere(i);
+        }
+
+        ImGui::Text("================");
+        for (int i = 0; i < m_Spheres.size(); ++i)
+        {
+            ImGui::SliderFloat3(("Sphere " + std::to_string(i)).c_str(), &m_Spheres[i].m_Rotation.x, 0.0f, 360.0f);
+        }
+        ImGui::End();
+    }
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
