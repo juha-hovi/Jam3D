@@ -40,6 +40,7 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
         - Fix includes with GLEW/GLFW, removing glew breaks build but isn't needed in all files
         - Clean Camera class variables using vectors, add double vectors by templating math?
 
+        - Create Shape parent class for box and sphere to inherit
         - Box class: modify so that m_Positions values are origin centered -> remove one translate from draw
 
         - Look into multiple viewport implementation
