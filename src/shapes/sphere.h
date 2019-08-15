@@ -1,32 +1,24 @@
 #pragma once
 
 #include "vec3.h"
-
-#include <vector>
+#include "shape.h"
 
 namespace Jam3D {
 
-class Sphere
+class Sphere : public Shape
 {
 public:
 	Sphere(float radius, Vec3 center, int sectorCount, int stackCount);
 	Sphere(const Sphere& orig);
 	bool operator=(const Sphere& rhs);
 
-	void Move(Vec3 translation);
 	void Resize(float radius);
-	void Rotate(Vec3 rotation);
-	void Update();
+	void Update() override;
 
 	int m_SectorCount;
 	int m_StackCount;
 
 	float m_Radius;
-	Vec3 m_Center;
-	Vec3 m_Rotation;
-
-	std::vector<float> m_Positions;
-	std::vector<unsigned int> m_Indices;
 };
 
 }

@@ -6,16 +6,18 @@
 namespace Jam3D {
 
 Sphere::Sphere(float radius, Vec3 center, int sectorCount, int stackCount)
-	: m_SectorCount(sectorCount), m_StackCount(stackCount), m_Radius(radius), 
-	m_Center(center), m_Rotation({90.0f, 0.0f, 0.0f})
+	: m_SectorCount(sectorCount), m_StackCount(stackCount), m_Radius(radius)
 {
+	m_Center = center;
+	m_Rotation = {90.0f, 0.0f, 0.0f};
 	Update();
 }
 
 Sphere::Sphere(const Sphere& orig)
-	: m_SectorCount(orig.m_SectorCount), m_StackCount(orig.m_StackCount), m_Radius(orig.m_Radius),
-	m_Center(orig.m_Center), m_Rotation(orig.m_Rotation)
+	: m_SectorCount(orig.m_SectorCount), m_StackCount(orig.m_StackCount), m_Radius(orig.m_Radius)
 {
+	m_Center = orig.m_Center;
+	m_Rotation = orig.m_Rotation;
 	Update();
 }
 
@@ -29,21 +31,10 @@ bool Sphere::operator=(const Sphere& rhs)
 	Update();
 }
 
-void Sphere::Move(Vec3 translation)
-{
-	m_Center += translation;
-	Update();
-}
-
 void Sphere::Resize(float radius)
 {
 	m_Radius = radius;
 	Update();
-}
-
-void Sphere::Rotate(Vec3 rotation)
-{
-	m_Rotation = rotation;
 }
 
 void Sphere::Update()

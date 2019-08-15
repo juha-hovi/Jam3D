@@ -8,7 +8,6 @@
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
 #include <string>
-#include <iostream>
 
 namespace Jam3D {
 
@@ -68,7 +67,6 @@ void TestBox::DeleteBox(int index)
 void TestBox::AddSphere(float radius, Vec3 center, int sectorCount, int stackCount)
 {
     m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
-    std::cout << m_Spheres[0].m_SectorCount << std::endl;
 }
 
 void TestBox::DeleteSphere(int index)

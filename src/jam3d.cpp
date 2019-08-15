@@ -42,6 +42,8 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 
         - Create Shape parent class for box and sphere to inherit
         - Box class: modify so that m_Positions values are origin centered -> remove one translate from draw
+            - Get m_Center from corners
+            - Get m_Positions from dimension
 
         - Look into multiple viewport implementation
             - 4 views: general, xy-plane, xz-plane, yz-plane

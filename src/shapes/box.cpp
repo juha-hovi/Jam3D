@@ -9,20 +9,20 @@ namespace Jam3D {
 Box::Box(Vec3 corner0, Vec3 corner1)
 	: m_Corner0(corner0), 
 	m_Corner1(corner1),
-	m_Rotation(0.0f, 0.0f, 0.0f),
-	m_Dimensions({0.0f, 0.0f, 0.0f}),
-	m_Center({0.0f, 0.0f, 0.0f})
+	m_Dimensions({0.0f, 0.0f, 0.0f})
 {
+	m_Rotation = Vec3(0.0f, 0.0f, 0.0f);
+	m_Center = Vec3(0.0f, 0.0f, 0.0f);
 	Update();
 }
 
 Box::Box(const Box& orig)
 	: m_Corner0(orig.m_Corner0), 
 	m_Corner1(orig.m_Corner1),
-	m_Rotation(orig.m_Rotation),
-	m_Dimensions({0.0f, 0.0f, 0.0f}),
-	m_Center({0.0f, 0.0f, 0.0f})
+	m_Dimensions({0.0f, 0.0f, 0.0f})
 {
+	m_Rotation = orig.m_Rotation;
+	m_Center = orig.m_Center;
 	Update();
 }
 
@@ -32,18 +32,6 @@ bool Box::operator=(const Box& rhs)
 	m_Corner1 = rhs.m_Corner1;
 	m_Rotation = rhs.m_Rotation;
 	Update();
-}
-
-void Box::Move(Vec3 translation)
-{
-	m_Corner0 += translation;
-	m_Corner1 += translation;
-	Update();
-}
-
-void Box::Rotate(Vec3 rotation)
-{
-	m_Rotation += rotation;
 }
 
 void Box::SetCorners(Vec3 corner0, Vec3 corner1)
