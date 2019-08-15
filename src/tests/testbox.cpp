@@ -136,7 +136,7 @@ void TestBox::RenderImGui()
         ImGui::Text("Rotate box");
         for (int i = 0; i < m_Boxes.size(); ++i)
         {
-            ImGui::InputFloat3(("Box " + std::to_string(i)).c_str(), &m_Boxes[i].m_Rotation.x, 1.0f, 1.0f);
+            ImGui::SliderFloat3(("Box " + std::to_string(i)).c_str(), &m_Boxes[i].m_Rotation.x, 0.0f, 360.0f);
         }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);

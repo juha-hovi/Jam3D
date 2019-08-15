@@ -29,7 +29,7 @@ void Camera::Update()
 void Camera::CursorPosCallback(double xPos, double yPos)
 {
 	// Rotation
-	int stateLeft = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_LEFT);
+	int stateLeft = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT);
 	if (stateLeft == GLFW_PRESS)
 	{
 	    m_Rotation.y = m_RotationOld.y + m_RotationSensitivity * (xPos - m_RotationCursorOriginX);
