@@ -25,9 +25,6 @@ public:
 	Vec3 m_Center;
 	Vec3 m_Rotation;
 
-	int m_PositionsSize;
-	int m_IndicesSize;
-
 	std::vector<float> m_Positions;
 	std::vector<unsigned int> m_Indices;
 };

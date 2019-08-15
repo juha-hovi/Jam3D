@@ -4,14 +4,12 @@
 namespace Jam3D {
 
 // Builds a 3D box from two given corners. See tex_example_full.png for texture layout.
-// m_PositionsSize = 120: 24 vertices, 3 coordinates, 2 texture coordinates
-// m_IndicesSize = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
+// m_Positions.size() = 120: 24 vertices, 3 coordinates, 2 texture coordinates
+// m_Indices.size() = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
 Box::Box(Vec3 corner0, Vec3 corner1)
 	: m_Corner0(corner0), 
 	m_Corner1(corner1),
 	m_Rotation(0.0f, 0.0f, 0.0f),
-	m_PositionsSize(24 * (3 + 2)),
-	m_IndicesSize(6 * 2 * 3),
 	m_Dimensions({0.0f, 0.0f, 0.0f}),
 	m_Center({0.0f, 0.0f, 0.0f})
 {
@@ -22,8 +20,6 @@ Box::Box(const Box& orig)
 	: m_Corner0(orig.m_Corner0), 
 	m_Corner1(orig.m_Corner1),
 	m_Rotation(orig.m_Rotation),
-	m_PositionsSize(24 * (3 + 2)),
-	m_IndicesSize(6 * 2 * 3),
 	m_Dimensions({0.0f, 0.0f, 0.0f}),
 	m_Center({0.0f, 0.0f, 0.0f})
 {
@@ -75,7 +71,10 @@ void Box::Update()
 	m_Center.y = (m_Corner0.y + m_Corner1.y) / 2.0f;
 	m_Center.z = (m_Corner0.z + m_Corner1.z) / 2.0f;
 
-	float positions[m_PositionsSize] = {
+	const int positionsSize = 6 * 4 * 5;
+    const int indicesSize = 6 * 2 * 3;
+
+	float positions[positionsSize] = {
 		// Front
 		m_Corner0.x, m_Corner0.y, m_Corner1.z, 2.0f / 3.0f, 0.0f,	// 0
 		m_Corner1.x, m_Corner0.y, m_Corner1.z, 1.0f, 0.0f,			// 1
@@ -113,7 +112,7 @@ void Box::Update()
 		m_Corner1.x, m_Corner0.y, m_Corner0.z, 1.0f, 0.5f			// 5
 	};
 
-	unsigned int indices[m_IndicesSize] = {
+	unsigned int indices[indicesSize] = {
 		0, 1, 2, // Front
 		0, 2, 3,
 
@@ -134,12 +133,12 @@ void Box::Update()
 	};
 
 	m_Positions.clear();
-	for (int i = 0; i < m_PositionsSize; ++i)
+	for (int i = 0; i < positionsSize; ++i)
 	{
 		m_Positions.push_back(positions[i]);
 	}
 	m_Indices.clear();
-	for (int i = 0; i < m_IndicesSize; ++i)
+	for (int i = 0; i < indicesSize; ++i)
 	{
 		m_Indices.push_back(indices[i]);
 	}

@@ -25,9 +25,6 @@ public:
 	Vec3 m_Corner1;
 	Vec3 m_Rotation;
 
-	const int m_PositionsSize;
-	const int m_IndicesSize;
-
 	Vec3 m_Dimensions;
 	Vec3 m_Center;
 
