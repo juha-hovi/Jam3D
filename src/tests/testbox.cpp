@@ -8,18 +8,19 @@
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
 #include <string>
+#include <iostream>
 
 namespace Jam3D {
 
 TestBox::TestBox(std::shared_ptr<GLWindow> window)
-    : m_Window(window), m_PositionsSize(0),
-    m_IndicesSize(0), m_Corner0(0.0f, 0.0f, 0.0f), m_Corner1(0.0f, 0.0f, 0.0f)
+    : m_Window(window), m_Corner0(0.0f, 0.0f, 0.0f), m_Corner1(0.0f, 0.0f, 0.0f)
 {
     InitRendering();
     InitAxes();
 
     AddBox(Vec3(-300.0f, -300.0f, -300.0f), Vec3(-100.0f, -100.0f, -100.0f));
     AddBox(Vec3(100.0f, 100.0f, 100.0f), Vec3(300.0f, 300.0f, 300.0f));
+    AddSphere(100.0f, Vec3(0.0f, 0.0f, 0.0f), 10, 10);
 }
 
 void TestBox::InitRendering()
@@ -64,12 +65,31 @@ void TestBox::DeleteBox(int index)
     m_Boxes.erase(m_Boxes.begin() + index);
 }
 
+void TestBox::AddSphere(float radius, Vec3 center, int sectorCount, int stackCount)
+{
+    m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
+    std::cout << m_Spheres[0].m_SectorCount << std::endl;
+}
+
+void TestBox::DeleteSphere(int index)
+{
+    m_Spheres.erase(m_Spheres.begin() + index);
+}
+
 void TestBox::BufferBox(const Box& box)
 {
     m_VAO = std::make_unique<VertexArray>();
     m_VBO = std::make_unique<VertexBuffer>(box.m_Positions.data(), box.m_PositionsSize * sizeof(float));    
     m_VAO->AddBuffer(*m_VBO, *m_Layout);
     m_IBO = std::make_unique<IndexBuffer>(box.m_Indices.data(), box.m_IndicesSize);
+}
+
+void TestBox::BufferSphere(const Sphere& sphere)
+{
+    m_VAO = std::make_unique<VertexArray>();
+    m_VBO = std::make_unique<VertexBuffer>(sphere.m_Positions.data(), sphere.m_PositionsSize * sizeof(float));    
+    m_VAO->AddBuffer(*m_VBO, *m_Layout);
+    m_IBO = std::make_unique<IndexBuffer>(sphere.m_Indices.data(), sphere.m_IndicesSize);
 }
 
 void TestBox::Render()
@@ -80,7 +100,7 @@ void TestBox::Render()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);    
+    //glEnable(GL_CULL_FACE);    
 
     // 2nd loop
     m_Texture->Bind();
@@ -98,6 +118,18 @@ void TestBox::Render()
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::translate(model, -translation);
+        glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
+        m_Shader->SetUniformMat4f("u_MVP", mvp);
+
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+    }
+    for (int i = 0; i < m_Spheres.size(); i++)
+    {
+        BufferSphere(m_Spheres[i]);
+
+        glm::mat4 model(1.0f);
+        glm::vec3 translation(m_Spheres[i].m_Center.x, m_Spheres[i].m_Center.y, m_Spheres[i].m_Center.z);
+        model = glm::translate(model, translation);
         glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
         m_Shader->SetUniformMat4f("u_MVP", mvp);
 

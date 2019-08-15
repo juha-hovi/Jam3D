@@ -18,7 +18,7 @@ public:
 
 	void Move(Vec3 translation);
 	void Rotate(Vec3 rotation);
-	void SetCorners(Vec3 corner0, Vec3, corner1)
+	void SetCorners(Vec3 corner0, Vec3 corner1);
 	void Update();
 
 	Vec3 m_Corner0;

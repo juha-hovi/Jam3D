@@ -1,7 +1,9 @@
 set(shapes_source
-	box.cpp
-    box.h
     axes.cpp
-    axes.h
+    axes.h	
+    box.cpp
+    box.h
+    sphere.cpp
+    sphere.h
 )
 add_library(shapes ${shapes_source})

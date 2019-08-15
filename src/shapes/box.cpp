@@ -42,7 +42,7 @@ void Box::Move(Vec3 translation)
 {
 	m_Corner0 += translation;
 	m_Corner1 += translation;
-	Update()
+	Update();
 }
 
 void Box::Rotate(Vec3 rotation)
@@ -50,7 +50,7 @@ void Box::Rotate(Vec3 rotation)
 	m_Rotation += rotation;
 }
 
-void Box::SetCorners(Vec3 corner0, Vec3, corner1)
+void Box::SetCorners(Vec3 corner0, Vec3 corner1)
 {
 	m_Corner0 = corner0;
 	m_Corner1 = corner1;

@@ -2,16 +2,19 @@
 
 #include "vec3.h"
 
-namespace Jam3d {
+#include <vector>
+
+namespace Jam3D {
 
 class Sphere
 {
-	Sphere(float radius, Vec3 center);
+public:
+	Sphere(float radius, Vec3 center, int sectorCount, int stackCount);
 	Sphere(const Sphere& orig);
 	bool operator=(const Sphere& rhs);
 
 	void Move(Vec3 translation);
-	void Resize(float radius)
+	void Resize(float radius);
 	void Update();
 
 	int m_SectorCount;
@@ -20,11 +23,11 @@ class Sphere
 	float m_Radius;
 	Vec3 m_Center;
 
-	const int m_PositionsSize;
-	const int m_IndicesSize;
+	int m_PositionsSize;
+	int m_IndicesSize;
 
 	std::vector<float> m_Positions;
 	std::vector<unsigned int> m_Indices;
-}
+};
 
 }

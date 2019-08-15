@@ -3,8 +3,9 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
-#include "box.h"
 #include "axes.h"
+#include "box.h"
+#include "sphere.h"
 
 #include "camera.h"
 #include "renderer.h"
@@ -32,16 +33,17 @@ public:
 
     void AddBox(Vec3 corner0, Vec3 corner1);
     void DeleteBox(int index);
+    void AddSphere(float radius, Vec3 center, int sectorCount, int stackCount);
+    void DeleteSphere(int index);
     void InitAxes();
     void InitRendering();
 
     void BufferBox(const Box& box);
+    void BufferSphere(const Sphere& sphere);
     void Render();
     void RenderImGui();
 
 private:
-    int m_PositionsSize;
-    int m_IndicesSize;
 
     Vec3 m_Corner0;
     Vec3 m_Corner1;
@@ -63,8 +65,7 @@ private:
     std::unique_ptr<IndexBuffer> m_IBO_axes;
 
     std::vector<Box> m_Boxes;
-    std::vector<float> m_Positions;
-    std::vector<unsigned int> m_Indices;
+    std::vector<Sphere> m_Spheres;
 
     glm::mat4 proj;
     glm::mat4 view;

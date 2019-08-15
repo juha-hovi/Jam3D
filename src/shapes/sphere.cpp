@@ -13,7 +13,8 @@ Sphere::Sphere(float radius, Vec3 center, int sectorCount, int stackCount)
 }
 
 Sphere::Sphere(const Sphere& orig)
-	: m_Radius(orig.m_Radius), m_Center(orig.m_Center), m_PositionsSize(0), m_IndicesSize(0)
+	: m_SectorCount(orig.m_SectorCount), m_StackCount(orig.m_StackCount), m_Radius(orig.m_Radius),
+	m_Center(orig.m_Center), m_PositionsSize(0), m_IndicesSize(0)
 {
 	Update();
 }
@@ -33,7 +34,7 @@ void Sphere::Move(Vec3 translation)
 
 void Sphere::Resize(float radius)
 {
-	m_Radius(radius);
+	m_Radius = radius;
 	Update();
 }
 
@@ -59,9 +60,9 @@ void Sphere::Update()
 		v = (float)i / m_StackCount;
 
 		sectorTopIdx = i * (m_SectorCount + 1);
-		sectorBottomIdx = baseIdx0 + m_SectorCount + 1;
+		sectorBottomIdx = sectorTopIdx + m_SectorCount + 1;
 
-		for (int j = 0; j < m_SectorCount; ++i)
+		for (int j = 0; j < m_SectorCount; ++j)
 		{
 			sectorAngleCurrent = j * sectorAngleStep;
 
