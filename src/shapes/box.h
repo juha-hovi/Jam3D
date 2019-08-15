@@ -16,14 +16,15 @@ public:
 	Box(const Box& orig);
 	bool operator=(const Box& rhs);
 
+	void Move(Vec3 translation);
 	void Rotate(Vec3 rotation);
+	void SetCorners(Vec3 corner0, Vec3, corner1)
 	void Update();
 
 	Vec3 m_Corner0;
 	Vec3 m_Corner1;
 	Vec3 m_Rotation;
 
-	const int m_Vertices;
 	const int m_PositionsSize;
 	const int m_IndicesSize;
 
