@@ -18,4 +18,11 @@ bool Vec2::operator!=(const Vec2& rhs)
     return !(this->x == rhs.x && this->y == rhs.y);
 }
 
+Vec2& Vec2::operator+=(const Vec2& rhs)
+{
+    this->x += rhs.x;
+    this->y += rhs.y;
+    return *this;
+}
+
 }

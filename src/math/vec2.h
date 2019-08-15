@@ -9,6 +9,7 @@ public:
 
     bool operator==(const Vec2& rhs);
     bool operator!=(const Vec2& rhs);
+    Vec2& operator+=(const Vec2& rhs);
 
     union
     {

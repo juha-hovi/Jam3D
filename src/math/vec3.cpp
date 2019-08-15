@@ -19,4 +19,12 @@ bool Vec3::operator!=(const Vec3& rhs)
     return !(this->x == rhs.x && this->y == rhs.y && this->z == rhs.z);
 }
 
+Vec3& Vec3::operator+=(const Vec3& rhs)
+{
+    this->x += rhs.x;
+    this->y += rhs.y;
+    this->z += rhs.z;
+    return *this;
+}
+
 }

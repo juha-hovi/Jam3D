@@ -40,9 +40,6 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
         - Fix includes with GLEW/GLFW, removing glew breaks build but isn't needed in all files
         - Clean Camera class variables using vectors, add double vectors by templating math?
 
-        - Draw Boxes
-            - Add support for box deletion & modification
-            - Add a way to individually rotate boxes
         - Look into multiple viewport implementation
             - 4 views: general, xy-plane, xz-plane, yz-plane
                 - Draw object by clicking mouse
@@ -57,7 +54,7 @@ Jam3D::Jam3D()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_GLWindow = std::make_unique<GLWindow>(960, 540, "Jam3D");
+    m_GLWindow = std::make_shared<GLWindow>(960, 540, "Jam3D");
 
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
@@ -91,7 +88,7 @@ void Jam3D::Run()
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     //TestBox test(m_GLWindow->m_Window);
-    m_Test = std::make_unique<TestBox>(m_GLWindow->m_Window);
+    m_Test = std::make_unique<TestBox>(m_GLWindow);
     m_GLWindow->SetCamera(m_Test->m_Camera);
     
     // Loop until the window is closed by the user.

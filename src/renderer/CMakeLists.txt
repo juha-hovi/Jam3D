@@ -1,6 +1,8 @@
 set(renderer_source
 	camera.cpp
 	camera.h
+	glwindow.cpp
+	glwindow.h
 	indexbuffer.cpp
 	indexbuffer.h
 	renderer.cpp

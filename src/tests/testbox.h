@@ -15,6 +15,8 @@
 #include "shader.h"
 #include "texture.h"
 
+#include "glwindow.h"
+
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -26,20 +28,16 @@ namespace Jam3D {
 class TestBox
 {
 public:
-    TestBox(GLFWwindow* window);
+    TestBox(std::shared_ptr<GLWindow> window);
 
     void AddBox(Vec3 corner0, Vec3 corner1);
     void DeleteBox(int index);
     void InitAxes();
     void InitRendering();
 
-    void UpdateNewBoxes();
-    void UpdateExistingBoxes();
+    void BufferBox(const Box& box);
     void Render();
     void RenderImGui();
-
-    float m_Rotation;
-    float m_Increment;
 
 private:
     int m_PositionsSize;
@@ -48,7 +46,7 @@ private:
     Vec3 m_Corner0;
     Vec3 m_Corner1;
 
-    GLFWwindow* m_Window;
+    std::shared_ptr<GLWindow> m_Window;
 
     std::unique_ptr<Renderer> m_Renderer;
     std::unique_ptr<VertexArray> m_VAO;

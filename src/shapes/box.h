@@ -16,10 +16,12 @@ public:
 	Box(const Box& orig);
 	bool operator=(const Box& rhs);
 
+	void Rotate(Vec3 rotation);
 	void Update();
 
 	Vec3 m_Corner0;
 	Vec3 m_Corner1;
+	Vec3 m_Rotation;
 
 	const int m_Vertices;
 	const int m_PositionsSize;

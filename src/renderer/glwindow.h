@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "camera.h"
+#include "vec2.h"
 
 namespace Jam3D {
 

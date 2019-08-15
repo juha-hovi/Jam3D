@@ -18,7 +18,7 @@ public:
 
 	void Run();
 
-	std::unique_ptr<GLWindow> m_GLWindow;
+	std::shared_ptr<GLWindow> m_GLWindow;
 	std::unique_ptr<TestBox> m_Test;
 };
 

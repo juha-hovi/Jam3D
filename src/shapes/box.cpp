@@ -9,6 +9,7 @@ namespace Jam3D {
 Box::Box(Vec3 corner0, Vec3 corner1)
 	: m_Corner0(corner0), 
 	m_Corner1(corner1),
+	m_Rotation(0.0f, 0.0f, 0.0f),
 	m_Vertices(24),
 	m_PositionsSize(24 * (3 + 2)),
 	m_IndicesSize(6 * 2 * 3),
@@ -21,6 +22,7 @@ Box::Box(Vec3 corner0, Vec3 corner1)
 Box::Box(const Box& orig)
 	: m_Corner0(orig.m_Corner0), 
 	m_Corner1(orig.m_Corner1),
+	m_Rotation(orig.m_Rotation),
 	m_Vertices(24),
 	m_PositionsSize(24 * (3 + 2)),
 	m_IndicesSize(6 * 2 * 3),
@@ -34,7 +36,13 @@ bool Box::operator=(const Box& rhs)
 {
 	m_Corner0 = rhs.m_Corner0;
 	m_Corner1 = rhs.m_Corner1;
+	m_Rotation = rhs.m_Rotation;
 	Update();
+}
+
+void Box::Rotate(Vec3 rotation)
+{
+	m_Rotation += rotation;
 }
 
 // Update the box.

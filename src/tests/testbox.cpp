@@ -11,8 +11,8 @@
 
 namespace Jam3D {
 
-TestBox::TestBox(GLFWwindow* window)
-    : m_Rotation(0.0f), m_Increment(0.5f), m_Window(window), m_PositionsSize(0),
+TestBox::TestBox(std::shared_ptr<GLWindow> window)
+    : m_Window(window), m_PositionsSize(0),
     m_IndicesSize(0), m_Corner0(0.0f, 0.0f, 0.0f), m_Corner1(0.0f, 0.0f, 0.0f)
 {
     InitRendering();
@@ -37,8 +37,8 @@ void TestBox::InitRendering()
     float fov = 45.0f;
     float near = 1.0f;
     float far = 5000.0f;
-    Vec2 windowDim({960.0f, 540.0f});
-    m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window);
+    Vec2 windowDim({(float)m_Window->m_Width, (float)m_Window->m_Height});
+    m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window->m_Window);
 }
 
 void TestBox::InitAxes()
@@ -57,68 +57,54 @@ void TestBox::InitAxes()
 void TestBox::AddBox(Vec3 corner0, Vec3 corner1)
 {
     m_Boxes.push_back(Box(corner0, corner1));
-    UpdateNewBoxes();
 }
 
 void TestBox::DeleteBox(int index)
 {
     m_Boxes.erase(m_Boxes.begin() + index);
-    UpdateNewBoxes();
 }
 
-void TestBox::UpdateNewBoxes()
+void TestBox::BufferBox(const Box& box)
 {
-    m_Positions.clear();
-    m_Indices.clear();
-    m_PositionsSize = 0;
-    m_IndicesSize = 0;
-
-    for (int i = 0; i < m_Boxes.size(); ++i)
-    {
-        m_Boxes[i].Update();
-        m_PositionsSize += m_Boxes[i].m_PositionsSize;
-        m_IndicesSize += m_Boxes[i].m_IndicesSize;
-        for (int j = 0; j < m_Boxes[i].m_PositionsSize; ++j)
-        {
-            m_Positions.push_back(m_Boxes[i].m_Positions[j]);
-        }
-        for (int j = 0; j < m_Boxes[i].m_IndicesSize; ++j)
-        {
-            m_Indices.push_back(m_Boxes[i].m_Indices[j] + (i * m_Boxes[i].m_Vertices));
-        }
-    }
-
     m_VAO = std::make_unique<VertexArray>();
-    m_VBO = std::make_unique<VertexBuffer>(m_Positions.data(), m_PositionsSize * sizeof(float));    
+    m_VBO = std::make_unique<VertexBuffer>(box.m_Positions.data(), box.m_PositionsSize * sizeof(float));    
     m_VAO->AddBuffer(*m_VBO, *m_Layout);
-    m_IBO = std::make_unique<IndexBuffer>(m_Indices.data(), m_IndicesSize);
-}
-
-void TestBox::UpdateExistingBoxes()
-{
-    m_VBO->UpdateBuffer(0, m_PositionsSize * sizeof(float), m_Positions.data());
+    m_IBO = std::make_unique<IndexBuffer>(box.m_Indices.data(), box.m_IndicesSize);
 }
 
 void TestBox::Render()
 {
+    m_Renderer->Clear();
+
+    // 1st loop
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);    
 
-    UpdateExistingBoxes();
-    m_Renderer->Clear();
-    
-    glm::mat4 model(1.0f);
-    //glm::vec3 translation(m_Box->m_Center.x, m_Box->m_Center.y, m_Box->m_Center.z);
-    //model = glm::translate(model, translation);
-    //model = glm::rotate(model, glm::radians(m_Rotation), glm::vec3(0.5f, 1.0f, 0.0f));
-    //model = glm::translate(model, -translation);
-    glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
+    // 2nd loop
     m_Texture->Bind();
     m_Shader->Bind();
-    m_Shader->SetUniformMat4f("u_MVP", mvp);
-    m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+    
+    // 3rd loop
+    for (int i = 0; i < m_Boxes.size(); i++)
+    {
+        BufferBox(m_Boxes[i]);
+
+        glm::mat4 model(1.0f);
+        glm::vec3 translation(m_Boxes[i].m_Center.x, m_Boxes[i].m_Center.y, m_Boxes[i].m_Center.z);
+        model = glm::translate(model, translation);
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::translate(model, -translation);
+        glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
+        m_Shader->SetUniformMat4f("u_MVP", mvp);
+
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+    }
+
+    // Draw axis lines
     m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
 }
 
@@ -130,22 +116,27 @@ void TestBox::RenderImGui()
 
     {
         ImGui::Begin("Jam3D");
-
-        ImGui::InputFloat("c0: x", &m_Corner0.x, 0.1f, 1.0f);
-        ImGui::InputFloat("c0: y", &m_Corner0.y, 0.1f, 1.0f);
-        ImGui::InputFloat("c0: z", &m_Corner0.z, 0.1f, 1.0f);
-        ImGui::InputFloat("c1: x", &m_Corner1.x, 0.1f, 1.0f);
-        ImGui::InputFloat("c1: y", &m_Corner1.y, 0.1f, 1.0f);
-        ImGui::InputFloat("c1: z", &m_Corner1.z, 0.1f, 1.0f);
+        ImGui::Text("Add box");
+        ImGui::InputFloat3("Corner 0", &m_Corner0.x, 1.0f, 1.0f);
+        ImGui::InputFloat3("Corner 1", &m_Corner1.x, 1.0f, 1.0f);
         if (ImGui::Button("Add box"))
         {
             AddBox(m_Corner0, m_Corner1);
         }
-
+        
+        ImGui::Text("================");
+        ImGui::Text("Delete box");
         for (int i = 0; i < m_Boxes.size(); ++i)
         {
             if (ImGui::Button(("Delete box: " + std::to_string(i)).c_str()))
                 DeleteBox(i);
+        }
+
+        ImGui::Text("================");
+        ImGui::Text("Rotate box");
+        for (int i = 0; i < m_Boxes.size(); ++i)
+        {
+            ImGui::InputFloat3(("Box " + std::to_string(i)).c_str(), &m_Boxes[i].m_Rotation.x, 1.0f, 1.0f);
         }
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
