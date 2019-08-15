@@ -1,16 +1,13 @@
 #pragma once
 
-#include <vector>
+#include "shape.h"
 
 namespace Jam3D {
 
-class Axes
+class Axes : public Shape
 {
 public:
     Axes();
-
-    std::vector<float> m_Positions;
-	std::vector<unsigned int> m_Indices;
 };
 
 }

@@ -4,6 +4,9 @@ namespace Jam3D {
 
 Axes::Axes()
 {
+    m_Center = Vec3(0.0f, 0.0f, 0.0f);
+    m_Rotation = Vec3(0.0f, 0.0f, 0.0f);
+
     const float dist = 1000.0f;
     const int positionsSize = 3 * 2 * 5;
     const int indicesSize = 3 * 2;
