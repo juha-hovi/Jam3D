@@ -115,7 +115,6 @@ void TestBox::Render()
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        //model = glm::translate(model, -translation);
         glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
         m_Shader->SetUniformMat4f("u_MVP", mvp);
 
