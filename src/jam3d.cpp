@@ -36,6 +36,8 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
+        - Lightsource class and lighting in shader
+            - Surface normals for shapes
         - Draw flowchart of OpenGL commands/tasks
         - Fix includes with GLEW/GLFW, removing glew breaks build but isn't needed in all files
         - Clean Camera class variables using vectors, add double vectors by templating math?
