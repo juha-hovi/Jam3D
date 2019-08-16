@@ -27,6 +27,7 @@ void TestBox::InitRendering()
     m_Layout = std::make_unique<VertexBufferLayout>();
     m_Layout->Push<float>(3);
     m_Layout->Push<float>(2);
+    m_Layout->Push<float>(3);
 
     m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader");
     m_Shader->Bind();
@@ -46,10 +47,11 @@ void TestBox::InitAxes()
     m_Renderer = std::make_unique<Renderer>();
     m_Axes = std::make_unique<Axes>();
     m_VAO_axes = std::make_unique<VertexArray>();
-    m_VBO_axes = std::make_unique<VertexBuffer>(m_Axes->m_Positions.data(), m_Axes->m_Positions.size() * sizeof(float));
+    m_VBO_axes = std::make_unique<VertexBuffer>(m_Axes->m_VertexData.data(), m_Axes->m_VertexData.size() * sizeof(float));
     m_Layout_axes = std::make_unique<VertexBufferLayout>();
     m_Layout_axes->Push<float>(3);
     m_Layout_axes->Push<float>(2);
+    m_Layout_axes->Push<float>(3);
     m_VAO_axes->AddBuffer(*m_VBO_axes, *m_Layout_axes);
     m_IBO_axes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
 }
@@ -77,7 +79,7 @@ void TestBox::DeleteSphere(int index)
 void TestBox::BufferBox(const Box& box)
 {
     m_VAO = std::make_unique<VertexArray>();
-    m_VBO = std::make_unique<VertexBuffer>(box.m_Positions.data(), box.m_Positions.size() * sizeof(float));    
+    m_VBO = std::make_unique<VertexBuffer>(box.m_VertexData.data(), box.m_VertexData.size() * sizeof(float));    
     m_VAO->AddBuffer(*m_VBO, *m_Layout);
     m_IBO = std::make_unique<IndexBuffer>(box.m_Indices.data(), box.m_Indices.size());
 }
@@ -85,7 +87,7 @@ void TestBox::BufferBox(const Box& box)
 void TestBox::BufferSphere(const Sphere& sphere)
 {
     m_VAO = std::make_unique<VertexArray>();
-    m_VBO = std::make_unique<VertexBuffer>(sphere.m_Positions.data(), sphere.m_Positions.size() * sizeof(float));    
+    m_VBO = std::make_unique<VertexBuffer>(sphere.m_VertexData.data(), sphere.m_VertexData.size() * sizeof(float));    
     m_VAO->AddBuffer(*m_VBO, *m_Layout);
     m_IBO = std::make_unique<IndexBuffer>(sphere.m_Indices.data(), sphere.m_Indices.size());
 }

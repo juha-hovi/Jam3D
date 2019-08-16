@@ -18,7 +18,7 @@ public:
     Vec3 m_Center;
     Vec3 m_Rotation;
 
-    std::vector<float> m_Positions;
+    std::vector<float> m_VertexData; // 3 position coordinates, 2 texture coordinates, 3 normal vector values 
 	std::vector<unsigned int> m_Indices;
 };
 

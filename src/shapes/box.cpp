@@ -43,45 +43,45 @@ void Box::Update()
 	Vec3 corner0 = m_Dimensions / -2.0f;
 	Vec3 corner1 = m_Dimensions / 2.0f;
 
-	const int positionsSize = 6 * 4 * 5;
+	const int vertexDataSize = 6 * 4 * (3 + 2 + 3);
     const int indicesSize = 6 * 2 * 3;
 
-	float positions[positionsSize] = {
+	float vertexData[vertexDataSize] = {
 		// Front
-		corner0.x, corner0.y, corner1.z, 2.0f / 3.0f, 0.0f,	// 0
-		corner1.x, corner0.y, corner1.z, 1.0f, 0.0f,		// 1
-		corner1.x, corner1.y, corner1.z, 1.0f, 0.5f,		// 2
-		corner0.x, corner1.y, corner1.z, 2.0f / 3.0f, 0.5f,	// 3
+		corner0.x, corner0.y, corner1.z, 2.0f / 3.0f, 0.0f,	0.0f, 0.0f, 1.0f, 	// 0
+		corner1.x, corner0.y, corner1.z, 1.0f, 0.0f,		0.0f, 0.0f, 1.0f, 	// 1
+		corner1.x, corner1.y, corner1.z, 1.0f, 0.5f,		0.0f, 0.0f, 1.0f, 	// 2
+		corner0.x, corner1.y, corner1.z, 2.0f / 3.0f, 0.5f,	0.0f, 0.0f, 1.0f, 	// 3
 
 		// Back
-		corner1.x, corner0.y, corner0.z, 1.0f / 3.0f, 0.0f,	// 5
-		corner0.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.0f,	// 4
-		corner0.x, corner1.y, corner0.z, 2.0f / 3.0f, 0.5f,	// 7
-		corner1.x, corner1.y, corner0.z, 1.0f / 3.0f, 0.5f,	// 6
+		corner1.x, corner0.y, corner0.z, 1.0f / 3.0f, 0.0f,	0.0f, 0.0f, -1.0f,	// 5
+		corner0.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.0f,	0.0f, 0.0f, -1.0f,	// 4
+		corner0.x, corner1.y, corner0.z, 2.0f / 3.0f, 0.5f,	0.0f, 0.0f, -1.0f,	// 7
+		corner1.x, corner1.y, corner0.z, 1.0f / 3.0f, 0.5f,	0.0f, 0.0f, -1.0f,	// 6
 
 		// Left
-		corner0.x, corner0.y, corner0.z, 0.0f, 0.5f,		// 4
-		corner0.x, corner0.y, corner1.z, 1.0f / 3.0f, 0.5f,	// 0
-		corner0.x, corner1.y, corner1.z, 1.0f / 3.0f, 1.0f,	// 3
-		corner0.x, corner1.y, corner0.z, 0.0f, 1.0f,		// 7
+		corner0.x, corner0.y, corner0.z, 0.0f, 0.5f,		-1.0f, 0.0f, 0.0f,	// 4
+		corner0.x, corner0.y, corner1.z, 1.0f / 3.0f, 0.5f,	-1.0f, 0.0f, 0.0f,	// 0
+		corner0.x, corner1.y, corner1.z, 1.0f / 3.0f, 1.0f,	-1.0f, 0.0f, 0.0f,	// 3
+		corner0.x, corner1.y, corner0.z, 0.0f, 1.0f,		-1.0f, 0.0f, 0.0f,	// 7
 
 		// Right
-		corner1.x, corner0.y, corner1.z, 1.0f / 3.0f, 0.5f,	// 1
-		corner1.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.5f,	// 5
-		corner1.x, corner1.y, corner0.z, 2.0f / 3.0f, 1.0f,	// 6
-		corner1.x, corner1.y, corner1.z, 1.0f / 3.0f, 1.0f,	// 2
+		corner1.x, corner0.y, corner1.z, 1.0f / 3.0f, 0.5f,	1.0f, 0.0f, 0.0f,	// 1
+		corner1.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.5f,	1.0f, 0.0f, 0.0f,	// 5
+		corner1.x, corner1.y, corner0.z, 2.0f / 3.0f, 1.0f,	1.0f, 0.0f, 0.0f,	// 6
+		corner1.x, corner1.y, corner1.z, 1.0f / 3.0f, 1.0f,	1.0f, 0.0f, 0.0f,	// 2
 
 		// Top
-		corner0.x, corner1.y, corner1.z, 0.0f, 0.0f,		// 3
-		corner1.x, corner1.y, corner1.z, 1.0f / 3.0f, 0.0f,	// 2
-		corner1.x, corner1.y, corner0.z, 1.0f / 3.0f, 0.5f,	// 6
-		corner0.x, corner1.y, corner0.z, 0.0f, 0.5f,		// 7
+		corner0.x, corner1.y, corner1.z, 0.0f, 0.0f,		0.0f, 1.0f, 0.0f,	// 3
+		corner1.x, corner1.y, corner1.z, 1.0f / 3.0f, 0.0f,	0.0f, 1.0f, 0.0f,	// 2
+		corner1.x, corner1.y, corner0.z, 1.0f / 3.0f, 0.5f,	0.0f, 1.0f, 0.0f,	// 6
+		corner0.x, corner1.y, corner0.z, 0.0f, 0.5f,		0.0f, 1.0f, 0.0f,	// 7
 
 		// Bottom
-		corner1.x, corner0.y, corner1.z, 1.0f, 1.0f,		// 1
-		corner0.x, corner0.y, corner1.z, 2.0f / 3.0f, 1.0f,	// 0
-		corner0.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.5f,	// 4
-		corner1.x, corner0.y, corner0.z, 1.0f, 0.5f			// 5
+		corner1.x, corner0.y, corner1.z, 1.0f, 1.0f,		0.0f, -1.0f, 0.0f,	// 1
+		corner0.x, corner0.y, corner1.z, 2.0f / 3.0f, 1.0f,	0.0f, -1.0f, 0.0f,	// 0
+		corner0.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.5f,	0.0f, -1.0f, 0.0f,	// 4
+		corner1.x, corner0.y, corner0.z, 1.0f, 0.5f,		0.0f, -1.0f, 0.0f	// 5
 	};
 
 	unsigned int indices[indicesSize] = {
@@ -104,10 +104,10 @@ void Box::Update()
 		20, 22, 23
 	};
 
-	m_Positions.clear();
-	for (int i = 0; i < positionsSize; ++i)
+	m_VertexData.clear();
+	for (int i = 0; i < vertexDataSize; ++i)
 	{
-		m_Positions.push_back(positions[i]);
+		m_VertexData.push_back(vertexData[i]);
 	}
 	m_Indices.clear();
 	for (int i = 0; i < indicesSize; ++i)

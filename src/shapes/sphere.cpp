@@ -39,10 +39,11 @@ void Sphere::Resize(float radius)
 
 void Sphere::Update()
 {
-	m_Positions.clear();
+	m_VertexData.clear();
 	m_Indices.clear();
 
 	float x, y, z, xy;
+	float nx, ny, nz, lengthInv = 1.0f / m_Radius; 
 	float u, v;
 
 	float sectorStep = 2 * M_PI / m_SectorCount;
@@ -61,14 +62,21 @@ void Sphere::Update()
 
 			x = xy * cosf(sectorAngle);
 			y = xy * sinf(sectorAngle);
-			m_Positions.push_back(x);
-			m_Positions.push_back(y);
-			m_Positions.push_back(z);
+			m_VertexData.push_back(x);
+			m_VertexData.push_back(y);
+			m_VertexData.push_back(z);
 
 			u = (float)j / m_SectorCount;
 			v = (float)i / m_StackCount;
-			m_Positions.push_back(u);
-			m_Positions.push_back(v);
+			m_VertexData.push_back(u);
+			m_VertexData.push_back(v);
+
+			nx = x * lengthInv;
+        	ny = y * lengthInv;
+        	nz = z * lengthInv;
+        	m_VertexData.push_back(nx);
+        	m_VertexData.push_back(ny);
+        	m_VertexData.push_back(nz);
 		}
 	}
 

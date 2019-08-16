@@ -7,33 +7,32 @@ Axes::Axes()
     m_Center = Vec3(0.0f, 0.0f, 0.0f);
     m_Rotation = Vec3(0.0f, 0.0f, 0.0f);
 
-    const float dist = 1000.0f;
-    const int positionsSize = 3 * 2 * 5;
+    const float dist = 2000.0f;
+    const int vertexDataSize = 3 * 2 * (3 + 2 + 3);
     const int indicesSize = 3 * 2;
 
-    float positions[positionsSize] = {
-        -dist, 0.0f, 0.0f, 0.1f, 0.1f,
-         dist, 0.0f, 0.0f, 0.1f, 0.1f,
+    float vertexData[vertexDataSize] = {
+        -dist, 0.0f, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
+         dist, 0.0f, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
 
-        0.0f, -dist, 0.0f, 0.1f, 0.1f,
-        0.0f,  dist, 0.0f, 0.1f, 0.1f,
+        0.0f, -dist, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
+        0.0f,  dist, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
 
-        0.0f, 0.0f, -dist, 0.1f, 0.1f,
-        0.0f, 0.0f,  dist, 0.1f, 0.1f,
+        0.0f, 0.0f, -dist, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f,  dist, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f 
     };
 
     unsigned int indices[indicesSize] = {
-        // x-axis
         0, 1,
-        // y-axis
+
         2, 3,
-        // z-axis
+
         4, 5
     };
 
-	for (int i = 0; i < positionsSize; ++i)
+	for (int i = 0; i < vertexDataSize; ++i)
 	{
-		m_Positions.push_back(positions[i]);
+		m_VertexData.push_back(vertexData[i]);
 	}
 	for (int i = 0; i < indicesSize; ++i)
 	{

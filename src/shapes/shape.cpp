@@ -3,7 +3,6 @@
 namespace Jam3D {
 
 Shape::Shape()
-    : m_Center({0.0f, 0.0f, 0.0f}), m_Rotation({0.0f, 0.0f, 0.0f})
 {
 
 }
