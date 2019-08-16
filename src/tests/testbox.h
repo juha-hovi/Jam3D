@@ -31,7 +31,7 @@ class TestBox
 public:
     TestBox(std::shared_ptr<GLWindow> window);
 
-    void AddBox(Vec3 corner0, Vec3 corner1);
+    void AddBox(Vec3 center, Vec3 dimensions, Vec3 rotation);
     void DeleteBox(int index);
     void AddSphere(float radius, Vec3 center, int sectorCount, int stackCount);
     void DeleteSphere(int index);
@@ -45,13 +45,14 @@ public:
 
 private:
 
-    Vec3 m_Corner0;
-    Vec3 m_Corner1;
+    Vec3 m_BoxCenter;
+    Vec3 m_BoxDimensions;
+    Vec3 m_BoxRotation;
 
-    Vec3 m_Center;
-    float m_Radius;
-    int m_SectorCount;
-    int m_StackCount;
+    Vec3 m_SphereCenter;
+    float m_SphereRadius;
+    int m_SphereSectorCount;
+    int m_SphereStackCount;
 
     std::shared_ptr<GLWindow> m_Window;
 

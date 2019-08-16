@@ -3,41 +3,30 @@
 
 namespace Jam3D {
 
-// Builds a 3D box from two given corners. See tex_example_full.png for texture layout.
+// Builds a 3D box. See tex_example_full.png for texture layout.
 // m_Positions.size() = 120: 24 vertices, 3 coordinates, 2 texture coordinates
 // m_Indices.size() = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
-Box::Box(Vec3 corner0, Vec3 corner1)
-	: m_Corner0(corner0), 
-	m_Corner1(corner1),
-	m_Dimensions({0.0f, 0.0f, 0.0f})
+Box::Box(Vec3 center, Vec3 dimensions, Vec3 rotation)
 {
-	m_Rotation = Vec3(0.0f, 0.0f, 0.0f);
-	m_Center = Vec3(0.0f, 0.0f, 0.0f);
+	m_Center = center;
+	m_Dimensions = dimensions;
+	m_Rotation = rotation;
 	Update();
 }
 
 Box::Box(const Box& orig)
-	: m_Corner0(orig.m_Corner0), 
-	m_Corner1(orig.m_Corner1),
-	m_Dimensions({0.0f, 0.0f, 0.0f})
 {
 	m_Rotation = orig.m_Rotation;
 	m_Center = orig.m_Center;
+	m_Dimensions = orig.m_Dimensions;
 	Update();
 }
 
 bool Box::operator=(const Box& rhs)
-{
-	m_Corner0 = rhs.m_Corner0;
-	m_Corner1 = rhs.m_Corner1;
+{	
 	m_Rotation = rhs.m_Rotation;
-	Update();
-}
-
-void Box::SetCorners(Vec3 corner0, Vec3 corner1)
-{
-	m_Corner0 = corner0;
-	m_Corner1 = corner1;
+	m_Center = rhs.m_Center;
+	m_Dimensions = rhs.m_Dimensions;
 	Update();
 }
 
@@ -51,53 +40,48 @@ void Box::Update()
 		|	4-+---5
 		0-----1
 	*/
-	m_Dimensions.x = std::abs(m_Corner1.x - m_Corner0.x);
-	m_Dimensions.y = std::abs(m_Corner1.y - m_Corner0.y);
-	m_Dimensions.z = std::abs(m_Corner1.z - m_Corner0.z);
-
-	m_Center.x = (m_Corner0.x + m_Corner1.x) / 2.0f;
-	m_Center.y = (m_Corner0.y + m_Corner1.y) / 2.0f;
-	m_Center.z = (m_Corner0.z + m_Corner1.z) / 2.0f;
+	Vec3 corner0 = m_Dimensions / -2.0f;
+	Vec3 corner1 = m_Dimensions / 2.0f;
 
 	const int positionsSize = 6 * 4 * 5;
     const int indicesSize = 6 * 2 * 3;
 
 	float positions[positionsSize] = {
 		// Front
-		m_Corner0.x, m_Corner0.y, m_Corner1.z, 2.0f / 3.0f, 0.0f,	// 0
-		m_Corner1.x, m_Corner0.y, m_Corner1.z, 1.0f, 0.0f,			// 1
-		m_Corner1.x, m_Corner1.y, m_Corner1.z, 1.0f, 0.5f,			// 2
-		m_Corner0.x, m_Corner1.y, m_Corner1.z, 2.0f / 3.0f, 0.5f,	// 3
+		corner0.x, corner0.y, corner1.z, 2.0f / 3.0f, 0.0f,	// 0
+		corner1.x, corner0.y, corner1.z, 1.0f, 0.0f,		// 1
+		corner1.x, corner1.y, corner1.z, 1.0f, 0.5f,		// 2
+		corner0.x, corner1.y, corner1.z, 2.0f / 3.0f, 0.5f,	// 3
 
 		// Back
-		m_Corner1.x, m_Corner0.y, m_Corner0.z, 1.0f / 3.0f, 0.0f,	// 5
-		m_Corner0.x, m_Corner0.y, m_Corner0.z, 2.0f / 3.0f, 0.0f,	// 4
-		m_Corner0.x, m_Corner1.y, m_Corner0.z, 2.0f / 3.0f, 0.5f,	// 7
-		m_Corner1.x, m_Corner1.y, m_Corner0.z, 1.0f / 3.0f, 0.5f,	// 6
+		corner1.x, corner0.y, corner0.z, 1.0f / 3.0f, 0.0f,	// 5
+		corner0.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.0f,	// 4
+		corner0.x, corner1.y, corner0.z, 2.0f / 3.0f, 0.5f,	// 7
+		corner1.x, corner1.y, corner0.z, 1.0f / 3.0f, 0.5f,	// 6
 
 		// Left
-		m_Corner0.x, m_Corner0.y, m_Corner0.z, 0.0f, 0.5f,			// 4
-		m_Corner0.x, m_Corner0.y, m_Corner1.z, 1.0f / 3.0f, 0.5f,	// 0
-		m_Corner0.x, m_Corner1.y, m_Corner1.z, 1.0f / 3.0f, 1.0f,	// 3
-		m_Corner0.x, m_Corner1.y, m_Corner0.z, 0.0f, 1.0f,			// 7
+		corner0.x, corner0.y, corner0.z, 0.0f, 0.5f,		// 4
+		corner0.x, corner0.y, corner1.z, 1.0f / 3.0f, 0.5f,	// 0
+		corner0.x, corner1.y, corner1.z, 1.0f / 3.0f, 1.0f,	// 3
+		corner0.x, corner1.y, corner0.z, 0.0f, 1.0f,		// 7
 
 		// Right
-		m_Corner1.x, m_Corner0.y, m_Corner1.z, 1.0f / 3.0f, 0.5f,	// 1
-		m_Corner1.x, m_Corner0.y, m_Corner0.z, 2.0f / 3.0f, 0.5f,	// 5
-		m_Corner1.x, m_Corner1.y, m_Corner0.z, 2.0f / 3.0f, 1.0f,	// 6
-		m_Corner1.x, m_Corner1.y, m_Corner1.z, 1.0f / 3.0f, 1.0f,	// 2
+		corner1.x, corner0.y, corner1.z, 1.0f / 3.0f, 0.5f,	// 1
+		corner1.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.5f,	// 5
+		corner1.x, corner1.y, corner0.z, 2.0f / 3.0f, 1.0f,	// 6
+		corner1.x, corner1.y, corner1.z, 1.0f / 3.0f, 1.0f,	// 2
 
 		// Top
-		m_Corner0.x, m_Corner1.y, m_Corner1.z, 0.0f, 0.0f,			// 3
-		m_Corner1.x, m_Corner1.y, m_Corner1.z, 1.0f / 3.0f, 0.0f,	// 2
-		m_Corner1.x, m_Corner1.y, m_Corner0.z, 1.0f / 3.0f, 0.5f,	// 6
-		m_Corner0.x, m_Corner1.y, m_Corner0.z, 0.0f, 0.5f,			// 7
+		corner0.x, corner1.y, corner1.z, 0.0f, 0.0f,		// 3
+		corner1.x, corner1.y, corner1.z, 1.0f / 3.0f, 0.0f,	// 2
+		corner1.x, corner1.y, corner0.z, 1.0f / 3.0f, 0.5f,	// 6
+		corner0.x, corner1.y, corner0.z, 0.0f, 0.5f,		// 7
 
 		// Bottom
-		m_Corner1.x, m_Corner0.y, m_Corner1.z, 1.0f, 1.0f,			// 1
-		m_Corner0.x, m_Corner0.y, m_Corner1.z, 2.0f / 3.0f, 1.0f,	// 0
-		m_Corner0.x, m_Corner0.y, m_Corner0.z, 2.0f / 3.0f, 0.5f,	// 4
-		m_Corner1.x, m_Corner0.y, m_Corner0.z, 1.0f, 0.5f			// 5
+		corner1.x, corner0.y, corner1.z, 1.0f, 1.0f,		// 1
+		corner0.x, corner0.y, corner1.z, 2.0f / 3.0f, 1.0f,	// 0
+		corner0.x, corner0.y, corner0.z, 2.0f / 3.0f, 0.5f,	// 4
+		corner1.x, corner0.y, corner0.z, 1.0f, 0.5f			// 5
 	};
 
 	unsigned int indices[indicesSize] = {

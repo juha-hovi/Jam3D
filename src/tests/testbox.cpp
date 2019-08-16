@@ -12,13 +12,13 @@
 namespace Jam3D {
 
 TestBox::TestBox(std::shared_ptr<GLWindow> window)
-    : m_Window(window), m_Corner0(0.0f, 0.0f, 0.0f), m_Corner1(0.0f, 0.0f, 0.0f), 
-    m_Center(0.0f, 0.0f, 0.0f), m_Radius(100.0f), m_SectorCount(10), m_StackCount(10)
+    : m_Window(window), m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
+    m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10)
 {
     InitRendering();
     InitAxes();
 
-    AddBox(Vec3(100.0f, 100.0f, -100.0f), Vec3(300.0f, 300.0f, 100.0f));
+    AddBox(Vec3(200.0f, -200.0f, 0.0f), Vec3(200.0f, 200.0f, 200.0f), Vec3(0.0f, 0.0f, 0.0f));
     AddSphere(100.0f, Vec3(-200.0f, -200.0f, 0.0f), 20, 20);
 }
 
@@ -54,9 +54,9 @@ void TestBox::InitAxes()
     m_IBO_axes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
 }
 
-void TestBox::AddBox(Vec3 corner0, Vec3 corner1)
+void TestBox::AddBox(Vec3 center, Vec3 dimensions, Vec3 rotation)
 {
-    m_Boxes.push_back(Box(corner0, corner1));
+    m_Boxes.push_back(Box(center, dimensions, rotation));
 }
 
 void TestBox::DeleteBox(int index)
@@ -115,7 +115,7 @@ void TestBox::Render()
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::translate(model, -translation);
+        //model = glm::translate(model, -translation);
         glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
         m_Shader->SetUniformMat4f("u_MVP", mvp);
 
@@ -154,11 +154,12 @@ void TestBox::RenderImGui()
 
     {
         ImGui::Begin("Boxes");
-        ImGui::InputFloat3("Corner 0", &m_Corner0.x, 1.0f, 1.0f);
-        ImGui::InputFloat3("Corner 1", &m_Corner1.x, 1.0f, 1.0f);
+        ImGui::InputFloat3("Center", &m_BoxCenter.x, 1.0f, 1.0f);
+        ImGui::InputFloat3("Dim", &m_BoxDimensions.x, 1.0f, 1.0f);
+        ImGui::InputFloat3("Rot", &m_BoxRotation.x, 1.0f, 1.0f);
         if (ImGui::Button("Add"))
         {
-            AddBox(m_Corner0, m_Corner1);
+            AddBox(m_BoxCenter, m_BoxDimensions, m_BoxRotation);
         }
         
         ImGui::Text("================");
@@ -178,13 +179,13 @@ void TestBox::RenderImGui()
 
     {
         ImGui::Begin("Spheres");
-        ImGui::InputFloat3("Center", &m_Center.x, 1.0f, 1.0f);
-        ImGui::InputFloat("Radius", &m_Radius, 1.0f, 1.0f);
-        ImGui::InputInt("Sectors", &m_SectorCount);
-        ImGui::InputInt("Stacks", &m_StackCount);
+        ImGui::InputFloat3("Center", &m_SphereCenter.x, 1.0f, 1.0f);
+        ImGui::InputFloat("Radius", &m_SphereRadius, 1.0f, 1.0f);
+        ImGui::InputInt("Sectors", &m_SphereSectorCount);
+        ImGui::InputInt("Stacks", &m_SphereStackCount);
         if (ImGui::Button("Add"))
         {
-            AddSphere(m_Radius, m_Center, m_SectorCount, m_StackCount);
+            AddSphere(m_SphereRadius, m_SphereCenter, m_SphereSectorCount, m_SphereStackCount);
         }
         ImGui::Text("================");
         for (int i = 0; i < m_Spheres.size(); ++i)
