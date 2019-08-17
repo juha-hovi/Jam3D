@@ -146,6 +146,12 @@ void Shader::SetUniform1f(const std::string& name, float value)
     glUniform1f(GetUniformLocation(name), value);
 }
 
+// Sets values for a uniform containing 3 floats.
+void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2)
+{
+    glUniform3f(GetUniformLocation(name), v0, v1, v2);
+}
+
 // Sets values for a uniform containing 4 floats.
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 {

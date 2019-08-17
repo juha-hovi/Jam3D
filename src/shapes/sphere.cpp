@@ -49,12 +49,16 @@ void Sphere::Update()
 	float sectorStep = 2 * M_PI / m_SectorCount;
 	float stackStep = M_PI / m_StackCount;
 	float sectorAngle, stackAngle;
+	int k1, k2;
 
 	for(int i = 0; i <= m_StackCount; ++i)
 	{
 		stackAngle = M_PI / 2 - i * stackStep;
 		xy = m_Radius * cosf(stackAngle);
 		z = m_Radius * sinf(stackAngle);
+
+		k1 = i * (m_SectorCount + 1);
+		k2 = k1 + m_SectorCount + 1;
 
 		for(int j = 0; j <= m_SectorCount; ++j)
 		{
@@ -78,13 +82,6 @@ void Sphere::Update()
         	m_VertexData.push_back(ny);
         	m_VertexData.push_back(nz);
 		}
-	}
-
-	int k1, k2;
-	for(int i = 0; i < m_StackCount; ++i)
-	{
-		k1 = i * (m_SectorCount + 1);
-		k2 = k1 + m_SectorCount + 1;
 
 		for(int j = 0; j < m_SectorCount; ++j, ++k1, ++k2)
 		{

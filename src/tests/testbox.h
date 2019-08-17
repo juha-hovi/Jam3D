@@ -54,6 +54,10 @@ private:
     int m_SphereSectorCount;
     int m_SphereStackCount;
 
+    float m_ObjectLocation;
+    float m_ObjectDistance;
+    Vec3 m_ObjectRotation;
+
     std::shared_ptr<GLWindow> m_Window;
 
     std::unique_ptr<Renderer> m_Renderer;

@@ -8,6 +8,7 @@
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
 #include <string>
+#include <cmath>
 
 namespace Jam3D {
 
@@ -18,8 +19,11 @@ TestBox::TestBox(std::shared_ptr<GLWindow> window)
     InitRendering();
     InitAxes();
 
-    AddBox(Vec3(200.0f, -200.0f, 0.0f), Vec3(200.0f, 200.0f, 200.0f), Vec3(0.0f, 0.0f, 0.0f));
-    AddSphere(100.0f, Vec3(-200.0f, -200.0f, 0.0f), 20, 20);
+    m_ObjectRotation = Vec3(0.0f, 0.0f, 0.0f);
+    m_ObjectLocation = 0.0f;
+    m_ObjectDistance = 500.0f;
+    //AddBox(Vec3(-200.0f, -200.0f, 0.0f), Vec3(200.0f, 200.0f, 200.0f), Vec3(0.0f, 0.0f, 0.0f));
+    AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, cosf(m_ObjectLocation) * m_ObjectDistance, 0.0f), 20, 20);
 }
 
 void TestBox::InitRendering()
@@ -105,6 +109,13 @@ void TestBox::Render()
     // 2nd loop
     m_Texture->Bind();
     m_Shader->Bind();
+
+    m_Shader->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
+    m_Shader->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
+
+    m_Shader->SetUniform3f("u_LightSource.lightPos", 0.0f, 0.0f, 0.0f);
+    m_Shader->SetUniform3f("u_LightSource.lightColor", 1.0f, 1.0f, 1.0f);
+    m_Shader->SetUniform1f("u_LightSource.ambientStrength", 0.1f);
     
     // 3rd loop
     for (int i = 0; i < m_Boxes.size(); ++i)
@@ -117,14 +128,24 @@ void TestBox::Render()
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
-        m_Shader->SetUniformMat4f("u_MVP", mvp);
+
+        m_Shader->SetUniformMat4f("u_Model", model);
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     }
 
     for (int i = 0; i < m_Spheres.size(); ++i)
     {
+        m_ObjectLocation += 0.005f;
+        if (m_ObjectLocation > (2 * M_PI))
+            m_ObjectLocation = 0.0f;
+        m_ObjectRotation += Vec3(0.2f, 0.2f, 0.0f);
+        if (m_ObjectRotation.x > 720)
+            m_ObjectRotation =  Vec3(0.0f, 0.0f, 0.0f);
+
+        m_Spheres[0].m_Center = Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, 0.0f, cosf(m_ObjectLocation) * m_ObjectDistance);
+        m_Spheres[0].m_Rotation = m_ObjectRotation;
+
         BufferSphere(m_Spheres[i]);
 
         glm::mat4 model(1.0f);
@@ -133,16 +154,16 @@ void TestBox::Render()
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
-        m_Shader->SetUniformMat4f("u_MVP", mvp);
+              
+        m_Shader->SetUniformMat4f("u_Model", model);
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     }
     
     {
         glm::mat4 model(1.0f);
-        glm::mat4 mvp = m_Camera->m_ProjectionMatrix * m_Camera->m_ViewMatrix * model;
-        m_Shader->SetUniformMat4f("u_MVP", mvp);
+        m_Shader->SetUniform1f("u_LightSource.ambientStrength", 1.0f);
+        m_Shader->SetUniformMat4f("u_Model", model);
         m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
     }
 }
@@ -173,7 +194,13 @@ void TestBox::RenderImGui()
         ImGui::Text("================");
         for (int i = 0; i < m_Boxes.size(); ++i)
         {
-            ImGui::SliderFloat3(("Box " + std::to_string(i)).c_str(), &m_Boxes[i].m_Rotation.x, 0.0f, 360.0f);
+            ImGui::SliderFloat3(("Rot " + std::to_string(i)).c_str(), &m_Boxes[i].m_Rotation.x, 0.0f, 360.0f);
+        }
+
+        ImGui::Text("================");
+        for (int i = 0; i < m_Boxes.size(); ++i)
+        {
+            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_Boxes[i].m_Center.x, -500.0f, 500.0f);
         }
         ImGui::End();
     }
@@ -198,7 +225,13 @@ void TestBox::RenderImGui()
         ImGui::Text("================");
         for (int i = 0; i < m_Spheres.size(); ++i)
         {
-            ImGui::SliderFloat3(("Sphere " + std::to_string(i)).c_str(), &m_Spheres[i].m_Rotation.x, 0.0f, 360.0f);
+            ImGui::SliderFloat3(("Rot " + std::to_string(i)).c_str(), &m_Spheres[i].m_Rotation.x, 0.0f, 360.0f);
+        }
+
+        ImGui::Text("================");
+        for (int i = 0; i < m_Spheres.size(); ++i)
+        {
+            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_Spheres[i].m_Center.x, -500.0f, 500.0f);
         }
         ImGui::End();
     }
