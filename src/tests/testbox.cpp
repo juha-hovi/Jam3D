@@ -22,7 +22,7 @@ TestBox::TestBox(std::shared_ptr<GLWindow> window)
     m_ObjectRotation = Vec3(0.0f, 0.0f, 0.0f);
     m_ObjectLocation = 0.0f;
     m_ObjectDistance = 500.0f;
-    AddBox(Vec3(-500.0f, -500.0f, -500.0f), Vec3(1000.0f, 100.0f, 1000.0f), Vec3(0.0f, 0.0f, 0.0f));
+    //AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
     AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, cosf(m_ObjectLocation) * m_ObjectDistance, 0.0f), 20, 20);
 }
 

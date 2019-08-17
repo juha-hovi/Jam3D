@@ -59,7 +59,7 @@ void main()
 
     vec3 viewDir = normalize(v_CameraPos - v_FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16);
     vec3 specular = u_LightSource.specularStrength * spec * u_LightSource.lightColor;
 
     vec3 light = ambient + diffuse + specular;
