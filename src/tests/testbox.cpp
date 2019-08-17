@@ -22,8 +22,8 @@ TestBox::TestBox(std::shared_ptr<GLWindow> window)
     m_ObjectRotation = Vec3(0.0f, 0.0f, 0.0f);
     m_ObjectLocation = 0.0f;
     m_ObjectDistance = 500.0f;
-    AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
-    AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, cosf(m_ObjectLocation) * m_ObjectDistance, 0.0f), 20, 20);
+    //AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
+    AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, 0.0f, cosf(m_ObjectLocation) * m_ObjectDistance), 20, 20);
 }
 
 void TestBox::InitRendering()
@@ -113,10 +113,15 @@ void TestBox::Render()
     m_Shader->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
     m_Shader->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
 
-    m_Shader->SetUniform3f("u_LightSource.lightPos", 0.0f, 0.0f, 0.0f);
-    m_Shader->SetUniform3f("u_LightSource.lightColor", 1.0f, 1.0f, 1.0f);
-    m_Shader->SetUniform1f("u_LightSource.ambientStrength", 0.1f);
-    m_Shader->SetUniform1f("u_LightSource.specularStrength", 0.5f);
+    m_Shader->SetUniform3f("u_LightSources[0].lightPos", -300.0f, 0.0f, 0.0f);
+    m_Shader->SetUniform3f("u_LightSources[0].lightColor", 1.0f, 1.0f, 1.0f);
+    m_Shader->SetUniform1f("u_LightSources[0].ambientStrength", 0.1f);
+    m_Shader->SetUniform1f("u_LightSources[0].specularStrength", 0.5f);
+
+    m_Shader->SetUniform3f("u_LightSources[1].lightPos", 900.0f, 0.0f, 0.0f);
+    m_Shader->SetUniform3f("u_LightSources[1].lightColor", 1.0f, 1.0f, 1.0f);
+    m_Shader->SetUniform1f("u_LightSources[1].ambientStrength", 0.1f);
+    m_Shader->SetUniform1f("u_LightSources[1].specularStrength", 0.5f);
     
     // 3rd loop
     for (int i = 0; i < m_Boxes.size(); ++i)
@@ -163,7 +168,8 @@ void TestBox::Render()
     
     {
         glm::mat4 model(1.0f);
-        m_Shader->SetUniform1f("u_LightSource.ambientStrength", 1.0f);
+        m_Shader->SetUniform1f("u_LightSources[0].ambientStrength", 1.0f);
+        m_Shader->SetUniform1f("u_LightSources[1].ambientStrength", 1.0f);
         m_Shader->SetUniformMat4f("u_Model", model);
         m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
     }
