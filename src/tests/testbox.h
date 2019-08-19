@@ -62,7 +62,9 @@ private:
 
     std::unique_ptr<Renderer> m_Renderer;
     std::unique_ptr<Shader> m_Shader;
-    std::unique_ptr<Texture> m_Texture;
+    std::unique_ptr<Texture> m_TextureBox;
+    std::unique_ptr<Texture> m_TextureRGB;
+    std::unique_ptr<Texture> m_TextureEarth;
 
     std::unique_ptr<VertexArray> m_VAO;
     std::unique_ptr<VertexBuffer> m_VBO;

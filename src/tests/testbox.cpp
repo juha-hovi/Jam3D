@@ -19,7 +19,7 @@ TestBox::TestBox(std::shared_ptr<GLWindow> window)
     InitRendering();
     InitAxes();
 
-    m_ObjectRotation = Vec3(0.0f, 0.0f, 0.0f);
+    m_ObjectRotation = Vec3(0.0f, 0.0f, 23.5f);
     m_ObjectLocation = 0.0f;
     m_ObjectDistance = 500.0f;
     //AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
@@ -36,7 +36,9 @@ void TestBox::InitRendering()
     m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader");
     m_Shader->Bind();
 
-    m_Texture = std::make_unique<Texture>("src/resources/tex_test_full.png");
+    m_TextureBox = std::make_unique<Texture>("res/tex_test_full");
+    m_TextureEarth = std::make_unique<Texture>("res/earth2048.bmp");
+    m_TextureRGB = std::make_unique<Texture>("res/rgb.png");
     m_Shader->SetUniform1i("u_Texture", 0);
 
     float fov = 45.0f;
@@ -107,19 +109,18 @@ void TestBox::Render()
     glEnable(GL_CULL_FACE);    
 
     // 2nd loop
-    m_Texture->Bind();
     m_Shader->Bind();
 
     m_Shader->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
     m_Shader->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
 
-    m_Shader->SetUniform3f("u_LightSources[0].lightPos", -300.0f, 0.0f, 0.0f);
+    m_Shader->SetUniform3f("u_LightSources[0].lightPos", 0.0f, 0.0f, 0.0f);
     m_Shader->SetUniform3f("u_LightSources[0].lightColor", 1.0f, 1.0f, 1.0f);
-    m_Shader->SetUniform1f("u_LightSources[0].ambientStrength", 0.1f);
-    m_Shader->SetUniform1f("u_LightSources[0].specularStrength", 0.5f);
+    m_Shader->SetUniform1f("u_LightSources[0].ambientStrength", 0.3f);
+    m_Shader->SetUniform1f("u_LightSources[0].specularStrength", 0.8f);
 
-    m_Shader->SetUniform3f("u_LightSources[1].lightPos", 900.0f, 0.0f, 0.0f);
-    m_Shader->SetUniform3f("u_LightSources[1].lightColor", 1.0f, 1.0f, 1.0f);
+    m_Shader->SetUniform3f("u_LightSources[1].lightPos", 0.0f, 0.0f, 0.0f);
+    m_Shader->SetUniform3f("u_LightSources[1].lightColor",0.0f, 0.0f, 0.0f);
     m_Shader->SetUniform1f("u_LightSources[1].ambientStrength", 0.1f);
     m_Shader->SetUniform1f("u_LightSources[1].specularStrength", 0.5f);
     
@@ -131,10 +132,11 @@ void TestBox::Render()
         glm::mat4 model(1.0f);
         glm::vec3 translation(m_Boxes[i].m_Center.x, m_Boxes[i].m_Center.y, m_Boxes[i].m_Center.z);
         model = glm::translate(model, translation);
-        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 
+        m_TextureBox->Bind();
         m_Shader->SetUniformMat4f("u_Model", model);
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
@@ -142,12 +144,15 @@ void TestBox::Render()
 
     for (int i = 0; i < m_Spheres.size(); ++i)
     {
-        m_ObjectLocation += 0.005f;
-        if (m_ObjectLocation > (2 * M_PI))
+        float locationMult = 0.005f;
+        m_ObjectLocation += locationMult;
+        if (m_ObjectLocation > (2.0f * M_PI))
             m_ObjectLocation = 0.0f;
-        m_ObjectRotation += Vec3(0.2f, 0.2f, 0.0f);
-        if (m_ObjectRotation.x > 720)
-            m_ObjectRotation =  Vec3(0.0f, 0.0f, 0.0f);
+
+        float rotationMult = 0.8f;
+        m_ObjectRotation += Vec3(0.0f, rotationMult, 0.0f);
+        if (m_ObjectRotation.y >= 360.0f)
+            m_ObjectRotation =  Vec3(0.0f, 0.0f, 23.5f);
 
         m_Spheres[0].m_Center = Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, 0.0f, cosf(m_ObjectLocation) * m_ObjectDistance);
         m_Spheres[0].m_Rotation = m_ObjectRotation;
@@ -157,10 +162,11 @@ void TestBox::Render()
         glm::mat4 model(1.0f);
         glm::vec3 translation(m_Spheres[i].m_Center.x, m_Spheres[i].m_Center.y, m_Spheres[i].m_Center.z);
         model = glm::translate(model, translation);
-        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-              
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+
+        m_TextureEarth->Bind();              
         m_Shader->SetUniformMat4f("u_Model", model);
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
@@ -170,6 +176,7 @@ void TestBox::Render()
         glm::mat4 model(1.0f);
         m_Shader->SetUniform1f("u_LightSources[0].ambientStrength", 1.0f);
         m_Shader->SetUniform1f("u_LightSources[1].ambientStrength", 1.0f);
+        m_TextureRGB->Bind();
         m_Shader->SetUniformMat4f("u_Model", model);
         m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
     }

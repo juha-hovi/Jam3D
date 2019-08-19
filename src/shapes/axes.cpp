@@ -12,14 +12,14 @@ Axes::Axes()
     const int indicesSize = 3 * 2;
 
     float vertexData[vertexDataSize] = {
-        -dist, 0.0f, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
-         dist, 0.0f, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
+        -dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         dist, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 
-        0.0f, -dist, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
-        0.0f,  dist, 0.0f, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
+        0.0f, -dist, 0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+        0.0f,  dist, 0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
 
-        0.0f, 0.0f, -dist, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f,  dist, 0.1f, 0.1f, 0.0f, 0.0f, 0.0f 
+        0.0f, 0.0f, -dist, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f,  dist, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f 
     };
 
     unsigned int indices[indicesSize] = {

@@ -9,7 +9,7 @@ Sphere::Sphere(float radius, Vec3 center, int sectorCount, int stackCount)
 	: m_SectorCount(sectorCount), m_StackCount(stackCount), m_Radius(radius)
 {
 	m_Center = center;
-	m_Rotation = {90.0f, 0.0f, 0.0f};
+	m_Rotation = {0.0f, 0.0f, 0.0f};
 	Update();
 }
 
@@ -55,7 +55,7 @@ void Sphere::Update()
 	{
 		stackAngle = M_PI / 2 - i * stackStep;
 		xy = m_Radius * cosf(stackAngle);
-		z = m_Radius * sinf(stackAngle);
+		y = m_Radius * sinf(stackAngle);
 
 		k1 = i * (m_SectorCount + 1);
 		k2 = k1 + m_SectorCount + 1;
@@ -64,8 +64,8 @@ void Sphere::Update()
 		{
 			sectorAngle = j * sectorStep;
 
-			x = xy * cosf(sectorAngle);
-			y = xy * sinf(sectorAngle);
+			z = xy * cosf(sectorAngle);
+			x = xy * sinf(sectorAngle);
 			m_VertexData.push_back(x);
 			m_VertexData.push_back(y);
 			m_VertexData.push_back(z);
@@ -73,7 +73,7 @@ void Sphere::Update()
 			u = (float)j / m_SectorCount;
 			v = (float)i / m_StackCount;
 			m_VertexData.push_back(u);
-			m_VertexData.push_back(v);
+			m_VertexData.push_back(1 - v);
 
 			nx = x * lengthInv;
         	ny = y * lengthInv;
