@@ -37,6 +37,7 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 
 /*  TODO:
         - Shadows
+        - Directional light shader implementation
         - View parent class for inheritance
         - Template math for other datatypes
         - Look into multiple viewport implementation
