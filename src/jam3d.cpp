@@ -36,8 +36,8 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
-        - Lightsource class
         - Shadows
+        - View parent class for inheritance
         - Template math for other datatypes
         - Look into multiple viewport implementation
             - 4 views: general, xy-plane, xz-plane, yz-plane
