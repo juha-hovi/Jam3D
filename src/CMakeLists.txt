@@ -7,8 +7,8 @@ include_directories(math)
 add_subdirectory(renderer)
 include_directories(renderer)
 
-add_subdirectory(shapes)
-include_directories(shapes)
+add_subdirectory(objects)
+include_directories(objects)
 
 add_subdirectory(tests)
 include_directories(tests)

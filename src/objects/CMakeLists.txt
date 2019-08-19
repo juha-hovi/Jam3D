@@ -3,6 +3,8 @@ set(shapes_source
     axes.h	
     box.cpp
     box.h
+    lightsource.cpp
+    lightsource.h
     shape.cpp
     shape.h
     sphere.cpp

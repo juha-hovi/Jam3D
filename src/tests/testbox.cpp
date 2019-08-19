@@ -9,21 +9,23 @@
 
 #include <string>
 #include <cmath>
+#include <iostream>
 
 namespace Jam3D {
 
 TestBox::TestBox(std::shared_ptr<GLWindow> window)
     : m_Window(window), m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
-    m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10)
+    m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
+    m_ObjectRotation(Vec3(0.0f, 0.0f, 23.5f)), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
+    m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Vec3(0.0f, 0.0f, 0.0f)), m_LightColor(Vec3(1.0f, 1.0f, 1.0f)),
+    m_LightIntensity(1.0f)
 {
     InitRendering();
     InitAxes();
 
-    m_ObjectRotation = Vec3(0.0f, 0.0f, 23.5f);
-    m_ObjectLocation = 0.0f;
-    m_ObjectDistance = 500.0f;
-    //AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
+    AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
     AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, 0.0f, cosf(m_ObjectLocation) * m_ObjectDistance), 20, 20);
+    AddLightSource(LightSource::POINT_LIGHT, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 1.0f);
 }
 
 void TestBox::InitRendering()
@@ -82,6 +84,23 @@ void TestBox::DeleteSphere(int index)
     m_Spheres.erase(m_Spheres.begin() + index);
 }
 
+void TestBox::AddLightSource(unsigned int type, Vec3 position_or_direction, Vec3 color, float intensity)
+{
+    if (m_LightSources.size() <= 10)
+    {
+        m_LightSources.push_back(LightSource(type, position_or_direction, color, intensity));
+    }
+    else
+    {
+        std::cout << "[WARNING]: Already at max light sources!" << std::endl;
+    }    
+}
+
+void TestBox::DeleteLightSource(int index)
+{
+    m_LightSources.erase(m_LightSources.begin() + index);
+}
+
 void TestBox::BufferBox(const Box& box)
 {
     m_VAO = std::make_unique<VertexArray>();
@@ -96,6 +115,20 @@ void TestBox::BufferSphere(const Sphere& sphere)
     m_VBO = std::make_unique<VertexBuffer>(sphere.m_VertexData.data(), sphere.m_VertexData.size() * sizeof(float));    
     m_VAO->AddBuffer(*m_VBO, *m_Layout);
     m_IBO = std::make_unique<IndexBuffer>(sphere.m_Indices.data(), sphere.m_Indices.size());
+}
+
+void TestBox::SetLightSources()
+{
+    for (int i = 0; i < m_LightSources.size(); ++i)
+    {
+        std::string prefix = "u_LightSources[" + std::to_string(i) + "].";
+        
+        m_Shader->SetUniform3f((prefix + "lightPosition").c_str(), m_LightSources[i].m_Position.x, m_LightSources[i].m_Position.y, m_LightSources[i].m_Position.z);
+        m_Shader->SetUniform3f((prefix + "lightColor").c_str(), m_LightSources[i].m_Color.r, m_LightSources[i].m_Color.g, m_LightSources[i].m_Color.b);
+        m_Shader->SetUniform1f((prefix + "lightIntensity").c_str(), m_LightSources[i].m_Intensity);
+    }
+
+    m_Shader->SetUniform1i("u_LightSourceCount", m_LightSources.size());
 }
 
 void TestBox::Render()
@@ -114,15 +147,7 @@ void TestBox::Render()
     m_Shader->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
     m_Shader->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
 
-    m_Shader->SetUniform3f("u_LightSources[0].lightPos", 0.0f, 0.0f, 0.0f);
-    m_Shader->SetUniform3f("u_LightSources[0].lightColor", 1.0f, 1.0f, 1.0f);
-    m_Shader->SetUniform1f("u_LightSources[0].ambientStrength", 0.3f);
-    m_Shader->SetUniform1f("u_LightSources[0].specularStrength", 0.8f);
-
-    m_Shader->SetUniform3f("u_LightSources[1].lightPos", 0.0f, 0.0f, 0.0f);
-    m_Shader->SetUniform3f("u_LightSources[1].lightColor",0.0f, 0.0f, 0.0f);
-    m_Shader->SetUniform1f("u_LightSources[1].ambientStrength", 0.1f);
-    m_Shader->SetUniform1f("u_LightSources[1].specularStrength", 0.5f);
+    SetLightSources();
     
     // 3rd loop
     for (int i = 0; i < m_Boxes.size(); ++i)
@@ -137,6 +162,7 @@ void TestBox::Render()
         model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 
         m_TextureBox->Bind();
+        m_Shader->SetUniform1i("u_ApplyLighting", true);
         m_Shader->SetUniformMat4f("u_Model", model);
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
@@ -166,7 +192,8 @@ void TestBox::Render()
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 
-        m_TextureEarth->Bind();              
+        m_TextureEarth->Bind();     
+        m_Shader->SetUniform1i("u_ApplyLighting", true);         
         m_Shader->SetUniformMat4f("u_Model", model);
 
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
@@ -174,8 +201,7 @@ void TestBox::Render()
     
     {
         glm::mat4 model(1.0f);
-        m_Shader->SetUniform1f("u_LightSources[0].ambientStrength", 1.0f);
-        m_Shader->SetUniform1f("u_LightSources[1].ambientStrength", 1.0f);
+        m_Shader->SetUniform1i("u_ApplyLighting", false);
         m_TextureRGB->Bind();
         m_Shader->SetUniformMat4f("u_Model", model);
         m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
@@ -247,6 +273,29 @@ void TestBox::RenderImGui()
         {
             ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_Spheres[i].m_Center.x, -500.0f, 500.0f);
         }
+        ImGui::End();
+    }
+
+    {
+        ImGui::Begin("LightSources");
+        ImGui::InputFloat3("Position", &m_LightPosition.x, 1.0f, 1.0f);
+        ImGui::InputFloat3("Color", &m_LightColor.r, 1.0f, 1.0f);
+        ImGui::InputFloat("Intensity", &m_LightIntensity);
+        if (ImGui::Button("Add"))
+        {
+            AddLightSource(LightSource::POINT_LIGHT, m_LightPosition, m_LightColor, m_LightIntensity);
+        }
+        ImGui::Text("================");
+        for (int i = 0; i < m_LightSources.size(); ++i)
+        {
+            if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
+                DeleteLightSource(i);
+        }
+        ImGui::Text("================");
+        for (int i = 0; i < m_LightSources.size(); ++i)
+        {
+            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_LightSources[i].m_Position.x, -500.0f, 500.0f);
+        }    
         ImGui::End();
     }
 

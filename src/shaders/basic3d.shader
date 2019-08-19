@@ -27,10 +27,9 @@ void main()
 
 struct LightSource
 {
-    vec3 lightPos;
+    vec3 lightPosition;
     vec3 lightColor;
-    float ambientStrength;
-    float specularStrength;
+    float lightIntensity;
 };
 
 layout(location = 0) out vec4 color;
@@ -40,9 +39,11 @@ in vec3 v_Normal;
 in vec3 v_FragPos;
 
 uniform sampler2D u_Texture;
-uniform LightSource u_LightSources[2];
+uniform LightSource u_LightSources[10];
 uniform mat4 u_Model;
 uniform mat4 u_View;
+uniform int u_LightSourceCount;
+uniform bool u_ApplyLighting;
 
 vec3 GetCameraToFragmentVec()
 {
@@ -53,17 +54,20 @@ vec3 GetCameraToFragmentVec()
 
 vec3 GetLighting(int index)
 {
-    vec3 ambient = u_LightSources[index].ambientStrength * u_LightSources[index].lightColor;
+    float ambientStrength = u_LightSources[index].lightIntensity * 0.2;
+    float specularStrength = u_LightSources[index].lightIntensity * 0.5;
+
+    vec3 ambient = ambientStrength * u_LightSources[index].lightColor;
 
     vec3 norm = normalize(v_Normal);
-    vec3 lightDir = normalize(u_LightSources[index].lightPos - v_FragPos);
+    vec3 lightDir = normalize(u_LightSources[index].lightPosition - v_FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * u_LightSources[index].lightColor;
 
     vec3 viewDir = normalize(GetCameraToFragmentVec());
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16);
-    vec3 specular = u_LightSources[index].specularStrength * spec * u_LightSources[index].lightColor;
+    vec3 specular = specularStrength * spec * u_LightSources[index].lightColor;
 
     vec3 light = ambient + diffuse + specular;
     return light;
@@ -71,10 +75,20 @@ vec3 GetLighting(int index)
 
 void main()
 {
-    vec3 light0 = GetLighting(0);
-    vec3 light1 = GetLighting(1);
+    vec3 light = vec3(0.0, 0.0, 0.0);
+    if (u_ApplyLighting)
+    {
+        for (int i = 0; i < u_LightSourceCount; ++i)
+        {
+            light += GetLighting(i);
+        }
+    }
+    else 
+    {
+        light = vec3(1.0, 1.0, 1.0);
+    }
 
     vec4 texColor = texture(u_Texture, v_TexCoord);
     
-    color = vec4(light0 + light1, 1.0) * texColor;
+    color = vec4(light, 1.0) * texColor;
 }

@@ -6,6 +6,7 @@
 #include "axes.h"
 #include "box.h"
 #include "sphere.h"
+#include "lightsource.h"
 
 #include "camera.h"
 #include "renderer.h"
@@ -35,11 +36,16 @@ public:
     void DeleteBox(int index);
     void AddSphere(float radius, Vec3 center, int sectorCount, int stackCount);
     void DeleteSphere(int index);
+    void AddLightSource(unsigned int type, Vec3 position_or_direction, Vec3 color, float intensity);
+    void DeleteLightSource(int index);
+
     void InitAxes();
     void InitRendering();
 
     void BufferBox(const Box& box);
     void BufferSphere(const Sphere& sphere);
+    void SetLightSources();
+
     void Render();
     void RenderImGui();
 
@@ -57,6 +63,11 @@ private:
     float m_ObjectLocation;
     float m_ObjectDistance;
     Vec3 m_ObjectRotation;
+
+    unsigned int m_LightType;
+    Vec3 m_LightPosition;
+    Vec3 m_LightColor;
+    float m_LightIntensity;
 
     std::shared_ptr<GLWindow> m_Window;
 
@@ -79,6 +90,7 @@ private:
 
     std::vector<Box> m_Boxes;
     std::vector<Sphere> m_Spheres;
+    std::vector<LightSource> m_LightSources;
 
 public:
     std::shared_ptr<Camera> m_Camera;
