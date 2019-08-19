@@ -10,8 +10,8 @@ include_directories(renderer)
 add_subdirectory(objects)
 include_directories(objects)
 
-add_subdirectory(tests)
-include_directories(tests)
+add_subdirectory(views)
+include_directories(views)
 
 find_package(glfw3 REQUIRED)
 include_directories(${GLFW_INCLUDE_DIRS})
@@ -30,4 +30,4 @@ set(jam3d_source
 	jam3d.h)
 add_executable(Jam3D ${jam3d_source})
 
-target_link_libraries(Jam3D renderer tests imgui glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
+target_link_libraries(Jam3D renderer views imgui glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

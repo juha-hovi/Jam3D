@@ -1,4 +1,4 @@
-#include "testbox.h"
+#include "testview.h"
 #include "vec2.h"
 #include "vec3.h"
 
@@ -13,7 +13,7 @@
 
 namespace Jam3D {
 
-TestBox::TestBox(std::shared_ptr<GLWindow> window)
+TestView::TestView(std::shared_ptr<GLWindow> window)
     : m_Window(window), m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_ObjectRotation(Vec3(0.0f, 0.0f, 23.5f)), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
@@ -28,7 +28,7 @@ TestBox::TestBox(std::shared_ptr<GLWindow> window)
     AddLightSource(LightSource::POINT_LIGHT, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 1.0f);
 }
 
-void TestBox::InitRendering()
+void TestView::InitRendering()
 {
     m_Layout = std::make_unique<VertexBufferLayout>();
     m_Layout->Push<float>(3);
@@ -50,7 +50,7 @@ void TestBox::InitRendering()
     m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window->m_Window);
 }
 
-void TestBox::InitAxes()
+void TestView::InitAxes()
 {
     m_Renderer = std::make_unique<Renderer>();
     m_Axes = std::make_unique<Axes>();
@@ -64,27 +64,27 @@ void TestBox::InitAxes()
     m_IBO_axes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
 }
 
-void TestBox::AddBox(Vec3 center, Vec3 dimensions, Vec3 rotation)
+void TestView::AddBox(Vec3 center, Vec3 dimensions, Vec3 rotation)
 {
     m_Boxes.push_back(Box(center, dimensions, rotation));
 }
 
-void TestBox::DeleteBox(int index)
+void TestView::DeleteBox(int index)
 {
     m_Boxes.erase(m_Boxes.begin() + index);
 }
 
-void TestBox::AddSphere(float radius, Vec3 center, int sectorCount, int stackCount)
+void TestView::AddSphere(float radius, Vec3 center, int sectorCount, int stackCount)
 {
     m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
 }
 
-void TestBox::DeleteSphere(int index)
+void TestView::DeleteSphere(int index)
 {
     m_Spheres.erase(m_Spheres.begin() + index);
 }
 
-void TestBox::AddLightSource(unsigned int type, Vec3 position_or_direction, Vec3 color, float intensity)
+void TestView::AddLightSource(unsigned int type, Vec3 position_or_direction, Vec3 color, float intensity)
 {
     if (m_LightSources.size() <= 10)
     {
@@ -96,12 +96,12 @@ void TestBox::AddLightSource(unsigned int type, Vec3 position_or_direction, Vec3
     }    
 }
 
-void TestBox::DeleteLightSource(int index)
+void TestView::DeleteLightSource(int index)
 {
     m_LightSources.erase(m_LightSources.begin() + index);
 }
 
-void TestBox::BufferBox(const Box& box)
+void TestView::BufferBox(const Box& box)
 {
     m_VAO = std::make_unique<VertexArray>();
     m_VBO = std::make_unique<VertexBuffer>(box.m_VertexData.data(), box.m_VertexData.size() * sizeof(float));    
@@ -109,7 +109,7 @@ void TestBox::BufferBox(const Box& box)
     m_IBO = std::make_unique<IndexBuffer>(box.m_Indices.data(), box.m_Indices.size());
 }
 
-void TestBox::BufferSphere(const Sphere& sphere)
+void TestView::BufferSphere(const Sphere& sphere)
 {
     m_VAO = std::make_unique<VertexArray>();
     m_VBO = std::make_unique<VertexBuffer>(sphere.m_VertexData.data(), sphere.m_VertexData.size() * sizeof(float));    
@@ -117,7 +117,7 @@ void TestBox::BufferSphere(const Sphere& sphere)
     m_IBO = std::make_unique<IndexBuffer>(sphere.m_Indices.data(), sphere.m_Indices.size());
 }
 
-void TestBox::SetLightSources()
+void TestView::SetLightSources()
 {
     for (int i = 0; i < m_LightSources.size(); ++i)
     {
@@ -131,7 +131,7 @@ void TestBox::SetLightSources()
     m_Shader->SetUniform1i("u_LightSourceCount", m_LightSources.size());
 }
 
-void TestBox::Render()
+void TestView::Render()
 {
     m_Renderer->Clear();
 
@@ -208,7 +208,7 @@ void TestBox::Render()
     }
 }
 
-void TestBox::RenderImGui()
+void TestView::RenderImGui()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

@@ -27,10 +27,10 @@
 
 namespace Jam3D {
 
-class TestBox
+class TestView
 {
 public:
-    TestBox(std::shared_ptr<GLWindow> window);
+    TestView(std::shared_ptr<GLWindow> window);
 
     void AddBox(Vec3 center, Vec3 dimensions, Vec3 rotation);
     void DeleteBox(int index);

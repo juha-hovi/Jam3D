@@ -1,7 +1,7 @@
 #pragma once
 
 #include "glwindow.h"
-#include "testbox.h"
+#include "testview.h"
 
 #include "GLFW/glfw3.h"
 
@@ -19,7 +19,7 @@ public:
 	void Run();
 
 	std::shared_ptr<GLWindow> m_GLWindow;
-	std::unique_ptr<TestBox> m_Test;
+	std::unique_ptr<TestView> m_TestView;
 };
 
 }

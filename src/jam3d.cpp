@@ -87,16 +87,16 @@ void Jam3D::Run()
     ImGui_ImplOpenGL3_Init(glsl_version);
 
     //TestBox test(m_GLWindow->m_Window);
-    m_Test = std::make_unique<TestBox>(m_GLWindow);
-    m_GLWindow->SetCamera(m_Test->m_Camera);
+    m_TestView = std::make_unique<TestView>(m_GLWindow);
+    m_GLWindow->SetCamera(m_TestView->m_Camera);
     
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(m_GLWindow->m_Window))  
     {
         frameStart = std::chrono::high_resolution_clock::now();
 
-        m_Test->Render();
-        m_Test->RenderImGui();
+        m_TestView->Render();
+        m_TestView->RenderImGui();
 
         glfwSwapBuffers(m_GLWindow->m_Window);
         glfwPollEvents();
