@@ -43,10 +43,14 @@ void Camera::CursorPosCallback(double xPos, double yPos)
 		m_RotationOld.y = m_Rotation.y;
 	}
 	// Prevent flipping upside down
-	if (m_Rotation.x > 90)
-		m_Rotation.x = 90;
-	if (m_Rotation.x < -90)
-		m_Rotation.x = -90;
+	if (m_Rotation.x > 90.0f)
+	{
+		m_Rotation.x = 90.0f;
+	}
+	if (m_Rotation.x < -90.0f)
+	{
+		m_Rotation.x = -90.0f;
+	}
 
 	// Translation
 	int stateMiddle = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_MIDDLE);

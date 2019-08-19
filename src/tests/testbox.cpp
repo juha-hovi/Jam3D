@@ -36,7 +36,7 @@ void TestBox::InitRendering()
     m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader");
     m_Shader->Bind();
 
-    m_TextureBox = std::make_unique<Texture>("res/tex_test_full");
+    m_TextureBox = std::make_unique<Texture>("res/tex_test_full.png");
     m_TextureEarth = std::make_unique<Texture>("res/earth2048.bmp");
     m_TextureRGB = std::make_unique<Texture>("res/rgb.png");
     m_Shader->SetUniform1i("u_Texture", 0);
