@@ -9,7 +9,7 @@ Camera::Camera(float fov, float near, float far, Jam3D::Vec2 windowDim, GLFWwind
 	: m_Window(window), m_FoV(fov), m_Near(near), m_Far(far), m_WindowDimension(windowDim),
 	m_Position(glm::vec3(1000.0f, 1000.0f, -1000.0f)), m_Pitch(35.0f), m_Yaw(-45.0f),
 	m_CameraX(glm::vec3(0.0f, 0.0f, 0.0f)), m_CameraY(glm::vec3(0.0f, 0.0f, 0.0f)),
-	m_RotationSensitivity(0.07f), m_TranslationSensitivity(10.0f),
+	m_RotationSensitivity(0.07f), m_TranslationSensitivity(15.0f), m_ScrollSensitivity(50.0f),
 	m_PressedW(false), m_PressedA(false), m_PressedS(false), m_PressedD(false),
 	m_MousePosPrevious(Vec2(0.0f, 0.0f))
 {
@@ -115,6 +115,11 @@ void Camera::MouseButtonCallback(int button, int action, int mods)
 
 	else
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
+void Camera::ScrollCallback(double yOffset)
+{
+	m_Position += -m_CameraZ * m_ScrollSensitivity * (float)yOffset;
 }
 
 }

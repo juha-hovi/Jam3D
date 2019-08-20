@@ -20,6 +20,7 @@ public:
 	void CursorPosCallback(double xPos, double yPos);
 	void KeyCallback(int key, int scancode, int action, int mods);
 	void MouseButtonCallback(int button, int action, int mods);
+	void ScrollCallback(double yOffset);
 
 	GLFWwindow* m_Window;
 
@@ -41,6 +42,7 @@ public:
 
 	float m_RotationSensitivity;
 	float m_TranslationSensitivity;
+	float m_ScrollSensitivity;
 
 	bool m_PressedW;
 	bool m_PressedA;

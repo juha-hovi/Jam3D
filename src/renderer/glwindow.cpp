@@ -44,6 +44,13 @@ void GLWindow::InitCallbacks()
         static_cast<GLWindow*>(glfwGetWindowUserPointer(window))->MouseButtonCallback(button, action, mods);
     };
     glfwSetMouseButtonCallback(m_Window, mouseButtonFunc);
+
+    glfwSetWindowUserPointer(m_Window, this);
+    auto scrollFunc = [](GLFWwindow* window, double xOffset, double yOffset)
+    {
+        static_cast<GLWindow*>(glfwGetWindowUserPointer(window))->ScrollCallback(yOffset);
+    };
+    glfwSetScrollCallback(m_Window, scrollFunc);
 }
 
 void GLWindow::SetCamera(std::shared_ptr<Camera> camera)
@@ -70,6 +77,11 @@ void GLWindow::KeyCallback(int key, int scancode, int action, int mods)
 void GLWindow::MouseButtonCallback(int button, int action, int mods)
 {
     m_Camera->MouseButtonCallback(button, action, mods);
+}
+
+void GLWindow::ScrollCallback(double yOffset)
+{
+    m_Camera->ScrollCallback(yOffset);
 }
 
 }

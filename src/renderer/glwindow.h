@@ -21,6 +21,7 @@ public:
     void CursorPosCallback(double xPos, double yPos);
     void KeyCallback(int key, int scancode, int action, int mods);
     void MouseButtonCallback(int button, int action, int mods);
+    void ScrollCallback(double yOffset);
 
     int m_Width;
     int m_Height;
