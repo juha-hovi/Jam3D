@@ -36,8 +36,6 @@ void Camera::Update()
 	m_CameraY = glm::cross(m_CameraZ, m_CameraX);
 
 	m_ViewMatrix = glm::lookAt(m_Position, m_Position - m_CameraZ, m_CameraY);
-
-	std::cout << m_Pitch << std::endl;
 }
 
 void Camera::ProcessInput()

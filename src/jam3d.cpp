@@ -36,7 +36,6 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
-        - Fix camera movement
         - Shadows
         - Directional light shader implementation
         - View parent class for inheritance
