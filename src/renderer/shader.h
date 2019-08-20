@@ -14,18 +14,24 @@ private:
     struct ShaderSources
     {
         std::string vertexSource;
+        std::string geometrySource;
         std::string fragmentSource;
 
-        ShaderSources(std::string vSrc, std::string fSrc) {vertexSource = vSrc; fragmentSource = fSrc; }
-        ShaderSources(const ShaderSources &orig) {vertexSource = orig.vertexSource; fragmentSource = orig.fragmentSource; }
+        ShaderSources(std::string vSrc, std::string gSrc, std::string fSrc) {vertexSource = vSrc; geometrySource = gSrc; fragmentSource = fSrc; }
+        ShaderSources(const ShaderSources &orig) {vertexSource = orig.vertexSource; geometrySource = orig.geometrySource; fragmentSource = orig.fragmentSource; }
     };
 
     std::string m_FilePath;
     unsigned int m_RendererID;
+    unsigned int m_Type;
     std::unordered_map<std::string, int> m_UniformLocationCache;
 
 public:
-    Shader(const std::string& fp);
+    enum : unsigned int {
+        VERTEX_FRAGMENT, VERTEX_GEOMETRY_FRAGMENT
+    };
+
+    Shader(const std::string& fp, unsigned int type);
 
     void Bind() const;
     void Unbind() const;
@@ -39,7 +45,7 @@ public:
     int GetUniformLocation(const std::string& name);
 
 private:
-    unsigned int CreateShader(std::string& vertexSource, std::string& fragmentSource);
+    unsigned int CreateShader(ShaderSources src);
     int CompileShader(unsigned int type, const std::string& source);
     ShaderSources ParseShader(const std::string& fp);
 };

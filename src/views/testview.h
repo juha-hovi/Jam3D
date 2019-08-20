@@ -45,8 +45,13 @@ public:
     void BufferBox(const Box& box);
     void BufferSphere(const Sphere& sphere);
     void SetLightSources();
-    void InitShadowCubeMap();
-    void RenderShadowCubeMap();
+    void InitPointShadow();
+    void UpdateShadowTransforms();
+    void RenderPointShadow();
+    void RenderScene();
+
+    void UpdateModelMats();    
+    void DoTick();
 
     void Render();
     void RenderImGui();
@@ -71,9 +76,17 @@ private:
     Vec3 m_LightColor;
     float m_LightIntensity;
 
+    const unsigned int m_ShadowWidth = 1024;
+    const unsigned int m_ShadowHeight = 1024;
     unsigned int m_DepthCubeMap;
     unsigned int m_DepthMapFBO;
 
+    float m_ShadowNearPlane;
+    float m_ShadowFarPlane;
+    glm::mat4 m_ShadowProjectionMatrix;
+    std::vector<glm::mat4> m_ShadowTransforms;
+    std::unique_ptr<Shader> m_Shader_shadow;
+ 
     std::shared_ptr<GLWindow> m_Window;
 
     std::unique_ptr<Renderer> m_Renderer;
@@ -94,7 +107,9 @@ private:
     std::unique_ptr<IndexBuffer> m_IBO_axes;
 
     std::vector<Box> m_Boxes;
+    std::vector<glm::mat4> m_BoxModelMats;
     std::vector<Sphere> m_Spheres;
+    std::vector<glm::mat4> m_SphereModelMats;
     std::vector<LightSource> m_LightSources;
 
 public:

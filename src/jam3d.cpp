@@ -36,7 +36,7 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
-        - Shadows
+        - Shadow support for multiple light sources
         - Directional light shader implementation
         - View parent class for inheritance
         - Template math for other datatypes
@@ -54,7 +54,7 @@ Jam3D::Jam3D()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_GLWindow = std::make_shared<GLWindow>(960, 540, "Jam3D");
+    m_GLWindow = std::make_shared<GLWindow>(1600, 900, "Jam3D");
 
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
@@ -62,7 +62,7 @@ Jam3D::Jam3D()
         std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 
     glEnable(GL_DEBUG_OUTPUT);
-    glDebugMessageCallback(OpenGLDebugCallback, 0);
+    //glDebugMessageCallback(OpenGLDebugCallback, 0);
 }
 
 Jam3D::~Jam3D()

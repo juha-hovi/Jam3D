@@ -18,14 +18,21 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_ObjectRotation(Vec3(0.0f, 0.0f, 23.5f)), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Vec3(0.0f, 0.0f, 0.0f)), m_LightColor(Vec3(1.0f, 1.0f, 1.0f)),
-    m_LightIntensity(1.0f), m_DepthCubeMap(0), m_DepthMapFBO(0)
+    m_LightIntensity(1.0f), m_DepthCubeMap(0), m_DepthMapFBO(0),
+    m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
 {
-    InitRendering();
-    InitAxes();
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);  
 
     AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
-    AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, 0.0f, cosf(m_ObjectLocation) * m_ObjectDistance), 20, 20);
+    AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, -300.0f, cosf(m_ObjectLocation) * m_ObjectDistance), 20, 20);
     AddLightSource(LightSource::POINT_LIGHT, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 1.0f);
+
+    InitRendering();
+    InitAxes();
+    InitPointShadow();
 }
 
 void TestView::InitRendering()
@@ -35,7 +42,7 @@ void TestView::InitRendering()
     m_Layout->Push<float>(2);
     m_Layout->Push<float>(3);
 
-    m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader");
+    m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader", Shader::VERTEX_FRAGMENT);
     m_Shader->Bind();
 
     m_TextureBox = std::make_unique<Texture>("res/tex_test_full.png");
@@ -131,11 +138,8 @@ void TestView::SetLightSources()
     m_Shader->SetUniform1i("u_LightSourceCount", m_LightSources.size());
 }
 
-void TestView::InitShadowCubeMap()
+void TestView::InitPointShadow()
 {
-    const unsigned int SHADOW_WIDTH = 1024;
-    const unsigned int SHADOW_HEIGHT = 1024;
-
     glGenFramebuffers(1, &m_DepthMapFBO);
 
     glGenTextures(1, &m_DepthCubeMap);
@@ -143,8 +147,8 @@ void TestView::InitShadowCubeMap()
 
     for (int i = 0; i < 6; ++i)
     {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH,
-                    SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, m_ShadowWidth,
+                    m_ShadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     }
 
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -158,53 +162,104 @@ void TestView::InitShadowCubeMap()
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    m_ShadowProjectionMatrix = glm::perspective(glm::radians(90.0f), (float)m_ShadowWidth / (float)m_ShadowHeight, m_ShadowNearPlane, m_ShadowFarPlane);
+    m_Shader_shadow = std::make_unique<Shader>("src/shaders/shadow.shader", Shader::VERTEX_GEOMETRY_FRAGMENT);
 }
 
-void TestView::RenderShadowCubeMap()
+void TestView::UpdateShadowTransforms()
 {
+    m_ShadowTransforms.clear();
+    glm::vec3 lightPos(m_LightSources[0].m_Position.x, m_LightSources[0].m_Position.y, m_LightSources[0].m_Position.z);
+    m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+    m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, -1.0f)));
+    m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+    m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
+}
+
+void TestView::RenderPointShadow()
+{
+    UpdateShadowTransforms();
+
+    glViewport(0, 0, m_ShadowWidth, m_ShadowHeight);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    m_Shader_shadow->Bind();
+
+    for (int i = 0; i < 6; ++i)
+    {
+        m_Shader_shadow->SetUniformMat4f("u_ShadowMatrices[" + std::to_string(i) + "]", m_ShadowTransforms[i]);
+    }
+    m_Shader_shadow->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
+    m_Shader_shadow->SetUniform3f("u_LightPosition", m_LightSources[0].m_Position.x, m_LightSources[0].m_Position.y, m_LightSources[0].m_Position.z);
     
+    for (int i = 0; i < m_Boxes.size(); ++i)
+    {
+        BufferBox(m_Boxes[i]);        
+        m_Shader_shadow->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader_shadow);
+    }
+
+    for (int i = 0; i < m_Spheres.size(); ++i)
+    {
+        BufferSphere(m_Spheres[i]);         
+        m_Shader_shadow->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader_shadow);
+    }
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TestView::Render()
+void TestView::RenderScene()
 {
+    glViewport(0, 0, m_Window->m_Width, m_Window->m_Height);
+
     m_Renderer->Clear();
 
     m_Camera->Update();
 
-    // 1st loop
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);    
-
-    // 2nd loop
     m_Shader->Bind();
-
     m_Shader->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
     m_Shader->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
+    m_Shader->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
+    m_Shader->SetUniform1i("u_DepthMap", 1);
+    m_Shader->SetUniform1i("u_ApplyLighting", true);
 
     SetLightSources();
     
-    // 3rd loop
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_DepthCubeMap);
+
     for (int i = 0; i < m_Boxes.size(); ++i)
     {
         BufferBox(m_Boxes[i]);
-
-        glm::mat4 model(1.0f);
-        glm::vec3 translation(m_Boxes[i].m_Center.x, m_Boxes[i].m_Center.y, m_Boxes[i].m_Center.z);
-        model = glm::translate(model, translation);
-        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        m_TextureBox->Bind();
-        m_Shader->SetUniform1i("u_ApplyLighting", true);
-        m_Shader->SetUniformMat4f("u_Model", model);
-
+        m_Shader->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
+        m_TextureBox->Bind();        
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     }
 
     for (int i = 0; i < m_Spheres.size(); ++i)
+    {
+        BufferSphere(m_Spheres[i]);
+        m_Shader->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
+        m_TextureEarth->Bind();  
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+    }
+    
+    {
+        glm::mat4 model(1.0f);
+        m_Shader->SetUniform1i("u_ApplyLighting", false);
+        m_Shader->SetUniformMat4f("u_Model", model);
+        m_TextureRGB->Bind();
+        m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
+    }
+}
+
+void TestView::DoTick()
+{
+    if (m_Spheres.size() >= 1)
     {
         float locationMult = 0.005f;
         m_ObjectLocation += locationMult;
@@ -216,32 +271,45 @@ void TestView::Render()
         if (m_ObjectRotation.y >= 360.0f)
             m_ObjectRotation =  Vec3(0.0f, 0.0f, 23.5f);
 
-        m_Spheres[0].m_Center = Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, 0.0f, cosf(m_ObjectLocation) * m_ObjectDistance);
+        m_Spheres[0].m_Center = Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, -300.0f, cosf(m_ObjectLocation) * m_ObjectDistance);
         m_Spheres[0].m_Rotation = m_ObjectRotation;
+    }
+}
 
-        BufferSphere(m_Spheres[i]);
+void TestView::UpdateModelMats()
+{
+    m_BoxModelMats.clear();
+    m_SphereModelMats.clear();
 
+    for (int i = 0; i < m_Boxes.size(); ++i)
+    {
+        glm::mat4 model(1.0f);
+        glm::vec3 translation(m_Boxes[i].m_Center.x, m_Boxes[i].m_Center.y, m_Boxes[i].m_Center.z);
+        model = glm::translate(model, translation);
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        m_BoxModelMats.push_back(model);
+    }
+
+    for (int i = 0; i < m_Spheres.size(); ++i)
+    {
         glm::mat4 model(1.0f);
         glm::vec3 translation(m_Spheres[i].m_Center.x, m_Spheres[i].m_Center.y, m_Spheres[i].m_Center.z);
         model = glm::translate(model, translation);
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-
-        m_TextureEarth->Bind();     
-        m_Shader->SetUniform1i("u_ApplyLighting", true);         
-        m_Shader->SetUniformMat4f("u_Model", model);
-
-        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+        m_SphereModelMats.push_back(model);
     }
-    
-    {
-        glm::mat4 model(1.0f);
-        m_Shader->SetUniform1i("u_ApplyLighting", false);
-        m_TextureRGB->Bind();
-        m_Shader->SetUniformMat4f("u_Model", model);
-        m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
-    }
+}
+
+void TestView::Render()
+{
+    DoTick();
+    UpdateModelMats();
+    RenderPointShadow();
+    RenderScene();
 }
 
 void TestView::RenderImGui()

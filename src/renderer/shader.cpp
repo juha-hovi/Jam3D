@@ -11,11 +11,11 @@ namespace Jam3D {
 // Creates OpenGL shader program from text file.
 // Input:
 //    - fp: reference to a filepath string
-Shader::Shader(const std::string& fp)
-    : m_FilePath(fp), m_RendererID(0)
+Shader::Shader(const std::string& fp, unsigned int type)
+    : m_FilePath(fp), m_RendererID(0), m_Type(type)
 {
     ShaderSources shaderSources = ParseShader(m_FilePath);
-    m_RendererID = CreateShader(shaderSources.vertexSource, shaderSources.fragmentSource);
+    m_RendererID = CreateShader(shaderSources);
 }
 
 // Compiles the shaders and links them to a program.
@@ -24,21 +24,44 @@ Shader::Shader(const std::string& fp)
 //    - fragmentSource: reference to a fragment shader source string
 // Output:
 //    - program ID associated with the shaders
-unsigned int Shader::CreateShader(std::string& vertexSource, std::string& fragmentSource)
+unsigned int Shader::CreateShader(ShaderSources src)
 {
-    unsigned int program = glCreateProgram();
-    unsigned int vertexID = CompileShader(GL_VERTEX_SHADER, vertexSource);
-    unsigned int fragmentID = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+    if (m_Type == VERTEX_FRAGMENT)
+    {
+        unsigned int program = glCreateProgram();
+        unsigned int vertexID = CompileShader(GL_VERTEX_SHADER, src.vertexSource);
+        unsigned int fragmentID = CompileShader(GL_FRAGMENT_SHADER, src.fragmentSource);
 
-    glAttachShader(program, vertexID);
-    glAttachShader(program, fragmentID);
-    glLinkProgram(program);
-    glValidateProgram(program);
+        glAttachShader(program, vertexID);
+        glAttachShader(program, fragmentID);
+        glLinkProgram(program);
+        glValidateProgram(program);
 
-    glDeleteShader(vertexID);
-    glDeleteShader(fragmentID);
+        glDeleteShader(vertexID);
+        glDeleteShader(fragmentID);
 
-    return program;
+        return program;
+    }
+    
+    else if (m_Type == VERTEX_GEOMETRY_FRAGMENT)
+    {
+        unsigned int program = glCreateProgram();
+        unsigned int vertexID = CompileShader(GL_VERTEX_SHADER, src.vertexSource);
+        unsigned int fragmentID = CompileShader(GL_FRAGMENT_SHADER, src.fragmentSource);
+        unsigned int geometryID = CompileShader(GL_GEOMETRY_SHADER, src.geometrySource);
+        glAttachShader(program, vertexID);
+        glAttachShader(program, geometryID);
+        glAttachShader(program, fragmentID);
+        glLinkProgram(program);
+        glValidateProgram(program);
+
+        glDeleteShader(vertexID);
+        glDeleteShader(geometryID);
+        glDeleteShader(fragmentID);
+
+        return program;
+    }
+    return 0;
 }
 
 // Compiles a single shader and reports failure.
@@ -63,8 +86,16 @@ int Shader::CompileShader(unsigned int type, const std::string& source)
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 		char* message = (char*)alloca(length * sizeof(char));
 		glGetShaderInfoLog(id, length, &length, message);
-		std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
+
+        if (type == GL_VERTEX_SHADER)
+		    std::cout << "Failed to compile vertex shader!" << std::endl;
+        if (type == GL_GEOMETRY_SHADER)
+		    std::cout << "Failed to compile geometry shader!" << std::endl;
+        if (type == GL_FRAGMENT_SHADER)
+		    std::cout << "Failed to compile fragment shader!" << std::endl;
+
 		std::cout << message << std::endl;
+
 		glDeleteShader(id);
 		return 0;
     }
@@ -82,6 +113,7 @@ Shader::ShaderSources Shader::ParseShader(const std::string& fp)
 {
     std::ifstream stream(fp);
     std::stringstream sstreamVertex;
+    std::stringstream sstreamGeometry;
     std::stringstream sstreamFragment;
     int typeSwitch = -1;
 
@@ -100,6 +132,11 @@ Shader::ShaderSources Shader::ParseShader(const std::string& fp)
                 typeSwitch = 2;
                 continue;
             }
+            else if (line.find("#Geometry") != line.npos)
+            {
+                typeSwitch = 3;
+                continue;
+            }
 
             switch (typeSwitch)
             {
@@ -108,6 +145,9 @@ Shader::ShaderSources Shader::ParseShader(const std::string& fp)
                 break;            
             case 2:
                 sstreamFragment << line << "\n";
+                break;
+            case 3:
+                sstreamGeometry << line << "\n";
                 break;
             case -1:
                 std::cout << "Shader type not identified. Current line: " << line << std::endl;
@@ -118,7 +158,7 @@ Shader::ShaderSources Shader::ParseShader(const std::string& fp)
     else 
         std::cout << "Failed to open shader file" << std::endl;
 
-    ShaderSources shaderSources = {sstreamVertex.str(), sstreamFragment.str()};
+    ShaderSources shaderSources = {sstreamVertex.str(), sstreamGeometry.str(), sstreamFragment.str()};
     return shaderSources;
 }
 

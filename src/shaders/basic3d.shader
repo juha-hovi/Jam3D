@@ -44,12 +44,29 @@ uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform int u_LightSourceCount;
 uniform bool u_ApplyLighting;
+uniform float u_FarPlane;
+uniform samplerCube u_DepthMap;
 
 vec3 GetCameraToFragmentVec()
 {
     mat4 viewModel = inverse(u_Model * u_View);
     vec3 cameraToFragmentVec = vec3(viewModel[3]);
     return cameraToFragmentVec;
+}
+
+float GetShadow(int index)
+{
+    vec3 fragToLight = v_FragPos - u_LightSources[index].lightPosition;
+    float closestDepth = texture(u_DepthMap, fragToLight).r;
+    closestDepth *= u_FarPlane;
+
+    float currentDepth = length(fragToLight);
+    float bias = 10;
+    float shadow = currentDepth - bias > closestDepth ? 1.0 : 0.0;
+
+
+
+    return shadow;
 }
 
 vec3 GetLighting(int index)
@@ -69,7 +86,11 @@ vec3 GetLighting(int index)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16);
     vec3 specular = specularStrength * spec * u_LightSources[index].lightColor;
 
-    vec3 light = ambient + diffuse + specular;
+    float shadow = 0.0;
+    if (index == 0)
+        shadow = GetShadow(index);
+
+    vec3 light = ambient + (1.0 - shadow) * (diffuse + specular);
     return light;
 }
 
