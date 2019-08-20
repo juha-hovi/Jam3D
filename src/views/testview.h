@@ -15,7 +15,8 @@
 #include "indexbuffer.h"
 #include "vertexbufferlayout.h"
 #include "shader.h"
-#include "texture.h"
+#include "texture2d.h"
+#include "texturecubemap.h"
 #include "framebuffer.h"
 
 #include "glwindow.h"
@@ -79,7 +80,7 @@ private:
 
     const int m_ShadowWidth = 1024;
     const int m_ShadowHeight = 1024;
-    std::unique_ptr<Texture> m_TextureShadow;
+    std::unique_ptr<TextureCubeMap> m_TextureShadow;
     std::unique_ptr<FrameBuffer> m_FrameBuffer;
 
     float m_ShadowNearPlane;
@@ -92,9 +93,9 @@ private:
 
     std::unique_ptr<Renderer> m_Renderer;
     std::unique_ptr<Shader> m_Shader;
-    std::unique_ptr<Texture> m_TextureBox;
-    std::unique_ptr<Texture> m_TextureRGB;
-    std::unique_ptr<Texture> m_TextureEarth;
+    std::unique_ptr<Texture2D> m_TextureBox;
+    std::unique_ptr<Texture2D> m_TextureRGB;
+    std::unique_ptr<Texture2D> m_TextureEarth;
 
     std::unique_ptr<VertexArray> m_VAO;
     std::unique_ptr<VertexBuffer> m_VBO;

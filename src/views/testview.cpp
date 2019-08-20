@@ -45,9 +45,9 @@ void TestView::InitRendering()
     m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader", Shader::VERTEX_FRAGMENT);
     m_Shader->Bind();
 
-    m_TextureBox = std::make_unique<Texture>("res/tex_test_full.png");
-    m_TextureEarth = std::make_unique<Texture>("res/earth2048.bmp");
-    m_TextureRGB = std::make_unique<Texture>("res/rgb.png");
+    m_TextureBox = std::make_unique<Texture2D>("res/tex_test_full.png");
+    m_TextureEarth = std::make_unique<Texture2D>("res/earth2048.bmp");
+    m_TextureRGB = std::make_unique<Texture2D>("res/rgb.png");
     m_Shader->SetUniform1i("u_Texture", 0);
 
     float fov = 45.0f;
@@ -141,7 +141,7 @@ void TestView::SetLightSources()
 void TestView::InitPointShadow()
 {
     m_FrameBuffer = std::make_unique<FrameBuffer>();
-    m_TextureShadow = std::make_unique<Texture>(m_ShadowWidth, m_ShadowHeight);
+    m_TextureShadow = std::make_unique<TextureCubeMap>(m_ShadowWidth, m_ShadowHeight);
     m_FrameBuffer->AttachTexture(m_TextureShadow->GetRendererID());
 
     m_ShadowProjectionMatrix = glm::perspective(glm::radians(90.0f), (float)m_ShadowWidth / (float)m_ShadowHeight, m_ShadowNearPlane, m_ShadowFarPlane);

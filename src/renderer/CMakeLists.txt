@@ -13,6 +13,10 @@ set(renderer_source
 	shader.h
 	texture.cpp
 	texture.h
+	texture2d.cpp
+	texture2d.h
+	texturecubemap.cpp
+	texturecubemap.h
 	vertexarray.cpp
 	vertexarray.h
 	vertexbuffer.cpp
