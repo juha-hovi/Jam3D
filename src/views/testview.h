@@ -76,10 +76,10 @@ private:
     Vec3 m_LightColor;
     float m_LightIntensity;
 
-    const unsigned int m_ShadowWidth = 1024;
-    const unsigned int m_ShadowHeight = 1024;
-    unsigned int m_DepthCubeMap;
     unsigned int m_DepthMapFBO;
+    const int m_ShadowWidth = 1024;
+    const int m_ShadowHeight = 1024;
+    std::unique_ptr<Texture> m_TextureShadow;
 
     float m_ShadowNearPlane;
     float m_ShadowFarPlane;

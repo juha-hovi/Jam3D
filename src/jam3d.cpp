@@ -36,14 +36,15 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
-        - Second camera control scheme: inheritance for camera class
-        - Shadow support for multiple light sources
-        - Directional light shader implementation
-        - View parent class for inheritance
-        - Template math for other datatypes
-        - Look into multiple viewport implementation
-            - 4 views: general, xy-plane, xz-plane, yz-plane
-                - Draw object by clicking mouse
+    - FrameBuffer class
+    - Second camera control scheme: inheritance for camera class
+    - Shadow support for multiple light sources
+    - Directional light shader implementation
+    - View parent class for inheritance
+    - Template math for other datatypes
+    - Look into multiple viewport implementation
+        - 4 views: general, xy-plane, xz-plane, yz-plane
+            - Draw object by clicking mouse
 */
 
 Jam3D::Jam3D()
