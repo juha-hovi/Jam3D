@@ -69,7 +69,7 @@ private:
 
     float m_ObjectLocation;
     float m_ObjectDistance;
-    Vec3 m_ObjectRotation;
+    float m_ObjectRotation;
 
     unsigned int m_LightType;
     Vec3 m_LightPosition;

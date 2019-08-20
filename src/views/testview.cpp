@@ -16,7 +16,7 @@ namespace Jam3D {
 TestView::TestView(std::shared_ptr<GLWindow> window)
     : m_Window(window), m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
-    m_ObjectRotation(Vec3(0.0f, 0.0f, 23.5f)), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
+    m_ObjectRotation(0.0f), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Vec3(0.0f, 0.0f, 0.0f)), m_LightColor(Vec3(1.0f, 1.0f, 1.0f)),
     m_LightIntensity(1.0f), m_DepthCubeMap(0), m_DepthMapFBO(0),
     m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
@@ -26,6 +26,7 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);  
 
+    AddBox(Vec3(0.0f, -200.0f, 0.0f), Vec3(70.0f, 50.0f, 90.0f), Vec3(0.0f, 0.0f, 0.0f));
     AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
     AddSphere(100.0f, Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, -300.0f, cosf(m_ObjectLocation) * m_ObjectDistance), 20, 20);
     AddLightSource(LightSource::POINT_LIGHT, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 1.0f);
@@ -208,35 +209,35 @@ void TestView::RenderPointShadow()
         m_Shader_shadow->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader_shadow);
     }
-    
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void TestView::RenderScene()
 {
+    const unsigned int textureSlot = 0;
+    const unsigned int depthMapSlot = 1;
+
     glViewport(0, 0, m_Window->m_Width, m_Window->m_Height);
-
     m_Renderer->Clear();
-
-    m_Camera->Update();
 
     m_Shader->Bind();
     m_Shader->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
     m_Shader->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
     m_Shader->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
-    m_Shader->SetUniform1i("u_DepthMap", 1);
+    m_Shader->SetUniform1i("u_DepthMap", depthMapSlot);
     m_Shader->SetUniform1i("u_ApplyLighting", true);
 
     SetLightSources();
     
-    glActiveTexture(GL_TEXTURE0 + 1);
+    glActiveTexture(GL_TEXTURE0 + depthMapSlot);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_DepthCubeMap);
 
     for (int i = 0; i < m_Boxes.size(); ++i)
     {
         BufferBox(m_Boxes[i]);
         m_Shader->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
-        m_TextureBox->Bind();        
+        m_TextureBox->Bind(textureSlot);        
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     }
 
@@ -244,7 +245,7 @@ void TestView::RenderScene()
     {
         BufferSphere(m_Spheres[i]);
         m_Shader->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
-        m_TextureEarth->Bind();  
+        m_TextureEarth->Bind(textureSlot);  
         m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
     }
     
@@ -252,27 +253,37 @@ void TestView::RenderScene()
         glm::mat4 model(1.0f);
         m_Shader->SetUniform1i("u_ApplyLighting", false);
         m_Shader->SetUniformMat4f("u_Model", model);
-        m_TextureRGB->Bind();
+        m_TextureRGB->Bind(textureSlot);
         m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
     }
 }
 
 void TestView::DoTick()
 {
-    if (m_Spheres.size() >= 1)
-    {
-        float locationMult = 0.005f;
+    float locationMult = 0.005f;
         m_ObjectLocation += locationMult;
         if (m_ObjectLocation > (2.0f * M_PI))
             m_ObjectLocation = 0.0f;
 
-        float rotationMult = 0.8f;
-        m_ObjectRotation += Vec3(0.0f, rotationMult, 0.0f);
-        if (m_ObjectRotation.y >= 360.0f)
-            m_ObjectRotation =  Vec3(0.0f, 0.0f, 23.5f);
+    float rotationMult = 0.8f;
+    m_ObjectRotation += rotationMult;
+    if (m_ObjectRotation >= 720.0f)
+        m_ObjectRotation =  0.0f;
 
+    if (m_Spheres.size() >= 1)
+    {
         m_Spheres[0].m_Center = Vec3(sinf(m_ObjectLocation) * m_ObjectDistance, -300.0f, cosf(m_ObjectLocation) * m_ObjectDistance);
-        m_Spheres[0].m_Rotation = m_ObjectRotation;
+        m_Spheres[0].m_Rotation.x = 0.0f;        
+        m_Spheres[0].m_Rotation.y = m_ObjectRotation;
+        m_Spheres[0].m_Rotation.z = 23.5;
+        
+    }
+
+    if (m_Boxes.size() >= 1)
+    {
+        m_Boxes[0].m_Rotation.x = m_ObjectRotation;        
+        m_Boxes[0].m_Rotation.y = m_ObjectRotation * 0.5f;
+        m_Boxes[0].m_Rotation.z = 0.0f;
     }
 }
 
@@ -306,8 +317,10 @@ void TestView::UpdateModelMats()
 
 void TestView::Render()
 {
+    m_Camera->Update();
     DoTick();
     UpdateModelMats();
+
     RenderPointShadow();
     RenderScene();
 }
