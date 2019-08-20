@@ -18,8 +18,7 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_ObjectRotation(0.0f), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Vec3(0.0f, 0.0f, 0.0f)), m_LightColor(Vec3(1.0f, 1.0f, 1.0f)),
-    m_LightIntensity(1.0f), m_DepthMapFBO(0),
-    m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
+    m_LightIntensity(1.0f), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
 {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -141,15 +140,9 @@ void TestView::SetLightSources()
 
 void TestView::InitPointShadow()
 {
-    glGenFramebuffers(1, &m_DepthMapFBO);
-
+    m_FrameBuffer = std::make_unique<FrameBuffer>();
     m_TextureShadow = std::make_unique<Texture>(m_ShadowWidth, m_ShadowHeight);
-
-    glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_TextureShadow->GetRendererID(), 0);
-    glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    m_FrameBuffer->AttachTexture(m_TextureShadow->GetRendererID());
 
     m_ShadowProjectionMatrix = glm::perspective(glm::radians(90.0f), (float)m_ShadowWidth / (float)m_ShadowHeight, m_ShadowNearPlane, m_ShadowFarPlane);
     m_Shader_shadow = std::make_unique<Shader>("src/shaders/shadow.shader", Shader::VERTEX_GEOMETRY_FRAGMENT);
@@ -172,8 +165,8 @@ void TestView::RenderPointShadow()
     UpdateShadowTransforms();
 
     glViewport(0, 0, m_ShadowWidth, m_ShadowHeight);
-    glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
-    glClear(GL_DEPTH_BUFFER_BIT);
+    m_FrameBuffer->Bind();
+    m_Renderer->Clear();
     m_Shader_shadow->Bind();
 
     for (int i = 0; i < 6; ++i)

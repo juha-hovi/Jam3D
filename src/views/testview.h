@@ -16,6 +16,7 @@
 #include "vertexbufferlayout.h"
 #include "shader.h"
 #include "texture.h"
+#include "framebuffer.h"
 
 #include "glwindow.h"
 
@@ -76,10 +77,10 @@ private:
     Vec3 m_LightColor;
     float m_LightIntensity;
 
-    unsigned int m_DepthMapFBO;
     const int m_ShadowWidth = 1024;
     const int m_ShadowHeight = 1024;
     std::unique_ptr<Texture> m_TextureShadow;
+    std::unique_ptr<FrameBuffer> m_FrameBuffer;
 
     float m_ShadowNearPlane;
     float m_ShadowFarPlane;

@@ -36,7 +36,6 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 /*  TODO:
-    - FrameBuffer class
     - Second camera control scheme: inheritance for camera class
     - Shadow support for multiple light sources
     - Directional light shader implementation
