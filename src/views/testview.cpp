@@ -18,7 +18,7 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_ObjectRotation(Vec3(0.0f, 0.0f, 23.5f)), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Vec3(0.0f, 0.0f, 0.0f)), m_LightColor(Vec3(1.0f, 1.0f, 1.0f)),
-    m_LightIntensity(1.0f)
+    m_LightIntensity(1.0f), m_DepthCubeMap(0), m_DepthMapFBO(0)
 {
     InitRendering();
     InitAxes();
@@ -131,9 +131,41 @@ void TestView::SetLightSources()
     m_Shader->SetUniform1i("u_LightSourceCount", m_LightSources.size());
 }
 
+void TestView::InitShadowCubeMap()
+{
+    const unsigned int SHADOW_WIDTH = 1024;
+    const unsigned int SHADOW_HEIGHT = 1024;
+
+    glGenFramebuffers(1, &m_DepthMapFBO);
+
+    glGenTextures(1, &m_DepthCubeMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_DepthCubeMap);
+
+    for (int i = 0; i < 6; ++i)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH,
+                    SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE); 
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_DepthMapFBO);
+}
+
+void TestView::RenderShadowCubeMap()
+{
+    
+}
+
 void TestView::Render()
 {
     m_Renderer->Clear();
+
+    m_Camera->Update();
 
     // 1st loop
     glEnable(GL_BLEND);
@@ -296,6 +328,7 @@ void TestView::RenderImGui()
         {
             ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_LightSources[i].m_Position.x, -500.0f, 500.0f);
         }    
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::End();
     }
 

@@ -32,11 +32,11 @@ void GLWindow::InitCallbacks()
     glfwSetCursorPosCallback(m_Window, cursorPosFunc);
 
     glfwSetWindowUserPointer(m_Window, this);
-    auto scrollFunc = [](GLFWwindow* window, double xOffset, double yOffset)
+    auto keyFunc = [](GLFWwindow* window, int key, int scancode, int action, int mods)
     {
-        static_cast<GLWindow*>(glfwGetWindowUserPointer(window))->ScrollCallback(yOffset);
+        static_cast<GLWindow*>(glfwGetWindowUserPointer(window))->KeyCallback(key, scancode, action, mods);
     };
-    glfwSetScrollCallback(m_Window, scrollFunc);
+    glfwSetKeyCallback(m_Window, keyFunc);
 
     glfwSetWindowUserPointer(m_Window, this);
     auto mouseButtonFunc = [](GLFWwindow* window, int button, int action, int mods)
@@ -56,9 +56,15 @@ void GLWindow::CursorPosCallback(double xPos, double yPos)
     m_Camera->CursorPosCallback(xPos, yPos);
 }
 
-void GLWindow::ScrollCallback(double yOffset)
+void GLWindow::KeyCallback(int key, int scancode, int action, int mods)
 {
-    m_Camera->ScrollCallback(yOffset);
+    if (key == GLFW_KEY_W || 
+        key == GLFW_KEY_A || 
+        key == GLFW_KEY_S || 
+        key == GLFW_KEY_D)
+    {
+        m_Camera->KeyCallback(key, scancode, action, mods);
+    }
 }
 
 void GLWindow::MouseButtonCallback(int button, int action, int mods)

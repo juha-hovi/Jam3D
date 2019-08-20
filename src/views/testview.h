@@ -45,6 +45,8 @@ public:
     void BufferBox(const Box& box);
     void BufferSphere(const Sphere& sphere);
     void SetLightSources();
+    void InitShadowCubeMap();
+    void RenderShadowCubeMap();
 
     void Render();
     void RenderImGui();
@@ -68,6 +70,9 @@ private:
     Vec3 m_LightPosition;
     Vec3 m_LightColor;
     float m_LightIntensity;
+
+    unsigned int m_DepthCubeMap;
+    unsigned int m_DepthMapFBO;
 
     std::shared_ptr<GLWindow> m_Window;
 

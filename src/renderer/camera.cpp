@@ -1,90 +1,120 @@
 #include "camera.h"
 
 #include <iostream>
+#include <cmath>
 
 namespace Jam3D {
 
 Camera::Camera(float fov, float near, float far, Jam3D::Vec2 windowDim, GLFWwindow* window)
 	: m_Window(window), m_FoV(fov), m_Near(near), m_Far(far), m_WindowDimension(windowDim),
-	m_FocusPoint({0.0f, 0.0f}), m_FocusPointOld({0.0f, 0.0f}), m_FocusPointDistance(1000.0f), m_Rotation({0.0f, 0.0f, 0.0f}),
-	m_RotationOld({0.0f, 0.0f, 0.0f}), m_RotationSensitivity(0.5), m_TranslationSensitivity(1),
-	m_ScrollSensitivity(100), m_RotationCursorOriginX(0.0), m_RotationCursorOriginY(0.0),
-	m_TranslationCursorOriginX(0.0), m_TranslationCursorOriginY(0.0)
+	m_Position(glm::vec3(1000.0f, 1000.0f, -1000.0f)), m_Pitch(35.0f), m_Yaw(-45.0f),
+	m_CameraX(glm::vec3(0.0f, 0.0f, 0.0f)), m_CameraY(glm::vec3(0.0f, 0.0f, 0.0f)),
+	m_RotationSensitivity(0.07f), m_TranslationSensitivity(10.0f),
+	m_PressedW(false), m_PressedA(false), m_PressedS(false), m_PressedD(false),
+	m_MousePosPrevious(Vec2(0.0f, 0.0f))
 {
 	m_ProjectionMatrix = glm::mat4(glm::perspective(glm::radians(m_FoV), m_WindowDimension.x / m_WindowDimension.y, m_Near, m_Far));
-	m_ViewMatrix = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -m_FocusPointDistance)));
-}
+	
+	glm::vec3 target(0.0f, 0.0f, 0.0f);
+	m_CameraZ = glm::normalize(m_Position - target);
 
-void Camera::Update()
-{
-	m_ViewMatrix = glm::mat4(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -m_FocusPointDistance)));
-
-	m_ViewMatrix = glm::translate(m_ViewMatrix, glm::vec3(m_FocusPoint.x, m_FocusPoint.y, 0.0f));
-
-	m_ViewMatrix = glm::rotate(m_ViewMatrix, glm::radians(m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	m_ViewMatrix = glm::rotate(m_ViewMatrix, glm::radians(m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	m_ViewMatrix = glm::rotate(m_ViewMatrix, glm::radians(m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-}
-
-void Camera::CursorPosCallback(double xPos, double yPos)
-{
-	// Rotation
-	int stateLeft = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT);
-	if (stateLeft == GLFW_PRESS)
-	{
-	    m_Rotation.y = m_RotationOld.y + m_RotationSensitivity * (xPos - m_RotationCursorOriginX);
-		m_Rotation.x = m_RotationOld.x + m_RotationSensitivity * (yPos - m_RotationCursorOriginY);
-	}
-	else
-	{
-		m_RotationCursorOriginX = xPos;
-		m_RotationCursorOriginY = yPos;
-		m_RotationOld.x = m_Rotation.x;
-		m_RotationOld.y = m_Rotation.y;
-	}
-	// Prevent flipping upside down
-	if (m_Rotation.x > 90.0f)
-	{
-		m_Rotation.x = 90.0f;
-	}
-	if (m_Rotation.x < -90.0f)
-	{
-		m_Rotation.x = -90.0f;
-	}
-
-	// Translation
-	int stateMiddle = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_MIDDLE);
-	if (stateMiddle == GLFW_PRESS)
-	{
-		m_FocusPoint.x = m_FocusPointOld.x + m_TranslationSensitivity * (xPos - m_TranslationCursorOriginX);
-		m_FocusPoint.y = m_FocusPointOld.y + m_TranslationSensitivity * -(yPos - m_TranslationCursorOriginY);
-	}
-	else
-	{
-		m_TranslationCursorOriginX = xPos;
-		m_TranslationCursorOriginY = yPos;
-		m_FocusPointOld.x = m_FocusPoint.x;
-		m_FocusPointOld.y = m_FocusPoint.y;
-	}
-
-	Update();	
-}
-
-void Camera::ScrollCallback(double yOffset)
-{
-	m_FocusPointDistance -= yOffset * m_ScrollSensitivity;
-	if (m_FocusPointDistance < 0)
-		m_FocusPointDistance = 0;
+	double xPos, yPos;
+	glfwGetCursorPos(m_Window, &xPos, &yPos);
+	m_MousePosPrevious.x = (float)xPos;
+	m_MousePosPrevious.y = (float)yPos;
 	
 	Update();
 }
 
+void Camera::Update()
+{
+	ProcessInput();
+
+	glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
+	m_CameraZ = glm::normalize(m_CameraZ);
+	m_CameraX = glm::normalize(glm::cross(worldUp, m_CameraZ));
+	m_CameraY = glm::cross(m_CameraZ, m_CameraX);
+
+	m_ViewMatrix = glm::lookAt(m_Position, m_Position - m_CameraZ, m_CameraY);
+
+	std::cout << m_Pitch << std::endl;
+}
+
+void Camera::ProcessInput()
+{
+	if (m_PressedW)
+		m_Position += -m_CameraZ * m_TranslationSensitivity;
+
+	if (m_PressedS)
+		m_Position -= -m_CameraZ * m_TranslationSensitivity;
+
+	if (m_PressedA)
+		m_Position -= m_CameraX * m_TranslationSensitivity;
+
+	if (m_PressedD)
+		m_Position += m_CameraX * m_TranslationSensitivity;
+
+}
+
+void Camera::CursorPosCallback(double xPos, double yPos)
+{
+	int stateMouseRight = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT);
+
+	if (stateMouseRight == GLFW_PRESS)
+	{
+		float xDiff = ((float)xPos - m_MousePosPrevious.x) * m_RotationSensitivity;
+		float yDiff = ((float)yPos - m_MousePosPrevious.y) * m_RotationSensitivity;
+		m_Pitch += yDiff;
+		m_Yaw += xDiff;
+
+		if (m_Pitch > 89.0f)
+			m_Pitch = 89.0f;
+		if (m_Pitch < -89.0f)
+			m_Pitch = -89.0f;
+
+		m_CameraZ.x = cosf(glm::radians(m_Pitch)) * cos(glm::radians(m_Yaw));
+		m_CameraZ.y = sinf(glm::radians(m_Pitch));
+		m_CameraZ.z = cosf(glm::radians(m_Pitch)) * sin(glm::radians(m_Yaw));
+	}
+
+	m_MousePosPrevious.x = (float)xPos;
+	m_MousePosPrevious.y = (float)yPos;
+}
+
+void Camera::KeyCallback(int key, int scancode, int action, int mods)
+{
+	bool flag = false;
+	if (action == GLFW_PRESS)
+		flag = true;
+	else if (action == GLFW_REPEAT)
+		flag = true;
+	else if (action == GLFW_RELEASE)
+		flag = false;
+
+	switch(key){
+		case GLFW_KEY_W: 
+			m_PressedW = flag;
+			break;
+
+		case GLFW_KEY_S: 
+			m_PressedS = flag;
+			break;
+		
+		case GLFW_KEY_A:
+			m_PressedA = flag;
+			break;
+
+		case GLFW_KEY_D: 
+			m_PressedD = flag;
+			break;
+	}
+}
+
 void Camera::MouseButtonCallback(int button, int action, int mods)
 {
-	int stateRight = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT);
-	int stateMiddle = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_MIDDLE);
-	if (stateRight == GLFW_PRESS || stateMiddle == GLFW_PRESS)
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	else
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }

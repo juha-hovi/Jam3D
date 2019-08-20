@@ -16,8 +16,9 @@ class Camera
 public:
 	Camera(float fov, float near, float far, Vec2 windowDim, GLFWwindow* window);
 	void Update();
+	void ProcessInput();
 	void CursorPosCallback(double xPos, double yPos);
-	void ScrollCallback(double yOffset);
+	void KeyCallback(int key, int scancode, int action, int mods);
 	void MouseButtonCallback(int button, int action, int mods);
 
 	GLFWwindow* m_Window;
@@ -27,25 +28,26 @@ public:
 	float m_Far;
 	Vec2 m_WindowDimension;
 
-	Vec2 m_FocusPoint;
-	Vec2 m_FocusPointOld;
-	float m_FocusPointDistance;
-	
-	glm::vec3 m_Rotation;
-	glm::vec3 m_RotationOld;
+	glm::vec3 m_Position;
+	float m_Pitch;
+	float m_Yaw;
+
+	glm::vec3 m_CameraX;
+	glm::vec3 m_CameraY;
+	glm::vec3 m_CameraZ;
 	
 	glm::mat4 m_ProjectionMatrix;
 	glm::mat4 m_ViewMatrix;
 
-	double m_RotationSensitivity;
-	double m_TranslationSensitivity;
-	double m_ScrollSensitivity;
+	float m_RotationSensitivity;
+	float m_TranslationSensitivity;
 
-	double m_RotationCursorOriginX;
-	double m_RotationCursorOriginY;
+	bool m_PressedW;
+	bool m_PressedA;
+	bool m_PressedS;
+	bool m_PressedD;
 
-	double m_TranslationCursorOriginX;
-	double m_TranslationCursorOriginY;
+	Vec2 m_MousePosPrevious;
 };
 
 }
