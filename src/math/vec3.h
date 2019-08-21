@@ -2,7 +2,7 @@
 
 namespace Jam3D {
 
-template <class T>
+template <typename T>
 class Vec3 
 {
 public:

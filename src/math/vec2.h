@@ -2,7 +2,7 @@
 
 namespace Jam3D {
 
-template <class T>
+template <typename T>
 class Vec2 
 {
 public:
@@ -31,10 +31,7 @@ public:
         { return Vec2<T>(this->x / rhs, this->y / rhs); };
 
     // Variables
-    struct
-    {
-        T x, y;
-    };
+    T x, y;
 };
 
 }
