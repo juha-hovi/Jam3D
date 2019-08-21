@@ -46,7 +46,6 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
             - 4 views: general, xy-plane, xz-plane, yz-plane
                 - Draw object by clicking mouse
     Libraries:
-        - Template Vec2
         - Add matrices to math
         - Matrix calculations
         - 2D GUI elements library (buttons...)
@@ -70,7 +69,7 @@ Jam3D::Jam3D()
         std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 
     glEnable(GL_DEBUG_OUTPUT);
-    //glDebugMessageCallback(OpenGLDebugCallback, 0);
+    glDebugMessageCallback(OpenGLDebugCallback, 0);
 }
 
 Jam3D::~Jam3D()
@@ -95,7 +94,6 @@ void Jam3D::Run()
     ImGui_ImplGlfw_InitForOpenGL(m_GLWindow->m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    //TestBox test(m_GLWindow->m_Window);
     m_TestView = std::make_unique<TestView>(m_GLWindow);
     m_GLWindow->SetCamera(m_TestView->m_Camera);
     
