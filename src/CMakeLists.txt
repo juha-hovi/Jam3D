@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(opengl_project_app)
 
-add_subdirectory(math)
 include_directories(math)
 
 add_subdirectory(renderer)
@@ -22,7 +21,6 @@ include_directories(${OPENGL_INCLUDE_DIRS})
 
 find_package(GLEW REQUIRED)
 include_directories(${GLEW_INCLUDE_DIRS})
-
 
 set(jam3d_source 
 	entrypoint.cpp

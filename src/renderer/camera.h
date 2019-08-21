@@ -14,7 +14,7 @@ namespace Jam3D {
 class Camera
 {
 public:
-	Camera(float fov, float near, float far, Vec2 windowDim, GLFWwindow* window);
+	Camera(float fov, float near, float far, Vec2<float> windowDim, GLFWwindow* window);
 	void Update();
 	void ProcessInput();
 	void CursorPosCallback(double xPos, double yPos);
@@ -27,7 +27,7 @@ public:
 	float m_FoV;
 	float m_Near;
 	float m_Far;
-	Vec2 m_WindowDimension;
+	Vec2<float> m_WindowDimension;
 
 	glm::vec3 m_Position;
 	float m_Pitch;
@@ -49,7 +49,7 @@ public:
 	bool m_PressedS;
 	bool m_PressedD;
 
-	Vec2 m_MousePosPrevious;
+	Vec2<float> m_MousePosPrevious;
 };
 
 }

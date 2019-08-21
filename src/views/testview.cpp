@@ -53,7 +53,7 @@ void TestView::InitRendering()
     float fov = 45.0f;
     float near = 1.0f;
     float far = 5000.0f;
-    Vec2 windowDim({(float)m_Window->m_Width, (float)m_Window->m_Height});
+    Vec2<float> windowDim({(float)m_Window->m_Width, (float)m_Window->m_Height});
     m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window->m_Window);
 }
 

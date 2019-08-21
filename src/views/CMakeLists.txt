@@ -3,4 +3,4 @@ set(views_source
     testview.h
 )
 add_library(views ${views_source})
-target_link_libraries(views math renderer shapes)
+target_link_libraries(views renderer shapes)
