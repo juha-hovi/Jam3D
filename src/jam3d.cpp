@@ -46,7 +46,8 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
             - 4 views: general, xy-plane, xz-plane, yz-plane
                 - Draw object by clicking mouse
     Libraries:
-        - Template math for other datatypes
+        - Template Vec2
+        - Add matrices to math
         - Matrix calculations
         - 2D GUI elements library (buttons...)
 
