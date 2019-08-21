@@ -54,8 +54,8 @@ void Sphere::Update()
 	for(int i = 0; i <= m_StackCount; ++i)
 	{
 		stackAngle = M_PI / 2 - i * stackStep;
-		xy = m_Radius * cosf(stackAngle);
-		y = m_Radius * sinf(stackAngle);
+		xy = m_Radius * std::cos(stackAngle);
+		y = m_Radius * std::sin(stackAngle);
 
 		k1 = i * (m_SectorCount + 1);
 		k2 = k1 + m_SectorCount + 1;
@@ -64,8 +64,8 @@ void Sphere::Update()
 		{
 			sectorAngle = j * sectorStep;
 
-			z = xy * cosf(sectorAngle);
-			x = xy * sinf(sectorAngle);
+			z = xy * std::cos(sectorAngle);
+			x = xy * std::sin(sectorAngle);
 			m_VertexData.push_back(x);
 			m_VertexData.push_back(y);
 			m_VertexData.push_back(z);

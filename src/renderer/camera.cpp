@@ -70,9 +70,9 @@ void Camera::CursorPosCallback(double xPos, double yPos)
 		if (m_Pitch < -89.0f)
 			m_Pitch = -89.0f;
 
-		m_CameraZ.x = cosf(glm::radians(m_Pitch)) * cos(glm::radians(m_Yaw));
-		m_CameraZ.y = sinf(glm::radians(m_Pitch));
-		m_CameraZ.z = cosf(glm::radians(m_Pitch)) * sin(glm::radians(m_Yaw));
+		m_CameraZ.x = std::cos(glm::radians(m_Pitch)) * std::cos(glm::radians(m_Yaw));
+		m_CameraZ.y = std::sin(glm::radians(m_Pitch));
+		m_CameraZ.z = std::cos(glm::radians(m_Pitch)) * std::sin(glm::radians(m_Yaw));
 	}
 
 	m_MousePosPrevious.x = (float)xPos;
