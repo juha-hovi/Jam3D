@@ -8,7 +8,7 @@ namespace Jam3D {
 class Sphere : public Shape
 {
 public:
-	Sphere(float radius, Vec3 center, int sectorCount, int stackCount);
+	Sphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount);
 	Sphere(const Sphere& orig);
 	bool operator=(const Sphere& rhs);
 

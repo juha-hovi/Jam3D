@@ -6,7 +6,7 @@ namespace Jam3D {
 // Builds a 3D box. See tex_example_full.png for texture layout.
 // m_Positions.size() = 120: 24 vertices, 3 coordinates, 2 texture coordinates
 // m_Indices.size() = 36: 6 sides, 2 triangles per side, 3 vertices per triangle
-Box::Box(Vec3 center, Vec3 dimensions, Vec3 rotation)
+Box::Box(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation)
 {
 	m_Center = center;
 	m_Dimensions = dimensions;
@@ -40,8 +40,8 @@ void Box::Update()
 		|	4-+---5
 		0-----1
 	*/
-	Vec3 corner0 = m_Dimensions / -2.0f;
-	Vec3 corner1 = m_Dimensions / 2.0f;
+	Jam3D::Vec3<float> corner0 = m_Dimensions / -2.0f;
+	Jam3D::Vec3<float> corner1 = m_Dimensions / 2.0f;
 
 	const int vertexDataSize = 6 * 4 * (3 + 2 + 3);
     const int indicesSize = 6 * 2 * 3;

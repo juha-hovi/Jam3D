@@ -11,13 +11,13 @@ namespace Jam3D {
 class Box : public Shape
 {
 public:
-	Box(Vec3 center, Vec3 dimensions, Vec3 rotation);
+	Box(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);
 	Box(const Box& orig);
 	bool operator=(const Box& rhs);
 
 	void Update() override;
 
-	Vec3 m_Dimensions;
+	Jam3D::Vec3<float> m_Dimensions;
 };
 
 }

@@ -5,7 +5,7 @@
 
 namespace Jam3D {
 
-Sphere::Sphere(float radius, Vec3 center, int sectorCount, int stackCount)
+Sphere::Sphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount)
 	: m_SectorCount(sectorCount), m_StackCount(stackCount), m_Radius(radius)
 {
 	m_Center = center;

@@ -4,8 +4,8 @@ namespace Jam3D {
 
 Axes::Axes()
 {
-    m_Center = Vec3(0.0f, 0.0f, 0.0f);
-    m_Rotation = Vec3(0.0f, 0.0f, 0.0f);
+    m_Center = Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f);
+    m_Rotation = Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f);
 
     const float dist = 2000.0f;
     const int vertexDataSize = 3 * 2 * (3 + 2 + 3);

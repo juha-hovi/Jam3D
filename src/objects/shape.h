@@ -11,12 +11,12 @@ class Shape
 public:
     Shape();
 
-    void Move(Vec3 translation);
-    void Rotate(Vec3 rotation);
+    void Move(Jam3D::Vec3<float> translation);
+    void Rotate(Jam3D::Vec3<float> rotation);
     virtual void Update();
 
-    Vec3 m_Center;
-    Vec3 m_Rotation;
+    Jam3D::Vec3<float> m_Center;
+    Jam3D::Vec3<float> m_Rotation;
 
     std::vector<float> m_VertexData; // 3 position coordinates, 2 texture coordinates, 3 normal vector values 
 	std::vector<unsigned int> m_Indices;

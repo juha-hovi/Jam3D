@@ -17,7 +17,7 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     : m_Window(window), m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_ObjectRotation(0.0f), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
-    m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Vec3(0.0f, 0.0f, 0.0f)), m_LightColor(Vec3(1.0f, 1.0f, 1.0f)),
+    m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f)), m_LightColor(Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f)),
     m_LightIntensity(1.0f), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
 {
     glEnable(GL_BLEND);
@@ -25,10 +25,10 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);  
 
-    AddBox(Vec3(0.0f, -200.0f, 0.0f), Vec3(70.0f, 50.0f, 90.0f), Vec3(0.0f, 0.0f, 0.0f));
-    AddBox(Vec3(0.0f, -500.0f, 0.0f), Vec3(2000.0f, 10.0f, 2000.0f), Vec3(0.0f, 0.0f, 0.0f));
-    AddSphere(100.0f, Vec3(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance), 20, 20);
-    AddLightSource(LightSource::POINT_LIGHT, Vec3(0.0f, 0.0f, 0.0f), Vec3(1.0f, 1.0f, 1.0f), 1.0f);
+    AddBox(Jam3D::Vec3<float>(0.0f, -200.0f, 0.0f), Jam3D::Vec3<float>(70.0f, 50.0f, 90.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
+    AddBox(Jam3D::Vec3<float>(0.0f, -500.0f, 0.0f), Jam3D::Vec3<float>(2000.0f, 10.0f, 2000.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
+    AddSphere(100.0f, Jam3D::Vec3<float>(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance), 20, 20);
+    AddLightSource(LightSource::POINT_LIGHT, Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f), Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f), 1.0f);
 
     InitRendering();
     InitAxes();
@@ -71,7 +71,7 @@ void TestView::InitAxes()
     m_IBO_axes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
 }
 
-void TestView::AddBox(Vec3 center, Vec3 dimensions, Vec3 rotation)
+void TestView::AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation)
 {
     m_Boxes.push_back(Box(center, dimensions, rotation));
 }
@@ -81,7 +81,7 @@ void TestView::DeleteBox(int index)
     m_Boxes.erase(m_Boxes.begin() + index);
 }
 
-void TestView::AddSphere(float radius, Vec3 center, int sectorCount, int stackCount)
+void TestView::AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount)
 {
     m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
 }
@@ -91,7 +91,7 @@ void TestView::DeleteSphere(int index)
     m_Spheres.erase(m_Spheres.begin() + index);
 }
 
-void TestView::AddLightSource(unsigned int type, Vec3 position_or_direction, Vec3 color, float intensity)
+void TestView::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity)
 {
     if (m_LightSources.size() <= 10)
     {
@@ -251,7 +251,7 @@ void TestView::DoTick()
 
     if (m_Spheres.size() >= 1)
     {
-        m_Spheres[0].m_Center = Vec3(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance);
+        m_Spheres[0].m_Center = Jam3D::Vec3<float>(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance);
         m_Spheres[0].m_Rotation.x = 0.0f;        
         m_Spheres[0].m_Rotation.y = m_ObjectRotation;
         m_Spheres[0].m_Rotation.z = 23.5;

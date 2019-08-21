@@ -7,21 +7,21 @@ namespace Jam3D {
 class LightSource 
 {
 public:
-    LightSource(unsigned int type, Vec3 position_or_direction, Vec3 color, float intensity);
+    LightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity);
     LightSource(const LightSource& orig);
-    void Move(Vec3 translation);
-    void SetDirection(Vec3 direction);
+    void Move(Jam3D::Vec3<float> translation);
+    void SetDirection(Jam3D::Vec3<float> direction);
 
     enum : unsigned int {DIRECTIONAL_LIGHT, POINT_LIGHT};
     
     unsigned int m_Type;
     
     union {
-        Vec3 m_Position;
-        Vec3 m_Direction;
+        Jam3D::Vec3<float> m_Position;
+        Jam3D::Vec3<float> m_Direction;
     };
 
-    Vec3 m_Color;
+    Jam3D::Vec3<float> m_Color;
 
     float m_Intensity;
 };

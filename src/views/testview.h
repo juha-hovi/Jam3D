@@ -34,11 +34,11 @@ class TestView
 public:
     TestView(std::shared_ptr<GLWindow> window);
 
-    void AddBox(Vec3 center, Vec3 dimensions, Vec3 rotation);
+    void AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);
     void DeleteBox(int index);
-    void AddSphere(float radius, Vec3 center, int sectorCount, int stackCount);
+    void AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount);
     void DeleteSphere(int index);
-    void AddLightSource(unsigned int type, Vec3 position_or_direction, Vec3 color, float intensity);
+    void AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity);
     void DeleteLightSource(int index);
 
     void InitAxes();
@@ -60,11 +60,11 @@ public:
 
 private:
 
-    Vec3 m_BoxCenter;
-    Vec3 m_BoxDimensions;
-    Vec3 m_BoxRotation;
+    Jam3D::Vec3<float> m_BoxCenter;
+    Jam3D::Vec3<float> m_BoxDimensions;
+    Jam3D::Vec3<float> m_BoxRotation;
 
-    Vec3 m_SphereCenter;
+    Jam3D::Vec3<float> m_SphereCenter;
     float m_SphereRadius;
     int m_SphereSectorCount;
     int m_SphereStackCount;
@@ -74,8 +74,8 @@ private:
     float m_ObjectRotation;
 
     unsigned int m_LightType;
-    Vec3 m_LightPosition;
-    Vec3 m_LightColor;
+    Jam3D::Vec3<float> m_LightPosition;
+    Jam3D::Vec3<float> m_LightColor;
     float m_LightIntensity;
 
     const int m_ShadowWidth = 1024;

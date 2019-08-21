@@ -7,13 +7,13 @@ Shape::Shape()
 
 }
 
-void Shape::Move(Vec3 translation)
+void Shape::Move(Jam3D::Vec3<float> translation)
 {
     m_Center += translation;
     Update();
 }
 
-void Shape::Rotate(Vec3 rotation)
+void Shape::Rotate(Jam3D::Vec3<float> rotation)
 {
     m_Rotation += rotation;
     Update();
