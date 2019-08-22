@@ -103,7 +103,6 @@ void Jam3D::Run()
         frameStart = std::chrono::high_resolution_clock::now();
 
         m_TestView->Render();
-        m_TestView->RenderImGui();
 
         glfwSwapBuffers(m_GLWindow->m_Window);
         glfwPollEvents();

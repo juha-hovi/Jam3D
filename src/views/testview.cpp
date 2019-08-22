@@ -302,6 +302,7 @@ void TestView::Render()
 
     RenderPointShadow();
     RenderScene();
+    RenderImGui();
 }
 
 void TestView::RenderImGui()
