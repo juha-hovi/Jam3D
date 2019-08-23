@@ -1,8 +1,8 @@
-#include <iostream>
 #include <memory>
 #include <chrono>
 #include <thread>
 #include <functional>
+#include <string>
 
 #include "GL/glew.h"
 
@@ -11,7 +11,8 @@
 #include "imgui/imgui_impl_opengl3.h"
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
-#include "jam3d.h"
+#include "application.h"
+#include "log.h"
 
 namespace Jam3D {
 
@@ -26,12 +27,12 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
     // Only report errors
     if (type == GL_DEBUG_TYPE_ERROR)
     {
-        std::cout << "******************************************************" << "\n"
-                << "**GL ERROR**" << "\n"
-                << "(Type): " << type << "\n" 
-                << "(Severity): " << severity << "\n" 
-                << "(Message): " << message << "\n"
-                << "******************************************************" << std::endl;
+        Jam3D::Log::Error(std::string("******************************************************\n"
+                                      "**GL ERROR**\n"
+                                      "(Type): " + std::to_string(type) + "\n"
+                                      "(Severity): " + std::to_string(severity) + "\n"
+                                      "(Message): " + message + "\n"
+                                      "******************************************************"));
     }
 }
 
@@ -52,10 +53,10 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 
 */
 
-Jam3D::Jam3D()
+Application::Application()
 {
     if (!glfwInit())
-        std::cout << "Error: glfwInit failed!" << std::endl;
+        Jam3D::Log::Error("glfwInit failed!");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -66,18 +67,18 @@ Jam3D::Jam3D()
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (GLEW_OK != err)
-        std::cout << "Error: " << glewGetErrorString(err) << std::endl;
+        Jam3D::Log::Error("GLEW initialization failed!");
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(OpenGLDebugCallback, 0);
 }
 
-Jam3D::~Jam3D()
+Application::~Application()
 {
     glfwTerminate();
 }
 
-void Jam3D::Run()
+void Application::Run()
 {
     // Setup timer
     int targetFps = 60;

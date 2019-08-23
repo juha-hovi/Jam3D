@@ -1,6 +1,5 @@
 #include "camera.h"
 
-#include <iostream>
 #include <cmath>
 
 namespace Jam3D {

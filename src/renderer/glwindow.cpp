@@ -1,6 +1,6 @@
 #include "glwindow.h"
+#include "log.h"
 
-#include <iostream>
 
 namespace Jam3D {
 
@@ -16,7 +16,7 @@ void GLWindow::InitGLFW()
      m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
     if (!m_Window)
     {
-        std::cout << "Error: " << "GLFW window creation failed!" << std::endl;
+        Jam3D::Log::Error("GLFW window creation failed!");
         glfwTerminate();
     }
     glfwMakeContextCurrent(m_Window);

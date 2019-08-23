@@ -1,6 +1,10 @@
 #include "testview.h"
 #include "vec2.h"
 #include "vec3.h"
+#include "log.h"
+
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -9,7 +13,6 @@
 
 #include <string>
 #include <cmath>
-#include <iostream>
 
 namespace Jam3D {
 
@@ -87,7 +90,7 @@ void TestView::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_
     }
     else
     {
-        std::cout << "[WARNING]: Already at max light sources!" << std::endl;
+        Jam3D::Log::Warning("Already at max light sources! Current max: " + m_LightSources.size());
     }    
 }
 

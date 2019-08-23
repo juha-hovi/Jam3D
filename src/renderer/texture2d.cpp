@@ -1,11 +1,9 @@
 #include "texture2d.h"
+#include "log.h"
 
 #include "stb_image/stb_image.h"
 
 #include <GL/glew.h>
-
-#include <iostream>
-
 
 namespace Jam3D {
 
@@ -29,7 +27,7 @@ Texture2D::Texture2D(const std::string& fp)
 	if (m_LocalBuffer)
 		stbi_image_free(m_LocalBuffer);
 	else
-		std::cout << "Failed to create GL_TEXTURE_2D texture!" << std::endl;
+		Jam3D::Log::Warning(std::string("Failed to create GL_TEXTURE_2D texture from: " + fp));
 }
 
 void Texture2D::Bind(unsigned int slot) const 

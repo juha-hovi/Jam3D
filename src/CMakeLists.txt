@@ -24,8 +24,10 @@ include_directories(${GLEW_INCLUDE_DIRS})
 
 set(jam3d_source 
 	entrypoint.cpp
-	jam3d.cpp
-	jam3d.h)
+	application.cpp
+	application.h
+	log.cpp
+	log.h)
 add_executable(Jam3D ${jam3d_source})
 
 target_link_libraries(Jam3D renderer views imgui glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

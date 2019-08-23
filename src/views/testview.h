@@ -1,8 +1,5 @@
 #pragma once
 
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
-
 #include "axes.h"
 #include "shape.h"
 #include "box.h"

@@ -1,3 +1,5 @@
+include_directories(../)
+
 set(renderer_source
 	camera.cpp
 	camera.h
@@ -22,6 +24,8 @@ set(renderer_source
 	vertexbuffer.cpp
 	vertexbuffer.h
 	vertexbufferlayout.h
+	viewport.cpp
+	viewport.h
 )
 add_library(renderer ${renderer_source})
 target_link_libraries(renderer stb_image)

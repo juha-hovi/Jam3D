@@ -10,16 +10,17 @@
 
 namespace Jam3D {
 
-class Jam3D
+class Application
 {
 public:
-	Jam3D();
-	~Jam3D();
+	Application();
+	~Application();
 
 	void Run();
 
 	std::shared_ptr<GLWindow> m_GLWindow;
 	std::unique_ptr<TestView> m_TestView;
+
 };
 
 }

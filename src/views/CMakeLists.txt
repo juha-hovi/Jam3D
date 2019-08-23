@@ -1,3 +1,5 @@
+include_directories(../)
+
 set(views_source
 	testview.cpp
     testview.h

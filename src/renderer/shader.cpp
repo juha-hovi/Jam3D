@@ -1,6 +1,6 @@
 #include "shader.h"
+#include "log.h"
 
-#include <iostream>
 #include <sstream>
 #include <fstream>
 
@@ -88,13 +88,13 @@ int Shader::CompileShader(unsigned int type, const std::string& source)
 		glGetShaderInfoLog(id, length, &length, message);
 
         if (type == GL_VERTEX_SHADER)
-		    std::cout << "Failed to compile vertex shader!" << std::endl;
+		    Jam3D::Log::Warning("Failed to compile vertex shader!");
         if (type == GL_GEOMETRY_SHADER)
-		    std::cout << "Failed to compile geometry shader!" << std::endl;
+		    Jam3D::Log::Warning("Failed to compile geometry shader!");
         if (type == GL_FRAGMENT_SHADER)
-		    std::cout << "Failed to compile fragment shader!" << std::endl;
+		    Jam3D::Log::Warning("Failed to compile fragment shader!");
 
-		std::cout << message << std::endl;
+		Jam3D::Log::Warning(message);
 
 		glDeleteShader(id);
 		return 0;
@@ -150,13 +150,13 @@ Shader::ShaderSources Shader::ParseShader(const std::string& fp)
                 sstreamGeometry << line << "\n";
                 break;
             case -1:
-                std::cout << "Shader type not identified. Current line: " << line << std::endl;
+                Jam3D::Log::Warning((std::string("Shader type not identified. Current line: ") + line).c_str());
             }  
         }
     }
 
     else 
-        std::cout << "Failed to open shader file" << std::endl;
+        Jam3D::Log::Warning(std::string("Failed to open shader file in: " + fp));
 
     ShaderSources shaderSources = {sstreamVertex.str(), sstreamGeometry.str(), sstreamFragment.str()};
     return shaderSources;
@@ -215,7 +215,7 @@ int Shader::GetUniformLocation(const std::string& name)
     // If uniform location is not cached, cache and return it if it exists.
     int location = glGetUniformLocation(m_RendererID, name.c_str());
     if (location == -1)
-        std::cout << "Warning: uniform " << name << " doesn't exist" << "\n";
+        Jam3D::Log::Warning(std::string("Warning: uniform " + name + " doesn't exist"));
 
     m_UniformLocationCache[name] = location;
     return location;
