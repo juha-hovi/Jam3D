@@ -14,7 +14,7 @@ namespace Jam3D {
 class GLWindow
 {
 public:
-    GLWindow(int width, int height, std::string title);
+    GLWindow(int width, int height, const std::string& title);
     void InitGLFW();
     void InitCallbacks();
     void SetCamera(std::shared_ptr<Camera> camera);
