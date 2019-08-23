@@ -16,8 +16,8 @@
 
 namespace Jam3D {
 
-TestView::TestView(std::shared_ptr<GLWindow> window)
-    : m_Window(window), m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
+TestView::TestView(std::shared_ptr<GLWindow> window) : View(window),
+    m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_ObjectRotation(0.0f), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f)), m_LightColor(Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f)),
@@ -59,12 +59,11 @@ void TestView::InitRendering()
     m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window->m_Window);
 
     m_NormalViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Viewport(Vec4<int>(0, 0, m_Window->m_Width, m_Window->m_Height)));
+    m_Viewports.push_back(Viewport(Jam3D::Vec4<int>(0, 0, m_Window->m_Width, m_Window->m_Height)));
 }
 
 void TestView::InitAxes()
 {
-    m_Renderer = std::make_unique<Renderer>();
     m_Axes = std::make_unique<Axes>();
     m_VAOAxes = std::make_unique<VertexArray>();
     m_VBOAxes = std::make_unique<VertexBuffer>(m_Axes->m_VertexData.data(), m_Axes->m_VertexData.size() * sizeof(float));
@@ -130,7 +129,7 @@ void TestView::InitPointShadow()
     m_ShaderShadow = std::make_unique<Shader>("src/shaders/shadow.shader", Shader::VERTEX_GEOMETRY_FRAGMENT);
 
     m_ShadowViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Viewport(Vec4<int>(0, 0, m_ShadowWidth, m_ShadowHeight)));
+    m_Viewports.push_back(Viewport(Jam3D::Vec4<int>(0, 0, m_ShadowWidth, m_ShadowHeight)));
 }
 
 void TestView::UpdateShadowTransforms()
@@ -292,10 +291,6 @@ void TestView::Render()
 
 void TestView::RenderImGui()
 {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-    ImGui::NewFrame();
-
     {
         ImGui::Begin("Boxes");
         ImGui::InputFloat3("Center", &m_BoxCenter.x, 1.0f, 1.0f);
@@ -381,9 +376,6 @@ void TestView::RenderImGui()
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::End();
     }
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 }

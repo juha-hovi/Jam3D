@@ -44,7 +44,11 @@
         "optional": "cpp",
         "tuple": "cpp",
         "utility": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "deque": "cpp",
+        "iterator": "cpp",
+        "memory_resource": "cpp",
+        "string": "cpp"
     },
     "terminal.integrated.shell.windows": "cmd.exe"
 }

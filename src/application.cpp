@@ -95,7 +95,9 @@ void Application::Run()
     ImGui_ImplGlfw_InitForOpenGL(m_GLWindow->m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
-    m_TestView = std::make_unique<TestView>(m_GLWindow);
+    m_TestView = std::make_shared<TestView>(m_GLWindow);
+    m_ObjectCreationView = std::make_shared<ObjectCreationView>(m_GLWindow);
+    m_CurrentView = m_TestView;
     m_GLWindow->SetCamera(m_TestView->m_Camera);
     
     // Loop until the window is closed by the user.
@@ -103,7 +105,23 @@ void Application::Run()
     {
         frameStart = std::chrono::high_resolution_clock::now();
 
-        m_TestView->Render();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        
+        m_CurrentView->Render();
+        
+        {
+            ImGui::Begin("Views");
+            if (ImGui::Button("Test"))
+                m_CurrentView = m_TestView;
+            if (ImGui::Button("Object creation"))
+                m_CurrentView = m_ObjectCreationView;
+            ImGui::End();
+        }
+        
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(m_GLWindow->m_Window);
         glfwPollEvents();

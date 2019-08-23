@@ -19,8 +19,6 @@
 #include "texturecubemap.h"
 #include "framebuffer.h"
 
-#include "glwindow.h"
-
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -33,7 +31,7 @@ class TestView : public View
 {
 public:
     TestView(std::shared_ptr<GLWindow> window);
-    void Render();
+    void Render() override;
 
 private:
     void AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);
@@ -59,6 +57,10 @@ private:
 
     void RenderImGui();
 
+public:
+    std::shared_ptr<Camera> m_Camera;
+
+private:
     Jam3D::Vec3<float> m_BoxCenter;
     Jam3D::Vec3<float> m_BoxDimensions;
     Jam3D::Vec3<float> m_BoxRotation;
@@ -91,9 +93,6 @@ private:
     int m_NormalViewportIndex;
     int m_ShadowViewportIndex;
  
-    std::shared_ptr<GLWindow> m_Window;
-
-    std::unique_ptr<Renderer> m_Renderer;
     std::unique_ptr<Shader> m_ShaderNormal;
     std::unique_ptr<Texture2D> m_TextureBox;
     std::unique_ptr<Texture2D> m_TextureRGB;
@@ -116,8 +115,6 @@ private:
     std::vector<glm::mat4> m_SphereModelMats;
     std::vector<LightSource> m_LightSources;
 
-public:
-    std::shared_ptr<Camera> m_Camera;
 };
 
 }
