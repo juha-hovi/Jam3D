@@ -4,4 +4,4 @@ cmake -DCMAKE_BUILD_TYPE=Debug ..
 make
 cd ..
 echo "Running..."
-./bin/src/app
+./bin/src/Jam3D

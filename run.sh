@@ -1,1 +1,1 @@
-./bin/src/app
+./bin/src/Jam3D
