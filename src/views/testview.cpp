@@ -21,7 +21,8 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_ObjectRotation(0.0f), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f)), m_LightColor(Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f)),
-    m_LightIntensity(1.0f), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
+    m_LightIntensity(1.0f), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f)),
+    m_NormalViewportIndex(-1), m_ShadowViewportIndex(-1)
 {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -56,6 +57,9 @@ void TestView::InitRendering()
     float far = 5000.0f;
     Vec2<float> windowDim({(float)m_Window->m_Width, (float)m_Window->m_Height});
     m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window->m_Window);
+
+    m_NormalViewportIndex = m_Viewports.size();
+    m_Viewports.push_back(Viewport(Vec4<int>(0, 0, m_Window->m_Width, m_Window->m_Height)));
 }
 
 void TestView::InitAxes()
@@ -124,6 +128,9 @@ void TestView::InitPointShadow()
 
     m_ShadowProjectionMatrix = glm::perspective(glm::radians(90.0f), (float)m_ShadowWidth / (float)m_ShadowHeight, m_ShadowNearPlane, m_ShadowFarPlane);
     m_ShaderShadow = std::make_unique<Shader>("src/shaders/shadow.shader", Shader::VERTEX_GEOMETRY_FRAGMENT);
+
+    m_ShadowViewportIndex = m_Viewports.size();
+    m_Viewports.push_back(Viewport(Vec4<int>(0, 0, m_ShadowWidth, m_ShadowHeight)));
 }
 
 void TestView::UpdateShadowTransforms()
@@ -142,7 +149,7 @@ void TestView::RenderPointShadow()
 {
     UpdateShadowTransforms();
 
-    glViewport(0, 0, m_ShadowWidth, m_ShadowHeight);
+    m_Viewports[m_ShadowViewportIndex].Use();
     m_FrameBuffer->Bind();
     m_Renderer->Clear();
     m_ShaderShadow->Bind();
@@ -176,7 +183,7 @@ void TestView::RenderScene()
     const unsigned int textureSlot = 0;
     const unsigned int depthMapSlot = 1;
 
-    glViewport(0, 0, m_Window->m_Width, m_Window->m_Height);
+    m_Viewports[m_NormalViewportIndex].Use();
     m_Renderer->Clear();
 
     m_ShaderNormal->Bind();

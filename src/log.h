@@ -2,13 +2,22 @@
 
 #include <string>
 
+#define LOGGING_LEVEL_INFO
+
 namespace Jam3D {
 
 class Log 
 {
 public:
-    static void Warning(const std::string&);
-    static void Error(const std::string&);
+    enum : unsigned int {
+        INFO, WARNING, ERROR
+    };
+
+    static const unsigned int LoggingLevel = INFO;
+
+    static void Info(const std::string& msg);
+    static void Warning(const std::string& msg);
+    static void Error(const std::string& msg);
 };
 
 }

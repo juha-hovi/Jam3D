@@ -1,5 +1,7 @@
 #pragma once
 
+#include "view.h"
+
 #include "axes.h"
 #include "shape.h"
 #include "box.h"
@@ -27,11 +29,13 @@
 
 namespace Jam3D {
 
-class TestView
+class TestView : public View
 {
 public:
     TestView(std::shared_ptr<GLWindow> window);
+    void Render();
 
+private:
     void AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);
     void DeleteBox(int index);
     void AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount);
@@ -53,10 +57,7 @@ public:
     void UpdateModelMats();    
     void DoTick();
 
-    void Render();
     void RenderImGui();
-
-private:
 
     Jam3D::Vec3<float> m_BoxCenter;
     Jam3D::Vec3<float> m_BoxDimensions;
@@ -86,6 +87,9 @@ private:
     glm::mat4 m_ShadowProjectionMatrix;
     std::vector<glm::mat4> m_ShadowTransforms;
     std::unique_ptr<Shader> m_ShaderShadow;
+
+    int m_NormalViewportIndex;
+    int m_ShadowViewportIndex;
  
     std::shared_ptr<GLWindow> m_Window;
 
