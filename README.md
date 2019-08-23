@@ -1,16 +1,16 @@
-#Jam3D
+# Jam3D
 
 Basic 3D modeling software. C++ / OpenGL programming practice project.
 
-##Directory structure
-###bin: Binaries
+## Directory structure
+### bin: Binaries
 Folder for cmake build files. Executable output is /bin/src/Jam3D
 
-###res: Resources
+### res: Resources
 Asset files such as texture images.
 
-###src: Source
+### src: Source
 All self-written project source code.
 
-###vendor: Vendor
+### vendor: Vendor
 3rd party libraries.
