@@ -37,18 +37,16 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
 
 void TestView::InitRendering()
 {
-    m_Layout = std::make_unique<VertexBufferLayout>();
-    m_Layout->Push<float>(3);
-    m_Layout->Push<float>(2);
-    m_Layout->Push<float>(3);
+    m_LayoutShape = std::make_unique<VertexBufferLayout>();
+    m_LayoutShape->Push<float>(3);
+    m_LayoutShape->Push<float>(2);
+    m_LayoutShape->Push<float>(3);
 
-    m_Shader = std::make_unique<Shader>("src/shaders/basic3d.shader", Shader::VERTEX_FRAGMENT);
-    m_Shader->Bind();
+    m_ShaderNormal = std::make_unique<Shader>("src/shaders/basic3d.shader", Shader::VERTEX_FRAGMENT);
 
     m_TextureBox = std::make_unique<Texture2D>("res/tex_test_full.png");
     m_TextureEarth = std::make_unique<Texture2D>("res/earth2048.bmp");
     m_TextureRGB = std::make_unique<Texture2D>("res/rgb.png");
-    m_Shader->SetUniform1i("u_Texture", 0);
 
     float fov = 45.0f;
     float near = 1.0f;
@@ -61,14 +59,14 @@ void TestView::InitAxes()
 {
     m_Renderer = std::make_unique<Renderer>();
     m_Axes = std::make_unique<Axes>();
-    m_VAO_axes = std::make_unique<VertexArray>();
-    m_VBO_axes = std::make_unique<VertexBuffer>(m_Axes->m_VertexData.data(), m_Axes->m_VertexData.size() * sizeof(float));
-    m_Layout_axes = std::make_unique<VertexBufferLayout>();
-    m_Layout_axes->Push<float>(3);
-    m_Layout_axes->Push<float>(2);
-    m_Layout_axes->Push<float>(3);
-    m_VAO_axes->AddBuffer(*m_VBO_axes, *m_Layout_axes);
-    m_IBO_axes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
+    m_VAOAxes = std::make_unique<VertexArray>();
+    m_VBOAxes = std::make_unique<VertexBuffer>(m_Axes->m_VertexData.data(), m_Axes->m_VertexData.size() * sizeof(float));
+    m_LayoutAxes = std::make_unique<VertexBufferLayout>();
+    m_LayoutAxes->Push<float>(3);
+    m_LayoutAxes->Push<float>(2);
+    m_LayoutAxes->Push<float>(3);
+    m_VAOAxes->AddBuffer(*m_VBOAxes, *m_LayoutAxes);
+    m_IBOAxes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
 }
 
 void TestView::AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation)
@@ -76,19 +74,9 @@ void TestView::AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, 
     m_Boxes.push_back(Box(center, dimensions, rotation));
 }
 
-void TestView::DeleteBox(int index)
-{
-    m_Boxes.erase(m_Boxes.begin() + index);
-}
-
 void TestView::AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount)
 {
     m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
-}
-
-void TestView::DeleteSphere(int index)
-{
-    m_Spheres.erase(m_Spheres.begin() + index);
 }
 
 void TestView::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity)
@@ -103,25 +91,12 @@ void TestView::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_
     }    
 }
 
-void TestView::DeleteLightSource(int index)
+void TestView::BufferShape(const Shape& shape)
 {
-    m_LightSources.erase(m_LightSources.begin() + index);
-}
-
-void TestView::BufferBox(const Box& box)
-{
-    m_VAO = std::make_unique<VertexArray>();
-    m_VBO = std::make_unique<VertexBuffer>(box.m_VertexData.data(), box.m_VertexData.size() * sizeof(float));    
-    m_VAO->AddBuffer(*m_VBO, *m_Layout);
-    m_IBO = std::make_unique<IndexBuffer>(box.m_Indices.data(), box.m_Indices.size());
-}
-
-void TestView::BufferSphere(const Sphere& sphere)
-{
-    m_VAO = std::make_unique<VertexArray>();
-    m_VBO = std::make_unique<VertexBuffer>(sphere.m_VertexData.data(), sphere.m_VertexData.size() * sizeof(float));    
-    m_VAO->AddBuffer(*m_VBO, *m_Layout);
-    m_IBO = std::make_unique<IndexBuffer>(sphere.m_Indices.data(), sphere.m_Indices.size());
+    m_VAOShape = std::make_unique<VertexArray>();
+    m_VBOShape = std::make_unique<VertexBuffer>(shape.m_VertexData.data(), shape.m_VertexData.size() * sizeof(float));    
+    m_VAOShape->AddBuffer(*m_VBOShape, *m_LayoutShape);
+    m_IBOShape = std::make_unique<IndexBuffer>(shape.m_Indices.data(), shape.m_Indices.size());
 }
 
 void TestView::SetLightSources()
@@ -130,12 +105,12 @@ void TestView::SetLightSources()
     {
         std::string prefix = "u_LightSources[" + std::to_string(i) + "].";
         
-        m_Shader->SetUniform3f((prefix + "lightPosition").c_str(), m_LightSources[i].m_Position.x, m_LightSources[i].m_Position.y, m_LightSources[i].m_Position.z);
-        m_Shader->SetUniform3f((prefix + "lightColor").c_str(), m_LightSources[i].m_Color.r, m_LightSources[i].m_Color.g, m_LightSources[i].m_Color.b);
-        m_Shader->SetUniform1f((prefix + "lightIntensity").c_str(), m_LightSources[i].m_Intensity);
+        m_ShaderNormal->SetUniform3f((prefix + "lightPosition").c_str(), m_LightSources[i].m_Position.x, m_LightSources[i].m_Position.y, m_LightSources[i].m_Position.z);
+        m_ShaderNormal->SetUniform3f((prefix + "lightColor").c_str(), m_LightSources[i].m_Color.r, m_LightSources[i].m_Color.g, m_LightSources[i].m_Color.b);
+        m_ShaderNormal->SetUniform1f((prefix + "lightIntensity").c_str(), m_LightSources[i].m_Intensity);
     }
 
-    m_Shader->SetUniform1i("u_LightSourceCount", m_LightSources.size());
+    m_ShaderNormal->SetUniform1i("u_LightSourceCount", m_LightSources.size());
 }
 
 void TestView::InitPointShadow()
@@ -145,7 +120,7 @@ void TestView::InitPointShadow()
     m_FrameBuffer->AttachTexture(m_TextureShadow->GetRendererID());
 
     m_ShadowProjectionMatrix = glm::perspective(glm::radians(90.0f), (float)m_ShadowWidth / (float)m_ShadowHeight, m_ShadowNearPlane, m_ShadowFarPlane);
-    m_Shader_shadow = std::make_unique<Shader>("src/shaders/shadow.shader", Shader::VERTEX_GEOMETRY_FRAGMENT);
+    m_ShaderShadow = std::make_unique<Shader>("src/shaders/shadow.shader", Shader::VERTEX_GEOMETRY_FRAGMENT);
 }
 
 void TestView::UpdateShadowTransforms()
@@ -167,27 +142,27 @@ void TestView::RenderPointShadow()
     glViewport(0, 0, m_ShadowWidth, m_ShadowHeight);
     m_FrameBuffer->Bind();
     m_Renderer->Clear();
-    m_Shader_shadow->Bind();
+    m_ShaderShadow->Bind();
 
     for (int i = 0; i < 6; ++i)
     {
-        m_Shader_shadow->SetUniformMat4f("u_ShadowMatrices[" + std::to_string(i) + "]", m_ShadowTransforms[i]);
+        m_ShaderShadow->SetUniformMat4f("u_ShadowMatrices[" + std::to_string(i) + "]", m_ShadowTransforms[i]);
     }
-    m_Shader_shadow->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
-    m_Shader_shadow->SetUniform3f("u_LightPosition", m_LightSources[0].m_Position.x, m_LightSources[0].m_Position.y, m_LightSources[0].m_Position.z);
+    m_ShaderShadow->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
+    m_ShaderShadow->SetUniform3f("u_LightPosition", m_LightSources[0].m_Position.x, m_LightSources[0].m_Position.y, m_LightSources[0].m_Position.z);
     
     for (int i = 0; i < m_Boxes.size(); ++i)
     {
-        BufferBox(m_Boxes[i]);        
-        m_Shader_shadow->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
-        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader_shadow);
+        BufferShape(m_Boxes[i]);        
+        m_ShaderShadow->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderShadow);
     }
 
     for (int i = 0; i < m_Spheres.size(); ++i)
     {
-        BufferSphere(m_Spheres[i]);         
-        m_Shader_shadow->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
-        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader_shadow);
+        BufferShape(m_Spheres[i]);         
+        m_ShaderShadow->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderShadow);
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -201,12 +176,12 @@ void TestView::RenderScene()
     glViewport(0, 0, m_Window->m_Width, m_Window->m_Height);
     m_Renderer->Clear();
 
-    m_Shader->Bind();
-    m_Shader->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
-    m_Shader->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
-    m_Shader->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
-    m_Shader->SetUniform1i("u_DepthMap", depthMapSlot);
-    m_Shader->SetUniform1i("u_ApplyLighting", true);
+    m_ShaderNormal->Bind();
+    m_ShaderNormal->SetUniformMat4f("u_View", m_Camera->m_ViewMatrix);
+    m_ShaderNormal->SetUniformMat4f("u_Proj", m_Camera->m_ProjectionMatrix);
+    m_ShaderNormal->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
+    m_ShaderNormal->SetUniform1i("u_DepthMap", depthMapSlot);
+    m_ShaderNormal->SetUniform1i("u_ApplyLighting", true);
 
     SetLightSources();
     
@@ -214,26 +189,26 @@ void TestView::RenderScene()
 
     for (int i = 0; i < m_Boxes.size(); ++i)
     {
-        BufferBox(m_Boxes[i]);
-        m_Shader->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
+        BufferShape(m_Boxes[i]);
+        m_ShaderNormal->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
         m_TextureBox->Bind(textureSlot);        
-        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
 
     for (int i = 0; i < m_Spheres.size(); ++i)
     {
-        BufferSphere(m_Spheres[i]);
-        m_Shader->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
+        BufferShape(m_Spheres[i]);
+        m_ShaderNormal->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
         m_TextureEarth->Bind(textureSlot);  
-        m_Renderer->Draw(GL_TRIANGLES, *m_VAO, *m_IBO, *m_Shader);
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
     
     {
         glm::mat4 model(1.0f);
-        m_Shader->SetUniform1i("u_ApplyLighting", false);
-        m_Shader->SetUniformMat4f("u_Model", model);
+        m_ShaderNormal->SetUniform1i("u_ApplyLighting", false);
+        m_ShaderNormal->SetUniformMat4f("u_Model", model);
         m_TextureRGB->Bind(textureSlot);
-        m_Renderer->Draw(GL_LINES, *m_VAO_axes, *m_IBO_axes, *m_Shader);
+        m_Renderer->Draw(GL_LINES, *m_VAOAxes, *m_IBOAxes, *m_ShaderNormal);
     }
 }
 
@@ -325,7 +300,7 @@ void TestView::RenderImGui()
         for (int i = 0; i < m_Boxes.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                DeleteBox(i);
+                m_Boxes.erase(m_Boxes.begin() + i);
         }
 
         ImGui::Text("================");
@@ -356,7 +331,7 @@ void TestView::RenderImGui()
         for (int i = 0; i < m_Spheres.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                DeleteSphere(i);
+                m_Spheres.erase(m_Spheres.begin() + i);
         }
 
         ImGui::Text("================");
@@ -386,7 +361,7 @@ void TestView::RenderImGui()
         for (int i = 0; i < m_LightSources.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                DeleteLightSource(i);
+                m_LightSources.erase(m_LightSources.begin() + i);;
         }
         ImGui::Text("================");
         for (int i = 0; i < m_LightSources.size(); ++i)

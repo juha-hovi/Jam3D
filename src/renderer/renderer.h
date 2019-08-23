@@ -9,6 +9,7 @@
 namespace Jam3D {
 
 // Handles drawing and clearing the screen.
+// Handles buffering.
 class Renderer
 {
 public:

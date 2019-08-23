@@ -4,6 +4,7 @@
 #include "GLFW/glfw3.h"
 
 #include "axes.h"
+#include "shape.h"
 #include "box.h"
 #include "sphere.h"
 #include "lightsource.h"
@@ -44,8 +45,8 @@ public:
     void InitAxes();
     void InitRendering();
 
-    void BufferBox(const Box& box);
-    void BufferSphere(const Sphere& sphere);
+    void BufferShape(const Shape& shape);
+
     void SetLightSources();
     void InitPointShadow();
     void UpdateShadowTransforms();
@@ -87,26 +88,26 @@ private:
     float m_ShadowFarPlane;
     glm::mat4 m_ShadowProjectionMatrix;
     std::vector<glm::mat4> m_ShadowTransforms;
-    std::unique_ptr<Shader> m_Shader_shadow;
+    std::unique_ptr<Shader> m_ShaderShadow;
  
     std::shared_ptr<GLWindow> m_Window;
 
     std::unique_ptr<Renderer> m_Renderer;
-    std::unique_ptr<Shader> m_Shader;
+    std::unique_ptr<Shader> m_ShaderNormal;
     std::unique_ptr<Texture2D> m_TextureBox;
     std::unique_ptr<Texture2D> m_TextureRGB;
     std::unique_ptr<Texture2D> m_TextureEarth;
 
-    std::unique_ptr<VertexArray> m_VAO;
-    std::unique_ptr<VertexBuffer> m_VBO;
-    std::unique_ptr<VertexBufferLayout> m_Layout;
-    std::unique_ptr<IndexBuffer> m_IBO;
+    std::unique_ptr<VertexArray> m_VAOShape;
+    std::unique_ptr<VertexBuffer> m_VBOShape;
+    std::unique_ptr<VertexBufferLayout> m_LayoutShape;
+    std::unique_ptr<IndexBuffer> m_IBOShape;
 
     std::unique_ptr<Axes> m_Axes;
-    std::unique_ptr<VertexArray> m_VAO_axes;
-    std::unique_ptr<VertexBuffer> m_VBO_axes;
-    std::unique_ptr<VertexBufferLayout> m_Layout_axes;
-    std::unique_ptr<IndexBuffer> m_IBO_axes;
+    std::unique_ptr<VertexArray> m_VAOAxes;
+    std::unique_ptr<VertexBuffer> m_VBOAxes;
+    std::unique_ptr<VertexBufferLayout> m_LayoutAxes;
+    std::unique_ptr<IndexBuffer> m_IBOAxes;
 
     std::vector<Box> m_Boxes;
     std::vector<glm::mat4> m_BoxModelMats;

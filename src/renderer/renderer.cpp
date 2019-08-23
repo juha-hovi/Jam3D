@@ -8,7 +8,6 @@ void Renderer::Clear() const
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-// Draws triangles on screen.
 // Input:
 // 	  -va: reference to a VertexArray object
 // 	  -ib: reference to IndexBuffer object
