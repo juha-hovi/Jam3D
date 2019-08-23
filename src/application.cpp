@@ -36,23 +36,6 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
     }
 }
 
-/*  TODO:
-    Renderer:
-        - Second camera control scheme: inheritance for camera class
-        - Shadow support for multiple light sources
-        - Directional light shader implementation
-    Application:
-        - View parent class for inheritance
-        - Look into multiple viewport implementation
-            - 4 views: general, xy-plane, xz-plane, yz-plane
-                - Draw object by clicking mouse
-    Libraries:
-        - Add matrices to math
-        - Matrix calculations
-        - 2D GUI elements library (buttons...)
-
-*/
-
 Application::Application()
 {
     if (!glfwInit())
