@@ -27,11 +27,11 @@ public:
     std::unique_ptr<Renderer> m_Renderer;
     std::vector<Viewport> m_Viewports;
 
-    std::shared_ptr<std::vector<Box>> m_Boxes;
-    std::shared_ptr<std::vector<glm::mat4>> m_BoxModelMats;
-    std::shared_ptr<std::vector<Sphere>> m_Spheres;
-    std::shared_ptr<std::vector<glm::mat4>> m_SphereModelMats;
-    std::shared_ptr<std::vector<LightSource>> m_LightSources;
+    static std::vector<Box> m_Boxes;
+    static std::vector<glm::mat4> m_BoxModelMats;
+    static std::vector<Sphere> m_Spheres;
+    static std::vector<glm::mat4> m_SphereModelMats;
+    static std::vector<LightSource> m_LightSources;
 
     // Input handling
     static View *m_CurrentView;

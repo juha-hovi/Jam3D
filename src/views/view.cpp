@@ -1,19 +1,20 @@
 #include "view.h"
 namespace Jam3D {
 
-// Global for input handling
+// Global for shared input callbacks
 View * View::m_CurrentView;
+
+// Global for shared object storage
+std::vector<Box> View::m_Boxes;
+std::vector<glm::mat4> View::m_BoxModelMats;
+std::vector<Sphere> View::m_Spheres;
+std::vector<glm::mat4> View::m_SphereModelMats;
+std::vector<LightSource> View::m_LightSources;
 
 View::View(std::shared_ptr<GLWindow> window)
     : m_Window(window)
 {
     m_Renderer = std::make_unique<Renderer>();
-
-    m_Boxes = std::make_shared<std::vector<Box>>();
-    m_BoxModelMats = std::make_shared<std::vector<glm::mat4>>();
-    m_Spheres = std::make_shared<std::vector<Sphere>>();
-    m_SphereModelMats = std::make_shared<std::vector<glm::mat4>>();
-    m_LightSources = std::make_shared<std::vector<LightSource>>();
 }
 
 }

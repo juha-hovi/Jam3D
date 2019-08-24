@@ -78,23 +78,23 @@ void TestView::InitAxes()
 
 void TestView::AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation)
 {
-    m_Boxes->push_back(Box(center, dimensions, rotation));
+    m_Boxes.push_back(Box(center, dimensions, rotation));
 }
 
 void TestView::AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount)
 {
-    m_Spheres->push_back(Sphere(radius, center, sectorCount, stackCount));
+    m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
 }
 
 void TestView::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity)
 {
-    if (m_LightSources->size() <= 10)
+    if (m_LightSources.size() <= 10)
     {
-        m_LightSources->push_back(LightSource(type, position_or_direction, color, intensity));
+        m_LightSources.push_back(LightSource(type, position_or_direction, color, intensity));
     }
     else
     {
-        Jam3D::Log::Warning("Already at max light sources! Current max: " + m_LightSources->size());
+        Jam3D::Log::Warning("Already at max light sources! Current max: " + m_LightSources.size());
     }    
 }
 
@@ -108,16 +108,16 @@ void TestView::BufferShape(const Shape& shape)
 
 void TestView::SetLightSources()
 {
-    for (int i = 0; i < m_LightSources->size(); ++i)
+    for (int i = 0; i < m_LightSources.size(); ++i)
     {
         std::string prefix = "u_LightSources[" + std::to_string(i) + "].";
         
-        m_ShaderNormal->SetUniform3f((prefix + "lightPosition").c_str(), m_LightSources->operator[](i).m_Position.x, m_LightSources->operator[](i).m_Position.y, m_LightSources->operator[](i).m_Position.z);
-        m_ShaderNormal->SetUniform3f((prefix + "lightColor").c_str(), m_LightSources->operator[](i).m_Color.r, m_LightSources->operator[](i).m_Color.g, m_LightSources->operator[](i).m_Color.b);
-        m_ShaderNormal->SetUniform1f((prefix + "lightIntensity").c_str(), m_LightSources->operator[](i).m_Intensity);
+        m_ShaderNormal->SetUniform3f((prefix + "lightPosition").c_str(), m_LightSources[i].m_Position.x, m_LightSources[i].m_Position.y, m_LightSources[i].m_Position.z);
+        m_ShaderNormal->SetUniform3f((prefix + "lightColor").c_str(), m_LightSources[i].m_Color.r, m_LightSources[i].m_Color.g, m_LightSources[i].m_Color.b);
+        m_ShaderNormal->SetUniform1f((prefix + "lightIntensity").c_str(), m_LightSources[i].m_Intensity);
     }
 
-    m_ShaderNormal->SetUniform1i("u_LightSourceCount", m_LightSources->size());
+    m_ShaderNormal->SetUniform1i("u_LightSourceCount", m_LightSources.size());
 }
 
 void TestView::InitPointShadow()
@@ -136,7 +136,7 @@ void TestView::InitPointShadow()
 void TestView::UpdateShadowTransforms()
 {
     m_ShadowTransforms.clear();
-    glm::vec3 lightPos(m_LightSources->operator[](0).m_Position.x, m_LightSources->operator[](0).m_Position.y, m_LightSources->operator[](0).m_Position.z);
+    glm::vec3 lightPos(m_LightSources[0].m_Position.x, m_LightSources[0].m_Position.y, m_LightSources[0].m_Position.z);
     m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
     m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(-1.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f, 0.0f)));
     m_ShadowTransforms.push_back(m_ShadowProjectionMatrix * glm::lookAt(lightPos, lightPos + glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
@@ -159,19 +159,19 @@ void TestView::RenderPointShadow()
         m_ShaderShadow->SetUniformMat4f("u_ShadowMatrices[" + std::to_string(i) + "]", m_ShadowTransforms[i]);
     }
     m_ShaderShadow->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
-    m_ShaderShadow->SetUniform3f("u_LightPosition", m_LightSources->operator[](0).m_Position.x, m_LightSources->operator[](0).m_Position.y, m_LightSources->operator[](0).m_Position.z);
+    m_ShaderShadow->SetUniform3f("u_LightPosition", m_LightSources[0].m_Position.x, m_LightSources[0].m_Position.y, m_LightSources[0].m_Position.z);
     
-    for (int i = 0; i < m_Boxes->size(); ++i)
+    for (int i = 0; i < m_Boxes.size(); ++i)
     {
-        BufferShape(m_Boxes->operator[](i));        
-        m_ShaderShadow->SetUniformMat4f("u_Model", m_BoxModelMats->operator[](i));
+        BufferShape(m_Boxes[i]);        
+        m_ShaderShadow->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderShadow);
     }
 
-    for (int i = 0; i < m_Spheres->size(); ++i)
+    for (int i = 0; i < m_Spheres.size(); ++i)
     {
-        BufferShape(m_Spheres->operator[](i));         
-        m_ShaderShadow->SetUniformMat4f("u_Model", m_SphereModelMats->operator[](i));
+        BufferShape(m_Spheres[i]);         
+        m_ShaderShadow->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderShadow);
     }
 
@@ -197,18 +197,18 @@ void TestView::RenderScene()
     
     m_TextureShadow->Bind(depthMapSlot);
 
-    for (int i = 0; i < m_Boxes->size(); ++i)
+    for (int i = 0; i < m_Boxes.size(); ++i)
     {
-        BufferShape(m_Boxes->operator[](i));
-        m_ShaderNormal->SetUniformMat4f("u_Model", m_BoxModelMats->operator[](i));
+        BufferShape(m_Boxes[i]);
+        m_ShaderNormal->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
         m_TextureBox->Bind(textureSlot);        
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
 
-    for (int i = 0; i < m_Spheres->size(); ++i)
+    for (int i = 0; i < m_Spheres.size(); ++i)
     {
-        BufferShape(m_Spheres->operator[](i));
-        m_ShaderNormal->SetUniformMat4f("u_Model", m_SphereModelMats->operator[](i));
+        BufferShape(m_Spheres[i]);
+        m_ShaderNormal->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
         m_TextureEarth->Bind(textureSlot);  
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
@@ -234,48 +234,48 @@ void TestView::DoTick()
     if (m_ObjectRotation >= 720.0f)
         m_ObjectRotation =  0.0f;
 
-    if (m_Spheres->size() >= 1)
+    if (m_Spheres.size() >= 1)
     {
-        m_Spheres->operator[](0).m_Center = Jam3D::Vec3<float>(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance);
-        m_Spheres->operator[](0).m_Rotation.x = 0.0f;        
-        m_Spheres->operator[](0).m_Rotation.y = m_ObjectRotation;
-        m_Spheres->operator[](0).m_Rotation.z = 23.5;
+        m_Spheres[0].m_Center = Jam3D::Vec3<float>(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance);
+        m_Spheres[0].m_Rotation.x = 0.0f;        
+        m_Spheres[0].m_Rotation.y = m_ObjectRotation;
+        m_Spheres[0].m_Rotation.z = 23.5;
         
     }
 
-    if (m_Boxes->size() >= 1)
+    if (m_Boxes.size() >= 1)
     {
-        m_Boxes->operator[](0).m_Rotation.x = m_ObjectRotation;        
-        m_Boxes->operator[](0).m_Rotation.y = m_ObjectRotation * 0.5f;
-        m_Boxes->operator[](0).m_Rotation.z = 0.0f;
+        m_Boxes[0].m_Rotation.x = m_ObjectRotation;        
+        m_Boxes[0].m_Rotation.y = m_ObjectRotation * 0.5f;
+        m_Boxes[0].m_Rotation.z = 0.0f;
     }
 }
 
 void TestView::UpdateModelMats()
 {
-    m_BoxModelMats->clear();
-    m_SphereModelMats->clear();
+    m_BoxModelMats.clear();
+    m_SphereModelMats.clear();
 
-    for (int i = 0; i < m_Boxes->size(); ++i)
+    for (int i = 0; i < m_Boxes.size(); ++i)
     {
         glm::mat4 model(1.0f);
-        glm::vec3 translation(m_Boxes->operator[](i).m_Center.x, m_Boxes->operator[](i).m_Center.y, m_Boxes->operator[](i).m_Center.z);
+        glm::vec3 translation(m_Boxes[i].m_Center.x, m_Boxes[i].m_Center.y, m_Boxes[i].m_Center.z);
         model = glm::translate(model, translation);
-        model = glm::rotate(model, glm::radians(m_Boxes->operator[](i).m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::rotate(model, glm::radians(m_Boxes->operator[](i).m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(m_Boxes->operator[](i).m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        m_BoxModelMats->push_back(model);
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Boxes[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        m_BoxModelMats.push_back(model);
     }
 
-    for (int i = 0; i < m_Spheres->size(); ++i)
+    for (int i = 0; i < m_Spheres.size(); ++i)
     {
         glm::mat4 model(1.0f);
-        glm::vec3 translation(m_Spheres->operator[](i).m_Center.x, m_Spheres->operator[](i).m_Center.y, m_Spheres->operator[](i).m_Center.z);
+        glm::vec3 translation(m_Spheres[i].m_Center.x, m_Spheres[i].m_Center.y, m_Spheres[i].m_Center.z);
         model = glm::translate(model, translation);
-        model = glm::rotate(model, glm::radians(m_Spheres->operator[](i).m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::rotate(model, glm::radians(m_Spheres->operator[](i).m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::rotate(model, glm::radians(m_Spheres->operator[](i).m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-        m_SphereModelMats->push_back(model);
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        m_SphereModelMats.push_back(model);
     }
 }
 
@@ -303,22 +303,22 @@ void TestView::RenderImGui()
         }
         
         ImGui::Text("================");
-        for (int i = 0; i < m_Boxes->size(); ++i)
+        for (int i = 0; i < m_Boxes.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                m_Boxes->erase(m_Boxes->begin() + i);
+                m_Boxes.erase(m_Boxes.begin() + i);
         }
 
         ImGui::Text("================");
-        for (int i = 0; i < m_Boxes->size(); ++i)
+        for (int i = 0; i < m_Boxes.size(); ++i)
         {
-            ImGui::SliderFloat3(("Rot " + std::to_string(i)).c_str(), &m_Boxes->operator[](i).m_Rotation.x, 0.0f, 360.0f);
+            ImGui::SliderFloat3(("Rot " + std::to_string(i)).c_str(), &m_Boxes[i].m_Rotation.x, 0.0f, 360.0f);
         }
 
         ImGui::Text("================");
-        for (int i = 0; i < m_Boxes->size(); ++i)
+        for (int i = 0; i < m_Boxes.size(); ++i)
         {
-            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_Boxes->operator[](i).m_Center.x, -500.0f, 500.0f);
+            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_Boxes[i].m_Center.x, -500.0f, 500.0f);
         }
         ImGui::End();
     }
@@ -334,22 +334,22 @@ void TestView::RenderImGui()
             AddSphere(m_SphereRadius, m_SphereCenter, m_SphereSectorCount, m_SphereStackCount);
         }
         ImGui::Text("================");
-        for (int i = 0; i < m_Spheres->size(); ++i)
+        for (int i = 0; i < m_Spheres.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                m_Spheres->erase(m_Spheres->begin() + i);
+                m_Spheres.erase(m_Spheres.begin() + i);
         }
 
         ImGui::Text("================");
-        for (int i = 0; i < m_Spheres->size(); ++i)
+        for (int i = 0; i < m_Spheres.size(); ++i)
         {
-            ImGui::SliderFloat3(("Rot " + std::to_string(i)).c_str(), &m_Spheres->operator[](i).m_Rotation.x, 0.0f, 360.0f);
+            ImGui::SliderFloat3(("Rot " + std::to_string(i)).c_str(), &m_Spheres[i].m_Rotation.x, 0.0f, 360.0f);
         }
 
         ImGui::Text("================");
-        for (int i = 0; i < m_Spheres->size(); ++i)
+        for (int i = 0; i < m_Spheres.size(); ++i)
         {
-            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_Spheres->operator[](i).m_Center.x, -500.0f, 500.0f);
+            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_Spheres[i].m_Center.x, -500.0f, 500.0f);
         }
         ImGui::End();
     }
@@ -364,15 +364,15 @@ void TestView::RenderImGui()
             AddLightSource(LightSource::POINT_LIGHT, m_LightPosition, m_LightColor, m_LightIntensity);
         }
         ImGui::Text("================");
-        for (int i = 0; i < m_LightSources->size(); ++i)
+        for (int i = 0; i < m_LightSources.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                m_LightSources->erase(m_LightSources->begin() + i);;
+                m_LightSources.erase(m_LightSources.begin() + i);;
         }
         ImGui::Text("================");
-        for (int i = 0; i < m_LightSources->size(); ++i)
+        for (int i = 0; i < m_LightSources.size(); ++i)
         {
-            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_LightSources->operator[](i).m_Position.x, -500.0f, 500.0f);
+            ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_LightSources[i].m_Position.x, -500.0f, 500.0f);
         }    
         ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::End();
