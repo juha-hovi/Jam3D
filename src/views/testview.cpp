@@ -20,7 +20,6 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
     : View(window),
     m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
-    m_ObjectRotation(0.0f), m_ObjectLocation(0.0f), m_ObjectDistance(500.0f),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f)), m_LightColor(Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f)),
     m_LightIntensity(1.0f), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f)),
     m_NormalViewportIndex(-1), m_ShadowViewportIndex(-1)
@@ -32,7 +31,7 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
 
     AddBox(Jam3D::Vec3<float>(0.0f, -200.0f, 0.0f), Jam3D::Vec3<float>(70.0f, 50.0f, 90.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
     AddBox(Jam3D::Vec3<float>(0.0f, -500.0f, 0.0f), Jam3D::Vec3<float>(2000.0f, 10.0f, 2000.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
-    AddSphere(100.0f, Jam3D::Vec3<float>(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance), 20, 20);
+    AddSphere(100.0f, Jam3D::Vec3<float>(500.0f, -300.0f, 0.0f), 20, 20);
     AddLightSource(LightSource::POINT_LIGHT, Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f), Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f), 1.0f);
 
     InitRendering();
@@ -74,36 +73,6 @@ void TestView::InitAxes()
     m_LayoutAxes->Push<float>(3);
     m_VAOAxes->AddBuffer(*m_VBOAxes, *m_LayoutAxes);
     m_IBOAxes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
-}
-
-void TestView::AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation)
-{
-    m_Boxes.push_back(Box(center, dimensions, rotation));
-}
-
-void TestView::AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount)
-{
-    m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
-}
-
-void TestView::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity)
-{
-    if (m_LightSources.size() <= 10)
-    {
-        m_LightSources.push_back(LightSource(type, position_or_direction, color, intensity));
-    }
-    else
-    {
-        Jam3D::Log::Warning("Already at max light sources! Current max: " + m_LightSources.size());
-    }    
-}
-
-void TestView::BufferShape(const Shape& shape)
-{
-    m_VAOShape = std::make_unique<VertexArray>();
-    m_VBOShape = std::make_unique<VertexBuffer>(shape.m_VertexData.data(), shape.m_VertexData.size() * sizeof(float));    
-    m_VAOShape->AddBuffer(*m_VBOShape, *m_LayoutShape);
-    m_IBOShape = std::make_unique<IndexBuffer>(shape.m_Indices.data(), shape.m_Indices.size());
 }
 
 void TestView::SetLightSources()
@@ -222,35 +191,6 @@ void TestView::RenderScene()
     }
 }
 
-void TestView::DoTick()
-{
-    float locationMult = 0.005f;
-        m_ObjectLocation += locationMult;
-        if (m_ObjectLocation > (2.0f * M_PI))
-            m_ObjectLocation = 0.0f;
-
-    float rotationMult = 0.8f;
-    m_ObjectRotation += rotationMult;
-    if (m_ObjectRotation >= 720.0f)
-        m_ObjectRotation =  0.0f;
-
-    if (m_Spheres.size() >= 1)
-    {
-        m_Spheres[0].m_Center = Jam3D::Vec3<float>(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance);
-        m_Spheres[0].m_Rotation.x = 0.0f;        
-        m_Spheres[0].m_Rotation.y = m_ObjectRotation;
-        m_Spheres[0].m_Rotation.z = 23.5;
-        
-    }
-
-    if (m_Boxes.size() >= 1)
-    {
-        m_Boxes[0].m_Rotation.x = m_ObjectRotation;        
-        m_Boxes[0].m_Rotation.y = m_ObjectRotation * 0.5f;
-        m_Boxes[0].m_Rotation.z = 0.0f;
-    }
-}
-
 void TestView::UpdateModelMats()
 {
     m_BoxModelMats.clear();
@@ -282,7 +222,6 @@ void TestView::UpdateModelMats()
 void TestView::Render()
 {
     m_Camera->Update();
-    DoTick();
     UpdateModelMats();
 
     RenderPointShadow();

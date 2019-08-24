@@ -38,6 +38,7 @@ void GLAPIENTRY OpenGLDebugCallback(GLenum source,
 }
 
 Application::Application()
+    : m_ObjectDistance(500.0f), m_ObjectRotation(0.0f), m_ObjectLocation(0.0f), m_WindowWidth(1600), m_WindowHeight(900)
 {
     if (!glfwInit())
         Jam3D::Log::Error("glfwInit failed!");
@@ -46,7 +47,7 @@ Application::Application()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_GLWindow = std::make_shared<GLWindow>(1600, 900, "Jam3D");
+    m_GLWindow = std::make_shared<GLWindow>(m_WindowWidth, m_WindowHeight, "Jam3D");
 
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
@@ -94,6 +95,7 @@ void Application::Run()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         
+        DoTick();
         m_CurrentView->Render();
         
         {
@@ -133,6 +135,32 @@ void Application::InitCallbacks()
     glfwSetKeyCallback(m_GLWindow->m_Window, View::KeyCallbackDispatch);
     glfwSetMouseButtonCallback(m_GLWindow->m_Window, View::MouseButtonCallbackDispatch);
     glfwSetScrollCallback(m_GLWindow->m_Window, View::ScrollCallbackDispatch);
+}
+
+void Application::DoTick()
+{
+    float locationMult = 0.005f;
+        m_ObjectLocation += locationMult;
+        if (m_ObjectLocation > (2.0f * M_PI))
+            m_ObjectLocation = 0.0f;
+
+    float rotationMult = 0.8f;
+    m_ObjectRotation += rotationMult;
+    if (m_ObjectRotation >= 720.0f)
+        m_ObjectRotation =  0.0f;
+
+    if (m_CurrentView->m_Spheres.size() >= 1)
+    {
+        m_CurrentView->m_Spheres[0].SetPosition(Jam3D::Vec3<float>(std::sin(m_ObjectLocation) * m_ObjectDistance, -300.0f, std::cos(m_ObjectLocation) * m_ObjectDistance));
+        m_CurrentView->m_Spheres[0].SetRotation(Jam3D::Vec3<float>(0.0f, m_ObjectRotation, 23.5f));        
+    }
+
+    if (m_CurrentView->m_Boxes.size() >= 1)
+    {
+        m_CurrentView->m_Boxes[0].m_Rotation.x = m_ObjectRotation;        
+        m_CurrentView->m_Boxes[0].m_Rotation.y = m_ObjectRotation * 0.5f;
+        m_CurrentView->m_Boxes[0].m_Rotation.z = 0.0f;
+    }
 }
 
 }

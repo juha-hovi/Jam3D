@@ -40,4 +40,9 @@ Axes::Axes()
 	}
 }
 
+void Axes::Update()
+{
+
+}
+
 }

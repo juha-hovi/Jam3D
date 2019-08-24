@@ -12,8 +12,10 @@ public:
     Shape();
 
     void Move(Jam3D::Vec3<float> translation);
+    void SetPosition(Jam3D::Vec3<float> position);
     void Rotate(Jam3D::Vec3<float> rotation);
-    virtual void Update();
+    void SetRotation(Jam3D::Vec3<float> rotation);
+    virtual void Update() = 0;
 
     Jam3D::Vec3<float> m_Center;
     Jam3D::Vec3<float> m_Rotation;

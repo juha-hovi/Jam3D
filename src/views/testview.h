@@ -32,17 +32,8 @@ public:
 	void ScrollCallback(double yOffset) override;
 
 private:
-    void AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);
-    void DeleteBox(int index);
-    void AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount);
-    void DeleteSphere(int index);
-    void AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity);
-    void DeleteLightSource(int index);
-
     void InitAxes();
     void InitRendering();
-
-    void BufferShape(const Shape& shape);
 
     void SetLightSources();
     void InitPointShadow();
@@ -51,7 +42,6 @@ private:
     void RenderScene();
 
     void UpdateModelMats();    
-    void DoTick();
 
     void RenderImGui();
 
@@ -67,10 +57,6 @@ private:
     float m_SphereRadius;
     int m_SphereSectorCount;
     int m_SphereStackCount;
-
-    float m_ObjectLocation;
-    float m_ObjectDistance;
-    float m_ObjectRotation;
 
     unsigned int m_LightType;
     Jam3D::Vec3<float> m_LightPosition;
@@ -95,18 +81,6 @@ private:
     std::unique_ptr<Texture2D> m_TextureBox;
     std::unique_ptr<Texture2D> m_TextureRGB;
     std::unique_ptr<Texture2D> m_TextureEarth;
-
-    std::unique_ptr<VertexArray> m_VAOShape;
-    std::unique_ptr<VertexBuffer> m_VBOShape;
-    std::unique_ptr<VertexBufferLayout> m_LayoutShape;
-    std::unique_ptr<IndexBuffer> m_IBOShape;
-
-    std::unique_ptr<Axes> m_Axes;
-    std::unique_ptr<VertexArray> m_VAOAxes;
-    std::unique_ptr<VertexBuffer> m_VBOAxes;
-    std::unique_ptr<VertexBufferLayout> m_LayoutAxes;
-    std::unique_ptr<IndexBuffer> m_IBOAxes;
-
 };
 
 }
