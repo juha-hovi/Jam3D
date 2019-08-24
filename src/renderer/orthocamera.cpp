@@ -18,9 +18,12 @@ void OrthoCamera::Update()
 
     // In case CameraZ points straight up (or straight down)
     if (m_Pitch == 90.0f)
+    {
         m_CameraX = glm::vec3(1.0f, 0.0f, 0.0f);
-
-	m_CameraY = glm::cross(m_CameraZ, m_CameraX);
+	    m_CameraY = -glm::cross(m_CameraZ, m_CameraX);        
+    }
+    else
+	    m_CameraY = glm::cross(m_CameraZ, m_CameraX);
 
 	m_ViewMatrix = glm::lookAt(m_Position, m_Position - m_CameraZ, m_CameraY);
 }
