@@ -4,21 +4,25 @@
 
 namespace Jam3D {
 
-PerspectiveCamera::PerspectiveCamera(float fov, float near, float far, Jam3D::Vec2<float> windowDim, GLFWwindow* window)
-	: m_Window(window), m_FoV(fov), m_Near(near), m_Far(far), m_WindowDimension(windowDim),
-	m_Position(glm::vec3(1000.0f, 1000.0f, -1000.0f)), m_Pitch(35.0f), m_Yaw(-45.0f),
-	m_CameraX(glm::vec3(0.0f, 0.0f, 0.0f)), m_CameraY(glm::vec3(0.0f, 0.0f, 0.0f)),
+PerspectiveCamera::PerspectiveCamera(float fov, float near, float far, Jam3D::Vec2<float> windowDim, std::shared_ptr<GLWindow> window)
+	: Camera(near, far, windowDim, window), m_FoV(fov),
 	m_RotationSensitivity(0.07f), m_TranslationSensitivity(15.0f), m_ScrollSensitivity(50.0f),
 	m_PressedW(false), m_PressedA(false), m_PressedS(false), m_PressedD(false),
 	m_MousePosPrevious(Vec2<float>(0.0f, 0.0f))
 {
+	m_Position = glm::vec3(1000.0f, 1000.0f, -1000.0f);
+	m_Pitch = 35.0f; 
+	m_Yaw = -45.0f;
+	m_CameraX = glm::vec3(0.0f, 0.0f, 0.0f);
+	m_CameraY = glm::vec3(0.0f, 0.0f, 0.0f);
+
 	m_ProjectionMatrix = glm::mat4(glm::perspective(glm::radians(m_FoV), m_WindowDimension.x / m_WindowDimension.y, m_Near, m_Far));
 	
 	glm::vec3 target(0.0f, 0.0f, 0.0f);
 	m_CameraZ = glm::normalize(m_Position - target);
 
 	double xPos, yPos;
-	glfwGetCursorPos(m_Window, &xPos, &yPos);
+	glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
 	m_MousePosPrevious.x = (float)xPos;
 	m_MousePosPrevious.y = (float)yPos;
 	
@@ -55,7 +59,7 @@ void PerspectiveCamera::ProcessInput()
 
 void PerspectiveCamera::CursorPosCallback(double xPos, double yPos)
 {
-	int stateMouseRight = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT);
+	int stateMouseRight = glfwGetMouseButton(m_Window->m_Window, GLFW_MOUSE_BUTTON_RIGHT);
 
 	if (stateMouseRight == GLFW_PRESS)
 	{
@@ -110,10 +114,10 @@ void PerspectiveCamera::KeyCallback(int key, int scancode, int action, int mods)
 void PerspectiveCamera::MouseButtonCallback(int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
-		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(m_Window->m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	else
-		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		glfwSetInputMode(m_Window->m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void PerspectiveCamera::ScrollCallback(double yOffset)

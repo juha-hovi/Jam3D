@@ -2,6 +2,7 @@
 * Add Math to dependency chart
 
 # Renderer:
+* Should camera be moved out of renderer?
 * Second camera control scheme: inheritance for camera class
 * Shadow support for multiple light sources
 * Directional light shader implementation
