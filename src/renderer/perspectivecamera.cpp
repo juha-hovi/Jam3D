@@ -1,10 +1,10 @@
-#include "camera.h"
+#include "perspectivecamera.h"
 
 #include <cmath>
 
 namespace Jam3D {
 
-Camera::Camera(float fov, float near, float far, Jam3D::Vec2<float> windowDim, GLFWwindow* window)
+PerspectiveCamera::PerspectiveCamera(float fov, float near, float far, Jam3D::Vec2<float> windowDim, GLFWwindow* window)
 	: m_Window(window), m_FoV(fov), m_Near(near), m_Far(far), m_WindowDimension(windowDim),
 	m_Position(glm::vec3(1000.0f, 1000.0f, -1000.0f)), m_Pitch(35.0f), m_Yaw(-45.0f),
 	m_CameraX(glm::vec3(0.0f, 0.0f, 0.0f)), m_CameraY(glm::vec3(0.0f, 0.0f, 0.0f)),
@@ -25,7 +25,7 @@ Camera::Camera(float fov, float near, float far, Jam3D::Vec2<float> windowDim, G
 	Update();
 }
 
-void Camera::Update()
+void PerspectiveCamera::Update()
 {
 	ProcessInput();
 
@@ -37,7 +37,7 @@ void Camera::Update()
 	m_ViewMatrix = glm::lookAt(m_Position, m_Position - m_CameraZ, m_CameraY);
 }
 
-void Camera::ProcessInput()
+void PerspectiveCamera::ProcessInput()
 {
 	if (m_PressedW)
 		m_Position += -m_CameraZ * m_TranslationSensitivity;
@@ -53,7 +53,7 @@ void Camera::ProcessInput()
 
 }
 
-void Camera::CursorPosCallback(double xPos, double yPos)
+void PerspectiveCamera::CursorPosCallback(double xPos, double yPos)
 {
 	int stateMouseRight = glfwGetMouseButton(m_Window, GLFW_MOUSE_BUTTON_RIGHT);
 
@@ -78,7 +78,7 @@ void Camera::CursorPosCallback(double xPos, double yPos)
 	m_MousePosPrevious.y = (float)yPos;
 }
 
-void Camera::KeyCallback(int key, int scancode, int action, int mods)
+void PerspectiveCamera::KeyCallback(int key, int scancode, int action, int mods)
 {
 	bool flag = false;
 	if (action == GLFW_PRESS)
@@ -107,7 +107,7 @@ void Camera::KeyCallback(int key, int scancode, int action, int mods)
 	}
 }
 
-void Camera::MouseButtonCallback(int button, int action, int mods)
+void PerspectiveCamera::MouseButtonCallback(int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -116,7 +116,7 @@ void Camera::MouseButtonCallback(int button, int action, int mods)
 		glfwSetInputMode(m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
-void Camera::ScrollCallback(double yOffset)
+void PerspectiveCamera::ScrollCallback(double yOffset)
 {
 	m_Position += -m_CameraZ * m_ScrollSensitivity * (float)yOffset;
 }

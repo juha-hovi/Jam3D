@@ -13,6 +13,7 @@
 
 #include "application.h"
 #include "log.h"
+#include "view.h"
 
 namespace Jam3D {
 
@@ -54,6 +55,12 @@ Application::Application()
 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(OpenGLDebugCallback, 0);
+
+    m_TestView = std::make_shared<TestView>(m_GLWindow);
+    m_ObjectCreationView = std::make_shared<ObjectCreationView>(m_GLWindow);
+    m_CurrentView = m_TestView;
+    m_TestView->SetAsCurrent();
+    InitCallbacks();
 }
 
 Application::~Application()
@@ -77,11 +84,6 @@ void Application::Run()
     const char* glsl_version = "#version 330";
     ImGui_ImplGlfw_InitForOpenGL(m_GLWindow->m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
-
-    m_TestView = std::make_shared<TestView>(m_GLWindow);
-    m_ObjectCreationView = std::make_shared<ObjectCreationView>(m_GLWindow);
-    m_CurrentView = m_TestView;
-    m_GLWindow->SetCamera(m_TestView->m_Camera);
     
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(m_GLWindow->m_Window))  
@@ -97,9 +99,15 @@ void Application::Run()
         {
             ImGui::Begin("Views");
             if (ImGui::Button("Test"))
+            {
                 m_CurrentView = m_TestView;
+                m_TestView->SetAsCurrent();
+            }
             if (ImGui::Button("Object creation"))
+            {
                 m_CurrentView = m_ObjectCreationView;
+                m_ObjectCreationView->SetAsCurrent();
+            }
             ImGui::End();
         }
         
@@ -117,6 +125,14 @@ void Application::Run()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+}
+
+void Application::InitCallbacks()
+{
+    glfwSetCursorPosCallback(m_GLWindow->m_Window, View::CursorPosCallbackDispatch);    
+    glfwSetKeyCallback(m_GLWindow->m_Window, View::KeyCallbackDispatch);
+    glfwSetMouseButtonCallback(m_GLWindow->m_Window, View::MouseButtonCallbackDispatch);
+    glfwSetScrollCallback(m_GLWindow->m_Window, View::ScrollCallbackDispatch);
 }
 
 }

@@ -8,7 +8,7 @@
 #include "sphere.h"
 #include "lightsource.h"
 
-#include "camera.h"
+#include "perspectivecamera.h"
 #include "renderer.h"
 #include "vertexarray.h"
 #include "vertexbuffer.h"
@@ -32,6 +32,11 @@ class TestView : public View
 public:
     TestView(std::shared_ptr<GLWindow> window);
     void Render() override;
+
+    void CursorPosCallback(double xPos, double yPos) override;
+	void KeyCallback(int key, int scancode, int action, int mods) override;
+	void MouseButtonCallback(int button, int action, int mods) override;
+	void ScrollCallback(double yOffset) override;
 
 private:
     void AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);
@@ -58,7 +63,7 @@ private:
     void RenderImGui();
 
 public:
-    std::shared_ptr<Camera> m_Camera;
+    std::shared_ptr<PerspectiveCamera> m_Camera;
 
 private:
     Jam3D::Vec3<float> m_BoxCenter;

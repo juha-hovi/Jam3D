@@ -11,10 +11,10 @@
 
 namespace Jam3D {
 
-class Camera
+class PerspectiveCamera
 {
 public:
-	Camera(float fov, float near, float far, Vec2<float> windowDim, GLFWwindow* window);
+	PerspectiveCamera(float fov, float near, float far, Vec2<float> windowDim, GLFWwindow* window);
 	void Update();
 	void ProcessInput();
 	void CursorPosCallback(double xPos, double yPos);

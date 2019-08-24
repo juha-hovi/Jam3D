@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
-project(opengl_project_app)
+project(Jam3D)
 
 include_directories(math)
+
+add_subdirectory(misc)
+include_directories(misc)
 
 add_subdirectory(renderer)
 include_directories(renderer)
@@ -25,9 +28,7 @@ include_directories(${GLEW_INCLUDE_DIRS})
 set(jam3d_source 
 	entrypoint.cpp
 	application.cpp
-	application.h
-	log.cpp
-	log.h)
+	application.h)
 add_executable(Jam3D ${jam3d_source})
 
 target_link_libraries(Jam3D renderer views imgui glfw ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})

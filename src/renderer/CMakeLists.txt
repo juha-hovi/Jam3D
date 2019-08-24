@@ -1,12 +1,8 @@
-include_directories(../)
-
 set(renderer_source
-	camera.cpp
-	camera.h
+	perspectivecamera.cpp
+	perspectivecamera.h
 	framebuffer.cpp
 	framebuffer.h
-	glwindow.cpp
-	glwindow.h
 	indexbuffer.cpp
 	indexbuffer.h
 	renderer.cpp
@@ -28,4 +24,4 @@ set(renderer_source
 	viewport.h
 )
 add_library(renderer ${renderer_source})
-target_link_libraries(renderer stb_image)
+target_link_libraries(renderer misc stb_image)

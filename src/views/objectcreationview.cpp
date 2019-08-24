@@ -25,4 +25,24 @@ void ObjectCreationView::Render()
     m_Renderer->Clear();
 }
 
+void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
+{
+    
+}
+
+void ObjectCreationView::KeyCallback(int key, int scancode, int action, int mods)
+{
+
+}
+
+void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
+{
+
+}
+
+void ObjectCreationView::ScrollCallback(double yOffset)
+{
+
+}
+
 }

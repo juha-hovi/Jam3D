@@ -1,5 +1,3 @@
-include_directories(../)
-
 set(views_source
     objectcreationview.cpp
     objectcreationview.h

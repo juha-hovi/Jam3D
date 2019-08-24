@@ -1,6 +1,5 @@
-# Architecture:
-* Move GLWindow from renderer to source root as described in the architecture chart.
-* Move input handling from GLWindow to View, re-register callbacks on view change
+# Docs:
+* Add Math to dependency chart
 
 # Renderer:
 * Second camera control scheme: inheritance for camera class

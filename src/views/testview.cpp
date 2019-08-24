@@ -56,7 +56,7 @@ void TestView::InitRendering()
     float near = 1.0f;
     float far = 5000.0f;
     Vec2<float> windowDim({(float)m_Window->m_Width, (float)m_Window->m_Height});
-    m_Camera = std::make_shared<Camera>(fov, near, far, windowDim, m_Window->m_Window);
+    m_Camera = std::make_shared<PerspectiveCamera>(fov, near, far, windowDim, m_Window->m_Window);
 
     m_NormalViewportIndex = m_Viewports.size();
     m_Viewports.push_back(Viewport(Jam3D::Vec4<int>(0, 0, m_Window->m_Width, m_Window->m_Height)));
@@ -377,5 +377,26 @@ void TestView::RenderImGui()
         ImGui::End();
     }
 }
+
+void TestView::CursorPosCallback(double xPos, double yPos)
+{
+    m_Camera->CursorPosCallback(xPos, yPos);
+}
+
+void TestView::KeyCallback(int key, int scancode, int action, int mods)
+{
+    m_Camera->KeyCallback(key, scancode, action, mods);
+}
+
+void TestView::MouseButtonCallback(int button, int action, int mods)
+{
+    m_Camera->MouseButtonCallback(button, action, mods);
+}
+
+void TestView::ScrollCallback(double yOffset)
+{
+    m_Camera->ScrollCallback(yOffset);
+}
+
 
 }

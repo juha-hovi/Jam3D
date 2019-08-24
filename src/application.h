@@ -19,6 +19,7 @@ public:
 	~Application();
 
 	void Run();
+	void InitCallbacks();
 
 	std::shared_ptr<GLWindow> m_GLWindow;
 
