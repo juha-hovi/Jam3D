@@ -1,6 +1,8 @@
 set(renderer_source
 	camera.cpp
 	camera.h
+	orthocamera.cpp
+	orthocamera.h
 	perspectivecamera.cpp
 	perspectivecamera.h
 	framebuffer.cpp

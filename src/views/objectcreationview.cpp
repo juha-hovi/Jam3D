@@ -3,7 +3,8 @@
 
 namespace Jam3D {
 
-ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window) : View(window)
+ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window) 
+    : View(window)
 {
     InitViewports();
 }

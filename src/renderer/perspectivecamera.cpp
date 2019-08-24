@@ -13,8 +13,6 @@ PerspectiveCamera::PerspectiveCamera(float fov, float near, float far, Jam3D::Ve
 	m_Position = glm::vec3(1000.0f, 1000.0f, -1000.0f);
 	m_Pitch = 35.0f; 
 	m_Yaw = -45.0f;
-	m_CameraX = glm::vec3(0.0f, 0.0f, 0.0f);
-	m_CameraY = glm::vec3(0.0f, 0.0f, 0.0f);
 
 	m_ProjectionMatrix = glm::mat4(glm::perspective(glm::radians(m_FoV), m_WindowDimension.x / m_WindowDimension.y, m_Near, m_Far));
 	

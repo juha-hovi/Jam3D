@@ -4,12 +4,8 @@
 
 #include "axes.h"
 #include "shape.h"
-#include "box.h"
-#include "sphere.h"
-#include "lightsource.h"
 
 #include "perspectivecamera.h"
-#include "renderer.h"
 #include "vertexarray.h"
 #include "vertexbuffer.h"
 #include "indexbuffer.h"
@@ -21,9 +17,6 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
-#include <memory>
-#include <vector>
 
 namespace Jam3D {
 
@@ -113,12 +106,6 @@ private:
     std::unique_ptr<VertexBuffer> m_VBOAxes;
     std::unique_ptr<VertexBufferLayout> m_LayoutAxes;
     std::unique_ptr<IndexBuffer> m_IBOAxes;
-
-    std::vector<Box> m_Boxes;
-    std::vector<glm::mat4> m_BoxModelMats;
-    std::vector<Sphere> m_Spheres;
-    std::vector<glm::mat4> m_SphereModelMats;
-    std::vector<LightSource> m_LightSources;
 
 };
 

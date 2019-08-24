@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
@@ -8,6 +9,10 @@
 #include "viewport.h"
 #include "glwindow.h"
 #include "renderer.h"
+
+#include "box.h"
+#include "sphere.h"
+#include "lightsource.h"
 
 namespace Jam3D {
 
@@ -21,6 +26,12 @@ public:
     std::shared_ptr<GLWindow> m_Window;
     std::unique_ptr<Renderer> m_Renderer;
     std::vector<Viewport> m_Viewports;
+
+    std::shared_ptr<std::vector<Box>> m_Boxes;
+    std::shared_ptr<std::vector<glm::mat4>> m_BoxModelMats;
+    std::shared_ptr<std::vector<Sphere>> m_Spheres;
+    std::shared_ptr<std::vector<glm::mat4>> m_SphereModelMats;
+    std::shared_ptr<std::vector<LightSource>> m_LightSources;
 
     // Input handling
     static View *m_CurrentView;

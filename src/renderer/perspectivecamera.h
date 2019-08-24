@@ -1,11 +1,7 @@
 #pragma once
 
-#include "vec2.h"
 #include "vec3.h"
 #include "camera.h"
-
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 namespace Jam3D {
 

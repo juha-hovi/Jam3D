@@ -7,6 +7,9 @@
 * Shadow support for multiple light sources
 * Directional light shader implementation
 
+# Views
+* Make object storage static to share them between views
+
 # Application:
 * View generalization through inheritance
 * Implement object creation view
