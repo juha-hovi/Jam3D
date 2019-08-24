@@ -2,11 +2,13 @@
 
 namespace Jam3D {
 
-Camera::Camera(float near, float far, Jam3D::Vec2<float> windowDim, std::shared_ptr<GLWindow> window)
-    : m_Near(near), m_Far(far), m_WindowDimension(windowDim), m_CameraX(glm::vec3(0.0f, 0.0f, 0.0f)),
-	m_CameraY(glm::vec3(0.0f, 0.0f, 0.0f))
+Camera::Camera(CameraBaseProperties properties)
+    : m_Near(properties.near), m_Far(properties.far), m_WindowDimension(properties.windowDim), 
+    m_Position(properties.position), m_Pitch(properties.pitch), m_Yaw(properties.yaw), 
+    m_CameraX(glm::vec3(0.0f, 0.0f, 0.0f)),	m_CameraY(glm::vec3(0.0f, 0.0f, 0.0f))
 {
-    m_Window = window;
+    m_Window = properties.window;
+    m_CameraZ = glm::normalize(m_Position - properties.target);
 }
 
 }

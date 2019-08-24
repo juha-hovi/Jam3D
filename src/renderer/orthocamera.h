@@ -4,11 +4,11 @@
 
 namespace Jam3D {
 
-class OrthoCamera : Camera
+class OrthoCamera : public Camera
 {
 public:
-    OrthoCamera(float near, float far, Jam3D::Vec2<float> windowDim, std::shared_ptr<GLWindow> window);
-
+    OrthoCamera(float left, float right, float bottom, float top, CameraBaseProperties properties);
+    void Update() override;
 };
 
 }

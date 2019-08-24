@@ -8,8 +8,8 @@ namespace Jam3D {
 class PerspectiveCamera : public Camera
 {
 public:
-	PerspectiveCamera(float fov, float near, float far, Jam3D::Vec2<float> windowDim, std::shared_ptr<GLWindow> window);
-	void Update();
+	PerspectiveCamera(float fov, glm::vec3 target, CameraBaseProperties properties);
+	void Update() override;
 	
 	void ProcessInput();
 

@@ -4,20 +4,13 @@
 
 namespace Jam3D {
 
-PerspectiveCamera::PerspectiveCamera(float fov, float near, float far, Jam3D::Vec2<float> windowDim, std::shared_ptr<GLWindow> window)
-	: Camera(near, far, windowDim, window), m_FoV(fov),
+PerspectiveCamera::PerspectiveCamera(float fov, glm::vec3 target, CameraBaseProperties properties)
+	: Camera(properties), m_FoV(fov),
 	m_RotationSensitivity(0.07f), m_TranslationSensitivity(15.0f), m_ScrollSensitivity(50.0f),
 	m_PressedW(false), m_PressedA(false), m_PressedS(false), m_PressedD(false),
 	m_MousePosPrevious(Vec2<float>(0.0f, 0.0f))
 {
-	m_Position = glm::vec3(1000.0f, 1000.0f, -1000.0f);
-	m_Pitch = 35.0f; 
-	m_Yaw = -45.0f;
-
 	m_ProjectionMatrix = glm::mat4(glm::perspective(glm::radians(m_FoV), m_WindowDimension.x / m_WindowDimension.y, m_Near, m_Far));
-	
-	glm::vec3 target(0.0f, 0.0f, 0.0f);
-	m_CameraZ = glm::normalize(m_Position - target);
 
 	double xPos, yPos;
 	glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
