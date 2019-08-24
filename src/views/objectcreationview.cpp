@@ -39,17 +39,19 @@ void ObjectCreationView::InitCameras()
     properties.window = m_Window;
     m_UpperLeftCamera = std::make_shared<PerspectiveCamera>(fov, target, properties);
 
-    float left = -1000;
-    float right = 1000;
-    float bottom = -1000;
-    float top = 1000;
-    properties.position = glm::vec3(0.0f, 1000.0f, 0.0f);
+    float left = -1200;
+    float right = 1200;
+    float bottom = -675;
+    float top = 675;
+    properties.pitch = 90.0f;
+    properties.position = glm::vec3(0.0f, 2000.0f, 0.0f);
     m_UpperRightCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
 
-    properties.position = glm::vec3(0.0f, 0.0f, 1000.0f);
+    properties.pitch = 0.0f;
+    properties.position = glm::vec3(0.0f, 0.0f, 2000.0f);
     m_LowerLeftCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
 
-    properties.position = glm::vec3(1000.0f, 0.0f, 0.0f);
+    properties.position = glm::vec3(2000.0f, 0.0f, 0.0f);
     m_LowerRightCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
 }
 

@@ -17,7 +17,7 @@ void OrthoCamera::Update()
 	m_CameraX = glm::normalize(glm::cross(worldUp, m_CameraZ));
 
     // In case CameraZ points straight up (or straight down)
-    if (m_CameraX.x < 0.01f && m_CameraX.y < 0.01f && m_CameraX.z < 0.01f)
+    if (m_Pitch == 90.0f)
         m_CameraX = glm::vec3(1.0f, 0.0f, 0.0f);
 
 	m_CameraY = glm::cross(m_CameraZ, m_CameraX);
