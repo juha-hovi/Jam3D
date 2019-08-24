@@ -4,7 +4,8 @@
 namespace Jam3D {
 
 ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window) 
-    : View(window)
+    : View(window), m_UpperLeftViewportIndex(-1), m_UpperRightViewportIndex(-1), m_LowerLeftViewportIndex(-1),
+    m_LowerRightViewportIndex(-1), m_ShadowViewportIndex(-1), m_MouseRightPressedUpperLeft(false)
 {
     InitViewports();
     InitCameras();
@@ -90,26 +91,57 @@ void ObjectCreationView::Render()
     m_Viewports[m_LowerRightViewportIndex].Use();
     RenderScene(*m_LowerRightCamera);
 
+    RenderImGui();
+}
+
+void ObjectCreationView::RenderImGui()
+{
+
 }
 
 void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
 {
-    
+    // Upper-left
+    if (m_MouseRightPressedUpperLeft)
+        m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
+    else if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+        m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
 }
 
 void ObjectCreationView::KeyCallback(int key, int scancode, int action, int mods)
 {
-
+    // Upper-left
+    double xPos, yPos;
+    glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
+    if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+        m_UpperLeftCamera->KeyCallback(key, scancode, action, mods);
 }
 
 void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
 {
-
+    // Upper-left
+    double xPos, yPos;
+    glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
+    if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+    {
+        if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+            m_MouseRightPressedUpperLeft = true;
+        m_UpperLeftCamera->MouseButtonCallback(button, action, mods);
+    }
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+    {
+        m_UpperLeftCamera->MouseButtonCallback(button, action, mods);
+        m_MouseRightPressedUpperLeft = false;
+    }
 }
 
 void ObjectCreationView::ScrollCallback(double yOffset)
 {
-
+    // Upper-left
+    double xPos, yPos;
+    glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
+    if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+        m_UpperLeftCamera->ScrollCallback(yOffset);
 }
 
 }

@@ -15,6 +15,8 @@ public:
     void InitViewports() override;
     void InitCameras() override;
 
+    void RenderImGui();
+
     void CursorPosCallback(double xPos, double yPos) override;
 	void KeyCallback(int key, int scancode, int action, int mods) override;
 	void MouseButtonCallback(int button, int action, int mods) override;
@@ -25,6 +27,8 @@ public:
     int m_LowerLeftViewportIndex;
     int m_LowerRightViewportIndex;
     int m_ShadowViewportIndex;
+
+    bool m_MouseRightPressedUpperLeft;
 
     std::shared_ptr<PerspectiveCamera> m_UpperLeftCamera;
 
