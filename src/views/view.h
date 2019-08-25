@@ -98,10 +98,10 @@ protected:
     const unsigned int m_TextureSlot = 0;
     const unsigned int m_DepthMapSlot = 1;
     std::unique_ptr<Shader> m_ShaderNormal;
-    std::unique_ptr<Texture2D> m_TextureBox;
-    std::unique_ptr<Texture2D> m_TextureRGB;
-    std::unique_ptr<Texture2D> m_TextureEarth;
-    std::unique_ptr<Texture2D> m_TexturePlane;
+    std::shared_ptr<Texture2D> m_TextureBox;
+    std::shared_ptr<Texture2D> m_TextureRGB;
+    std::shared_ptr<Texture2D> m_TextureEarth;
+    std::shared_ptr<Texture2D> m_TexturePlane;
 
     std::shared_ptr<GLWindow> m_Window;
     std::unique_ptr<Renderer> m_Renderer;

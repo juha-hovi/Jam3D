@@ -6,15 +6,17 @@
 
 namespace Jam3D {
 
-// Global for shared input callbacks
-View * View::m_CurrentView;
+// Global for static input callbacks
+View *View::m_CurrentView;
 
-// Global for shared object storage
+// Global for static storage
 std::vector<Box> View::m_Boxes;
 std::vector<glm::mat4> View::m_BoxModelMats;
 std::vector<Sphere> View::m_Spheres;
 std::vector<glm::mat4> View::m_SphereModelMats;
 std::vector<LightSource> View::m_LightSources;
+std::vector<std::shared_ptr<Texture2D>> View::m_BoxTextures;
+std::vector<std::shared_ptr<Texture2D>> View::m_SphereTextures;
 
 View::View(std::shared_ptr<GLWindow> window)
     : m_Window(window), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
@@ -71,10 +73,10 @@ void View::InitRendering()
 
     m_ShaderNormal = std::make_unique<Shader>("src/shaders/basic3d.shader", Shader::VERTEX_FRAGMENT);
 
-    m_TextureBox = std::make_unique<Texture2D>("res/tex_test_full.png", Texture2D::STRETCH);
-    m_TextureEarth = std::make_unique<Texture2D>("res/earth2048.bmp", Texture2D::STRETCH);
-    m_TextureRGB = std::make_unique<Texture2D>("res/rgb.png", Texture2D::STRETCH);
-    m_TexturePlane = std::make_unique<Texture2D>("res/planetile_100x100_transparent.png", Texture2D::TILE);
+    m_TextureBox = std::make_shared<Texture2D>("res/tex_test_full.png", Texture2D::STRETCH);
+    m_TextureEarth = std::make_shared<Texture2D>("res/earth2048.bmp", Texture2D::STRETCH);
+    m_TextureRGB = std::make_shared<Texture2D>("res/rgb.png", Texture2D::STRETCH);
+    m_TexturePlane = std::make_shared<Texture2D>("res/planetile_100x100_transparent.png", Texture2D::TILE);
 }
 
 void View::InitMisc()
