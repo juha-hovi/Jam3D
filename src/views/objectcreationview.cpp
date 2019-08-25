@@ -20,14 +20,15 @@ ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window)
 
 void ObjectCreationView::InitViewports()
 {
+    int divider = 10;
     m_UpperLeftViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(0, m_Window->m_Height / 2, m_Window->m_Width / 2, m_Window->m_Height / 2));
+    m_Viewports.push_back(Jam3D::Vec4<int>(0, m_Window->m_Height / 2 + divider, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
     m_UpperRightViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2, m_Window->m_Height / 2, m_Window->m_Width / 2, m_Window->m_Height / 2));
+    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2 + divider, m_Window->m_Height / 2 + divider, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
     m_LowerLeftViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(0, 0, m_Window->m_Width / 2, m_Window->m_Height / 2));
+    m_Viewports.push_back(Jam3D::Vec4<int>(0, 0, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
     m_LowerRightViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2, 0, m_Window->m_Width / 2, m_Window->m_Height / 2));
+    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2 + divider, 0, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
     m_ShadowViewportIndex = m_Viewports.size();
     m_Viewports.push_back(Viewport(Jam3D::Vec4<int>(0, 0, m_ShadowWidth, m_ShadowHeight)));
 }
@@ -126,7 +127,10 @@ void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
     // Upper-left: Normal
     if (m_MouseRightPressedUpperLeft)
         m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
-    else if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+    else if (xPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0
+             && xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 
+             && m_Window->m_Height - yPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0
+             && m_Window->m_Height - yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1)
         m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
 }
 
@@ -135,7 +139,10 @@ void ObjectCreationView::KeyCallback(int key, int scancode, int action, int mods
     // Upper-left: Normal
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
-    if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+    if (xPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0
+        && xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 
+        && m_Window->m_Height - yPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0
+        && m_Window->m_Height - yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1)
         m_UpperLeftCamera->KeyCallback(key, scancode, action, mods);
 }
 
@@ -144,6 +151,11 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
 
+    int upperLeftX0 = m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0;
+    int upperLeftX1 = m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1;
+    int upperLeftY0 = m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0;
+    int upperLeftY1 = m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1;
+
     // Upper-left: Normal
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
     {
@@ -151,7 +163,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
         m_MouseRightPressedUpperLeft = false;
     }
 
-    if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+    if (xPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0
+        && xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 
+        && m_Window->m_Height - yPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0
+        && m_Window->m_Height - yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1)
     {
         if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
             m_MouseRightPressedUpperLeft = true;
@@ -159,7 +174,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     }
 
     // Upper-Right: XZ
-    else if (xPos > m_Viewports[m_UpperRightViewportIndex].m_Corners.x0 && yPos < m_Viewports[m_UpperRightViewportIndex].m_Corners.y0)
+    else if (xPos > m_Viewports[m_UpperRightViewportIndex].m_Corners.x0 
+             && xPos < m_Viewports[m_UpperRightViewportIndex].m_Corners.x0 + m_Viewports[m_UpperRightViewportIndex].m_Corners.x1
+             && m_Window->m_Height - yPos > m_Viewports[m_UpperRightViewportIndex].m_Corners.y0
+             && m_Window->m_Height - yPos < m_Viewports[m_UpperRightViewportIndex].m_Corners.y0 + m_Viewports[m_UpperRightViewportIndex].m_Corners.y1)
     {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
@@ -171,7 +189,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     }
 
     // Lower-Left: XY
-    else if (xPos < m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1 && yPos > m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1)
+    else if (xPos > m_Viewports[m_LowerLeftViewportIndex].m_Corners.x0
+             && xPos < m_Viewports[m_LowerLeftViewportIndex].m_Corners.x0 + m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1 
+             && m_Window->m_Height - yPos > m_Viewports[m_LowerLeftViewportIndex].m_Corners.y0
+             && m_Window->m_Height - yPos < m_Viewports[m_LowerLeftViewportIndex].m_Corners.y0 + m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1)
     {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
@@ -184,7 +205,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
 
     // Lower-Right: YZ
     // TODO: Fix z-flipping (horizontal mirror)
-    else if (xPos > m_Viewports[m_LowerRightViewportIndex].m_Corners.x0 && yPos > m_Viewports[m_LowerRightViewportIndex].m_Corners.y1)
+    else if (xPos > m_Viewports[m_LowerRightViewportIndex].m_Corners.x0 
+             && xPos < m_Viewports[m_LowerRightViewportIndex].m_Corners.x0 + m_Viewports[m_LowerRightViewportIndex].m_Corners.x1
+             && m_Window->m_Height - yPos > m_Viewports[m_LowerRightViewportIndex].m_Corners.y0
+             && m_Window->m_Height - yPos < m_Viewports[m_LowerRightViewportIndex].m_Corners.y0 + m_Viewports[m_LowerRightViewportIndex].m_Corners.y1)
     {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
@@ -201,7 +225,10 @@ void ObjectCreationView::ScrollCallback(double yOffset)
     // Upper-left: Normal
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
-    if (xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 && yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0)
+    if (xPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0
+        && xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 
+        && m_Window->m_Height - yPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0
+        && m_Window->m_Height - yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1)
         m_UpperLeftCamera->ScrollCallback(yOffset);
 }
 
