@@ -7,7 +7,7 @@ Plane::Plane(unsigned int type)
     m_Center = Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f);
     m_Rotation = Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f);
 
-    const float dist = 1000.0f;
+    const float dist = 1200.0f;
     const int vertexDataSize = 2 * 3 * (3 + 2 + 3);
     const int indicesSize = 2 * 3;
 
@@ -21,12 +21,12 @@ Plane::Plane(unsigned int type)
     {
         float vertexData[vertexDataSize] = {
         -dist, 0.0f, -dist,  0.0f,  0.0f, 0.0f, 1.0f, 0.0f,
-         dist, 0.0f, -dist, 10.0f,  0.0f, 0.0f, 1.0f, 0.0f,
-         dist, 0.0f,  dist, 10.0f, 10.0f, 0.0f, 1.0f, 0.0f,
+         dist, 0.0f, -dist, 12.0f,  0.0f, 0.0f, 1.0f, 0.0f,
+         dist, 0.0f,  dist, 12.0f, 12.0f, 0.0f, 1.0f, 0.0f,
 
         -dist, 0.0f, -dist,  0.0f,  0.0f, 0.0f, 1.0f, 0.0f,
-         dist, 0.0f,  dist, 10.0f, 10.0f, 0.0f, 1.0f, 0.0f,
-        -dist, 0.0f,  dist,  0.0f, 10.0f, 0.0f, 1.0f, 0.0f,
+         dist, 0.0f,  dist, 12.0f, 12.0f, 0.0f, 1.0f, 0.0f,
+        -dist, 0.0f,  dist,  0.0f, 12.0f, 0.0f, 1.0f, 0.0f
         };
 
         for (int i = 0; i < vertexDataSize; ++i)
@@ -48,7 +48,7 @@ Plane::Plane(unsigned int type)
 
         -dist, -dist, 0.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f,
          dist,  dist, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 1.0f,
-        -dist,  dist, 0.0f, 0.0f,  10.0f, 0.0f, 0.0f, 1.0f,
+        -dist,  dist, 0.0f, 0.0f,  10.0f, 0.0f, 0.0f, 1.0f
         };
 
         for (int i = 0; i < vertexDataSize; ++i)
@@ -70,7 +70,7 @@ Plane::Plane(unsigned int type)
 
         0.0f, -dist, -dist, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
         0.0f,  dist,  dist, 10.0f, 10.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, -dist,  dist, 0.0f,  10.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, -dist,  dist, 0.0f,  10.0f, 1.0f, 0.0f, 0.0f
         };   
 
         for (int i = 0; i < vertexDataSize; ++i)

@@ -35,6 +35,10 @@ public:
     std::shared_ptr<OrthoCamera> m_UpperRightCamera;
     std::shared_ptr<OrthoCamera> m_LowerLeftCamera;
     std::shared_ptr<OrthoCamera> m_LowerRightCamera;
+
+    glm::vec3 m_SelectedLocation;
+
+    bool m_DrawPlanes;
 };
 
 }
