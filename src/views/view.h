@@ -51,7 +51,8 @@ protected:
 
     void UpdateShadowTransforms();
     void RenderPointShadow();
-    void RenderScene(Camera &camera); 
+    void RenderScene(Camera& camera, bool applyLighting);
+    void RenderMisc(Camera& camera); 
     void SetLightSources();
 
     std::unique_ptr<VertexArray> m_VAOShape;

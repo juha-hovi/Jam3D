@@ -165,7 +165,7 @@ void View::RenderPointShadow()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void View::RenderScene(Camera &camera)
+void View::RenderScene(Camera &camera, bool applyLighting)
 {
     const unsigned int textureSlot = 0;
     const unsigned int depthMapSlot = 1;
@@ -175,7 +175,7 @@ void View::RenderScene(Camera &camera)
     m_ShaderNormal->SetUniformMat4f("u_Proj", camera.m_ProjectionMatrix);
     m_ShaderNormal->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
     m_ShaderNormal->SetUniform1i("u_DepthMap", depthMapSlot);
-    m_ShaderNormal->SetUniform1i("u_ApplyLighting", true);
+    m_ShaderNormal->SetUniform1i("u_ApplyLighting", applyLighting);
 
     SetLightSources();
     
@@ -196,14 +196,16 @@ void View::RenderScene(Camera &camera)
         m_TextureEarth->Bind(textureSlot);  
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
-    
-    {
-        glm::mat4 model(1.0f);
-        m_ShaderNormal->SetUniform1i("u_ApplyLighting", false);
-        m_ShaderNormal->SetUniformMat4f("u_Model", model);
-        m_TextureRGB->Bind(textureSlot);
-        m_Renderer->Draw(GL_LINES, *m_VAOAxes, *m_IBOAxes, *m_ShaderNormal);
-    }
+}
+
+void View::RenderMisc(Camera &camera)
+{
+    // Axes
+    glm::mat4 model(1.0f);
+    m_ShaderNormal->SetUniform1i("u_ApplyLighting", false);
+    m_ShaderNormal->SetUniformMat4f("u_Model", model);
+    m_TextureRGB->Bind(textureSlot);
+    m_Renderer->Draw(GL_LINES, *m_VAOAxes, *m_IBOAxes, *m_ShaderNormal);
 }
 
 void View::SetLightSources()

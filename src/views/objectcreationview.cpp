@@ -77,19 +77,23 @@ void ObjectCreationView::Render()
 
     // Render overall window
     m_Viewports[m_UpperLeftViewportIndex].Use();
-    RenderScene(*m_UpperLeftCamera);
+    RenderScene(*m_UpperLeftCamera, true);
+    RenderMisc(*m_UpperLeftCamera);
 
     // Render xz
     m_Viewports[m_UpperRightViewportIndex].Use();
-    RenderScene(*m_UpperRightCamera);
+    RenderScene(*m_UpperRightCamera, false);
+    RenderMisc(*m_UpperRightCamera);
 
     // Render xy
     m_Viewports[m_LowerLeftViewportIndex].Use();
-    RenderScene(*m_LowerLeftCamera);
+    RenderScene(*m_LowerLeftCamera, false);
+    RenderMisc(*m_LowerLeftCamera);
 
     // Render yz
     m_Viewports[m_LowerRightViewportIndex].Use();
-    RenderScene(*m_LowerRightCamera);
+    RenderScene(*m_LowerRightCamera, false);
+    RenderMisc(*m_LowerRightCamera);
 
     RenderImGui();
 }
