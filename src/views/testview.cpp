@@ -74,7 +74,7 @@ void TestView::Render()
 
     m_Viewports[m_NormalViewportIndex].Use();
     RenderScene(*m_Camera, true);
-    RenderMisc(*m_Camera);
+    RenderMisc(*m_Camera, true, false, false, false);
 
     RenderImGui();
 }
@@ -163,7 +163,6 @@ void TestView::RenderImGui()
         {
             ImGui::SliderFloat3(("Pos " + std::to_string(i)).c_str(), &m_LightSources[i].m_Position.x, -500.0f, 500.0f);
         }    
-        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
         ImGui::End();
     }
 }

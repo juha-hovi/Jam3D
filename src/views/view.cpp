@@ -22,7 +22,7 @@ View::View(std::shared_ptr<GLWindow> window)
     m_Renderer = std::make_unique<Renderer>();
 
     InitRendering();
-    InitAxes();
+    InitMisc();
     InitPointShadow();
 }
 
@@ -50,29 +50,44 @@ void View::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_dire
 
 void View::InitRendering()
 {
-    m_LayoutShape = std::make_unique<VertexBufferLayout>();
-    m_LayoutShape->Push<float>(3);
-    m_LayoutShape->Push<float>(2);
-    m_LayoutShape->Push<float>(3);
+    m_Layout = std::make_unique<VertexBufferLayout>();
+    m_Layout->Push<float>(3);
+    m_Layout->Push<float>(2);
+    m_Layout->Push<float>(3);
 
     m_ShaderNormal = std::make_unique<Shader>("src/shaders/basic3d.shader", Shader::VERTEX_FRAGMENT);
 
-    m_TextureBox = std::make_unique<Texture2D>("res/tex_test_full.png");
-    m_TextureEarth = std::make_unique<Texture2D>("res/earth2048.bmp");
-    m_TextureRGB = std::make_unique<Texture2D>("res/rgb.png");
+    m_TextureBox = std::make_unique<Texture2D>("res/tex_test_full.png", Texture2D::STRETCH);
+    m_TextureEarth = std::make_unique<Texture2D>("res/earth2048.bmp", Texture2D::STRETCH);
+    m_TextureRGB = std::make_unique<Texture2D>("res/rgb.png", Texture2D::STRETCH);
+    m_TexturePlane = std::make_unique<Texture2D>("res/planetile_100x100_transparent.png", Texture2D::TILE);
 }
 
-void View::InitAxes()
+void View::InitMisc()
 {
     m_Axes = std::make_unique<Axes>();
     m_VAOAxes = std::make_unique<VertexArray>();
     m_VBOAxes = std::make_unique<VertexBuffer>(m_Axes->m_VertexData.data(), m_Axes->m_VertexData.size() * sizeof(float));
-    m_LayoutAxes = std::make_unique<VertexBufferLayout>();
-    m_LayoutAxes->Push<float>(3);
-    m_LayoutAxes->Push<float>(2);
-    m_LayoutAxes->Push<float>(3);
-    m_VAOAxes->AddBuffer(*m_VBOAxes, *m_LayoutAxes);
+    m_VAOAxes->AddBuffer(*m_VBOAxes, *m_Layout);
     m_IBOAxes = std::make_unique<IndexBuffer>(m_Axes->m_Indices.data(), m_Axes->m_Indices.size());
+
+    m_XZPlane = std::make_unique<Plane>(Plane::XZ); 
+    m_VAOXZPlane = std::make_unique<VertexArray>();
+    m_VBOXZPlane = std::make_unique<VertexBuffer>(m_XZPlane->m_VertexData.data(), m_XZPlane->m_VertexData.size() * sizeof(float));
+    m_VAOXZPlane->AddBuffer(*m_VBOXZPlane, *m_Layout);
+    m_IBOXZPlane = std::make_unique<IndexBuffer>(m_XZPlane->m_Indices.data(), m_XZPlane->m_Indices.size());
+
+    m_XYPlane = std::make_unique<Plane>(Plane::XY); 
+    m_VAOXYPlane = std::make_unique<VertexArray>();
+    m_VBOXYPlane = std::make_unique<VertexBuffer>(m_XYPlane->m_VertexData.data(), m_XYPlane->m_VertexData.size() * sizeof(float));
+    m_VAOXYPlane->AddBuffer(*m_VBOXYPlane, *m_Layout);
+    m_IBOXYPlane = std::make_unique<IndexBuffer>(m_XYPlane->m_Indices.data(), m_XYPlane->m_Indices.size());
+
+    m_YZPlane = std::make_unique<Plane>(Plane::YZ); 
+    m_VAOYZPlane = std::make_unique<VertexArray>();
+    m_VBOYZPlane = std::make_unique<VertexBuffer>(m_YZPlane->m_VertexData.data(), m_YZPlane->m_VertexData.size() * sizeof(float));
+    m_VAOYZPlane->AddBuffer(*m_VBOYZPlane, *m_Layout);
+    m_IBOYZPlane = std::make_unique<IndexBuffer>(m_YZPlane->m_Indices.data(), m_YZPlane->m_Indices.size());
 }
 
 void View::InitPointShadow()
@@ -117,7 +132,7 @@ void View::BufferShape(const Shape& shape)
 {
     m_VAOShape = std::make_unique<VertexArray>();
     m_VBOShape = std::make_unique<VertexBuffer>(shape.m_VertexData.data(), shape.m_VertexData.size() * sizeof(float));    
-    m_VAOShape->AddBuffer(*m_VBOShape, *m_LayoutShape);
+    m_VAOShape->AddBuffer(*m_VBOShape, *m_Layout);
     m_IBOShape = std::make_unique<IndexBuffer>(shape.m_Indices.data(), shape.m_Indices.size());
 }
 
@@ -167,25 +182,24 @@ void View::RenderPointShadow()
 
 void View::RenderScene(Camera &camera, bool applyLighting)
 {
-    const unsigned int textureSlot = 0;
-    const unsigned int depthMapSlot = 1;
-
     m_ShaderNormal->Bind();
     m_ShaderNormal->SetUniformMat4f("u_View", camera.m_ViewMatrix);
     m_ShaderNormal->SetUniformMat4f("u_Proj", camera.m_ProjectionMatrix);
     m_ShaderNormal->SetUniform1f("u_FarPlane", m_ShadowFarPlane);
-    m_ShaderNormal->SetUniform1i("u_DepthMap", depthMapSlot);
+    m_ShaderNormal->SetUniform1i("u_DepthMap", m_DepthMapSlot);
     m_ShaderNormal->SetUniform1i("u_ApplyLighting", applyLighting);
+    m_ShaderNormal->SetUniform1i("u_ApplyTexture", true);
+    m_ShaderNormal->SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
 
     SetLightSources();
     
-    m_TextureShadow->Bind(depthMapSlot);
+    m_TextureShadow->Bind(m_DepthMapSlot);
 
     for (int i = 0; i < m_Boxes.size(); ++i)
     {
         BufferShape(m_Boxes[i]);
         m_ShaderNormal->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
-        m_TextureBox->Bind(textureSlot);        
+        m_TextureBox->Bind(m_TextureSlot);        
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
 
@@ -193,19 +207,42 @@ void View::RenderScene(Camera &camera, bool applyLighting)
     {
         BufferShape(m_Spheres[i]);
         m_ShaderNormal->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
-        m_TextureEarth->Bind(textureSlot);  
+        m_TextureEarth->Bind(m_TextureSlot);  
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
 }
 
-void View::RenderMisc(Camera &camera)
+void View::RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, bool yzPlane)
 {
-    // Axes
     glm::mat4 model(1.0f);
-    m_ShaderNormal->SetUniform1i("u_ApplyLighting", false);
     m_ShaderNormal->SetUniformMat4f("u_Model", model);
-    m_TextureRGB->Bind(textureSlot);
+    m_ShaderNormal->SetUniformMat4f("u_View", camera.m_ViewMatrix);
+    m_ShaderNormal->SetUniformMat4f("u_Proj", camera.m_ProjectionMatrix);
+    m_ShaderNormal->SetUniform1i("u_ApplyLighting", false);
+    m_ShaderNormal->SetUniform1i("u_ApplyTexture", true);
+    m_ShaderNormal->SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
+
+    if (axes)
+    {
+    m_TextureRGB->Bind(m_TextureSlot);
     m_Renderer->Draw(GL_LINES, *m_VAOAxes, *m_IBOAxes, *m_ShaderNormal);
+    }
+
+    m_TexturePlane->Bind(m_TextureSlot);
+    if (xzPlane)
+    {
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOXZPlane, *m_IBOXZPlane, *m_ShaderNormal);
+    }
+    
+    if (xyPlane)
+    {
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOXYPlane, *m_IBOXYPlane, *m_ShaderNormal);
+    }
+
+    if (yzPlane)
+    {
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOYZPlane, *m_IBOYZPlane, *m_ShaderNormal);
+    }
 }
 
 void View::SetLightSources()

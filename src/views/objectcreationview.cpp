@@ -78,22 +78,28 @@ void ObjectCreationView::Render()
     // Render overall window
     m_Viewports[m_UpperLeftViewportIndex].Use();
     RenderScene(*m_UpperLeftCamera, true);
-    RenderMisc(*m_UpperLeftCamera);
+    RenderMisc(*m_UpperLeftCamera, true, false, false, false);
 
     // Render xz
     m_Viewports[m_UpperRightViewportIndex].Use();
     RenderScene(*m_UpperRightCamera, false);
-    RenderMisc(*m_UpperRightCamera);
+    glDisable(GL_CULL_FACE); 
+    RenderMisc(*m_UpperRightCamera, true, true, false, false);
+    glEnable(GL_CULL_FACE); 
 
     // Render xy
     m_Viewports[m_LowerLeftViewportIndex].Use();
     RenderScene(*m_LowerLeftCamera, false);
-    RenderMisc(*m_LowerLeftCamera);
+    glDisable(GL_CULL_FACE); 
+    RenderMisc(*m_LowerLeftCamera, true, false, true, false);
+    glEnable(GL_CULL_FACE); 
 
     // Render yz
     m_Viewports[m_LowerRightViewportIndex].Use();
     RenderScene(*m_LowerRightCamera, false);
-    RenderMisc(*m_LowerRightCamera);
+    glDisable(GL_CULL_FACE); 
+    RenderMisc(*m_LowerRightCamera, true, false, false, true);
+    glEnable(GL_CULL_FACE); 
 
     RenderImGui();
 }

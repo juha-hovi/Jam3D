@@ -9,7 +9,11 @@ namespace Jam3D {
 class Texture2D : public Texture 
 {
 public:
-    Texture2D(const std::string& fp);
+    enum {
+        TILE, STRETCH
+    };
+
+    Texture2D(const std::string& fp, unsigned int type);
     void Bind(unsigned int slot = 0) const override;
 	void Unbind() const override;
 

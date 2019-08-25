@@ -19,6 +19,7 @@
 #include "framebuffer.h"
 
 #include "axes.h"
+#include "plane.h"
 #include "box.h"
 #include "sphere.h"
 #include "lightsource.h"
@@ -43,7 +44,7 @@ protected:
     virtual void InitCameras() = 0;
 
     void InitRendering();
-    void InitAxes();
+    void InitMisc();
     void InitPointShadow();
 
     void UpdateModelMats();
@@ -52,19 +53,34 @@ protected:
     void UpdateShadowTransforms();
     void RenderPointShadow();
     void RenderScene(Camera& camera, bool applyLighting);
-    void RenderMisc(Camera& camera); 
+    void RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, bool yzPlane); 
     void SetLightSources();
+
+    std::unique_ptr<VertexBufferLayout> m_Layout;
 
     std::unique_ptr<VertexArray> m_VAOShape;
     std::unique_ptr<VertexBuffer> m_VBOShape;
-    std::unique_ptr<VertexBufferLayout> m_LayoutShape;
     std::unique_ptr<IndexBuffer> m_IBOShape;
 
     std::unique_ptr<Axes> m_Axes;
     std::unique_ptr<VertexArray> m_VAOAxes;
     std::unique_ptr<VertexBuffer> m_VBOAxes;
-    std::unique_ptr<VertexBufferLayout> m_LayoutAxes;
     std::unique_ptr<IndexBuffer> m_IBOAxes;
+
+    std::unique_ptr<Plane> m_XZPlane;
+    std::unique_ptr<VertexArray> m_VAOXZPlane;
+    std::unique_ptr<VertexBuffer> m_VBOXZPlane;
+    std::unique_ptr<IndexBuffer> m_IBOXZPlane;
+
+    std::unique_ptr<Plane> m_XYPlane;
+    std::unique_ptr<VertexArray> m_VAOXYPlane;
+    std::unique_ptr<VertexBuffer> m_VBOXYPlane;
+    std::unique_ptr<IndexBuffer> m_IBOXYPlane;
+
+    std::unique_ptr<Plane> m_YZPlane;
+    std::unique_ptr<VertexArray> m_VAOYZPlane;
+    std::unique_ptr<VertexBuffer> m_VBOYZPlane;
+    std::unique_ptr<IndexBuffer> m_IBOYZPlane;
 
     const int m_ShadowWidth = 1024;
     const int m_ShadowHeight = 1024;
@@ -77,10 +93,13 @@ protected:
     std::vector<glm::mat4> m_ShadowTransforms;
     std::unique_ptr<Shader> m_ShaderShadow;
 
+    const unsigned int m_TextureSlot = 0;
+    const unsigned int m_DepthMapSlot = 1;
     std::unique_ptr<Shader> m_ShaderNormal;
     std::unique_ptr<Texture2D> m_TextureBox;
     std::unique_ptr<Texture2D> m_TextureRGB;
     std::unique_ptr<Texture2D> m_TextureEarth;
+    std::unique_ptr<Texture2D> m_TexturePlane;
 
     std::shared_ptr<GLWindow> m_Window;
     std::unique_ptr<Renderer> m_Renderer;

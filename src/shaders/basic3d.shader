@@ -44,6 +44,8 @@ uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform int u_LightSourceCount;
 uniform bool u_ApplyLighting;
+uniform bool u_ApplyTexture;
+uniform vec4 u_Color;
 uniform float u_FarPlane;
 uniform samplerCube u_DepthMap;
 
@@ -109,7 +111,13 @@ void main()
         light = vec3(1.0, 1.0, 1.0);
     }
 
-    vec4 texColor = texture(u_Texture, v_TexCoord);
-    
-    color = vec4(light, 1.0) * texColor;
+    if (u_ApplyTexture)
+    {
+        vec4 texColor = texture(u_Texture, v_TexCoord);    
+        color = vec4(light, 1.0) * texColor;
+    }
+    else
+    {
+        color = vec4(light, 1.0) * u_Color;
+    }
 }

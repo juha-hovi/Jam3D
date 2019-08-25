@@ -110,6 +110,7 @@ void Application::Run()
                 m_CurrentView = m_ObjectCreationView;
                 m_ObjectCreationView->SetAsCurrent();
             }
+            ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
             ImGui::End();
         }
         

@@ -1,10 +1,6 @@
 #pragma once
 
 #include "view.h"
-
-#include "axes.h"
-#include "shape.h"
-
 #include "perspectivecamera.h"
 
 namespace Jam3D {
