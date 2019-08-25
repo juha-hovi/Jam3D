@@ -124,18 +124,20 @@ void ObjectCreationView::RenderImGui()
 
 void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
 {
-    // Upper-left: Normal
     if (m_MouseRightPressedUpperLeft)
         m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
+
+    // Upper-left: Normal
     else if (IsInViewport(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex]))
         m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
 }
 
 void ObjectCreationView::KeyCallback(int key, int scancode, int action, int mods)
 {
-    // Upper-left: Normal
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
+
+    // Upper-left: Normal
     if (IsInViewport(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex]))
         m_UpperLeftCamera->KeyCallback(key, scancode, action, mods);
 }
@@ -198,13 +200,11 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
 
 void ObjectCreationView::ScrollCallback(double yOffset)
 {
-    // Upper-left: Normal
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
-    if (xPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0
-        && xPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 
-        && m_Window->m_Height - yPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0
-        && m_Window->m_Height - yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1)
+
+    // Upper-left: Normal
+    if (IsInViewport(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex]))
         m_UpperLeftCamera->ScrollCallback(yOffset);
 }
 
