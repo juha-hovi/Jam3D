@@ -95,7 +95,7 @@ void TestView::RenderImGui()
         for (int i = 0; i < m_Boxes.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                m_Boxes.erase(m_Boxes.begin() + i);
+                DeleteBox(i);
         }
 
         ImGui::Text("================");
@@ -126,7 +126,7 @@ void TestView::RenderImGui()
         for (int i = 0; i < m_Spheres.size(); ++i)
         {
             if (ImGui::Button(("Delete " + std::to_string(i)).c_str()))
-                m_Spheres.erase(m_Spheres.begin() + i);
+                DeleteSphere(i);
         }
 
         ImGui::Text("================");

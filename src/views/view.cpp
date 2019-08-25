@@ -29,11 +29,25 @@ View::View(std::shared_ptr<GLWindow> window)
 void View::AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation)
 {
     m_Boxes.push_back(Box(center, dimensions, rotation));
+    m_BoxTextures.push_back(m_TextureBox);
+}
+
+void View::DeleteBox(int index)
+{
+    m_Boxes.erase(m_Boxes.begin() + index);
+    m_BoxTextures.erase(m_BoxTextures.begin() + index);
 }
 
 void View::AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount)
 {
     m_Spheres.push_back(Sphere(radius, center, sectorCount, stackCount));
+    m_SphereTextures.push_back(m_TextureEarth);
+}
+
+void View::DeleteSphere(int index)
+{
+    m_Spheres.erase(m_Spheres.begin() + index);
+    m_SphereTextures.erase(m_SphereTextures.begin() + index);
 }
 
 void View::AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity)
@@ -199,7 +213,7 @@ void View::RenderScene(Camera &camera, bool applyLighting)
     {
         BufferShape(m_Boxes[i]);
         m_ShaderNormal->SetUniformMat4f("u_Model", m_BoxModelMats[i]);
-        m_TextureBox->Bind(m_TextureSlot);        
+        m_BoxTextures[i]->Bind(m_TextureSlot);        
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
 
@@ -207,7 +221,7 @@ void View::RenderScene(Camera &camera, bool applyLighting)
     {
         BufferShape(m_Spheres[i]);
         m_ShaderNormal->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
-        m_TextureEarth->Bind(m_TextureSlot);  
+        m_SphereTextures[i]->Bind(m_TextureSlot);  
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
 }

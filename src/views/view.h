@@ -37,7 +37,9 @@ public:
 
 protected:
     void AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);
+    void DeleteBox(int index);
     void AddSphere(float radius, Jam3D::Vec3<float> center, int sectorCount, int stackCount);
+    void DeleteSphere(int index);
     void AddLightSource(unsigned int type, Jam3D::Vec3<float> position_or_direction, Jam3D::Vec3<float> color, float intensity);
 
     virtual void InitViewports() = 0;
@@ -108,8 +110,12 @@ protected:
 public:
     static std::vector<Box> m_Boxes;
     static std::vector<glm::mat4> m_BoxModelMats;
+    static std::vector<std::shared_ptr<Texture2D>> m_BoxTextures;
+
     static std::vector<Sphere> m_Spheres;
     static std::vector<glm::mat4> m_SphereModelMats;
+    static std::vector<std::shared_ptr<Texture2D>> m_SphereTextures;
+
     static std::vector<LightSource> m_LightSources;
 
     // Input handling
