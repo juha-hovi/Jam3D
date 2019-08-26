@@ -11,8 +11,8 @@
 * Directional light shader implementation
 
 # Application:
-* Implement object creation view
-  * Draw object by clicking mouse in each plane view and clicking add after
+* Improve object creation view
+  * Stretch existing TempBox
 
 # Libraries:
 * Add matrices to math

@@ -120,6 +120,9 @@ public:
 
     static std::vector<LightSource> m_LightSources;
 
+    static std::unique_ptr<Box> m_TempBox;
+    static glm::mat4 m_TempBoxModel;
+
     // Input handling
 public:
     static View *m_CurrentView;

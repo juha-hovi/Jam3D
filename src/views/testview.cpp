@@ -18,14 +18,14 @@ namespace Jam3D {
 
 TestView::TestView(std::shared_ptr<GLWindow> window) 
     : View(window),
-    m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(0.0f, 0.0f, 0.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
+    m_BoxCenter(0.0f, 0.0f, 0.0f), m_BoxDimensions(100.0f, 100.0f, 100.0f), m_BoxRotation(0.0f, 0.0f, 0.0f), 
     m_SphereCenter(0.0f, 0.0f, 0.0f), m_SphereRadius(100.0f), m_SphereSectorCount(10), m_SphereStackCount(10),
     m_LightType(LightSource::POINT_LIGHT), m_LightPosition(Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f)), m_LightColor(Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f)),
     m_LightIntensity(1.0f), m_NormalViewportIndex(-1), m_ShadowViewportIndex(-1)
 {
-    AddBox(Jam3D::Vec3<float>(0.0f, -200.0f, 0.0f), Jam3D::Vec3<float>(70.0f, 50.0f, 90.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
-    AddBox(Jam3D::Vec3<float>(0.0f, -500.0f, 0.0f), Jam3D::Vec3<float>(1900.0f, 100.0f, 1900.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
-    AddSphere(100.0f, Jam3D::Vec3<float>(500.0f, -300.0f, 0.0f), 20, 20);
+    //AddBox(Jam3D::Vec3<float>(0.0f, -200.0f, 0.0f), Jam3D::Vec3<float>(70.0f, 50.0f, 90.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
+    //AddBox(Jam3D::Vec3<float>(0.0f, -500.0f, 0.0f), Jam3D::Vec3<float>(1900.0f, 100.0f, 1900.0f), Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f));
+    //AddSphere(100.0f, Jam3D::Vec3<float>(500.0f, -300.0f, 0.0f), 20, 20);
     AddLightSource(LightSource::POINT_LIGHT, Jam3D::Vec3<float>(0.0f, 0.0f, 0.0f), Jam3D::Vec3<float>(1.0f, 1.0f, 1.0f), 1.0f);
 
     InitViewports();

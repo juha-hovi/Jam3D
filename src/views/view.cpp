@@ -18,6 +18,9 @@ std::vector<LightSource> View::m_LightSources;
 std::vector<std::shared_ptr<Texture2D>> View::m_BoxTextures;
 std::vector<std::shared_ptr<Texture2D>> View::m_SphereTextures;
 
+std::unique_ptr<Box> View::m_TempBox = nullptr;
+glm::mat4 View::m_TempBoxModel = glm::mat4(1.0f);
+
 View::View(std::shared_ptr<GLWindow> window)
     : m_Window(window), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
 {
@@ -142,6 +145,17 @@ void View::UpdateModelMats()
         model = glm::rotate(model, glm::radians(m_Spheres[i].m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
         m_SphereModelMats.push_back(model);
     }
+
+    if (m_TempBox)
+    {
+        glm::mat4 model(1.0f);
+        glm::vec3 translation(m_TempBox->m_Center.x, m_TempBox->m_Center.y, m_TempBox->m_Center.z);
+        model = glm::translate(model, translation);
+        model = glm::rotate(model, glm::radians(m_TempBox->m_Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::rotate(model, glm::radians(m_TempBox->m_Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(m_TempBox->m_Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        m_TempBoxModel = model;
+    }
 }
 
 void View::BufferShape(const Shape& shape)
@@ -193,6 +207,13 @@ void View::RenderPointShadow()
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderShadow);
     }
 
+    if (m_TempBox)
+    {
+        BufferShape(*m_TempBox);
+        m_ShaderShadow->SetUniformMat4f("u_Model", m_TempBoxModel);
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderShadow);
+    }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -224,6 +245,14 @@ void View::RenderScene(Camera &camera, bool applyLighting)
         BufferShape(m_Spheres[i]);
         m_ShaderNormal->SetUniformMat4f("u_Model", m_SphereModelMats[i]);
         m_SphereTextures[i]->Bind(m_TextureSlot);  
+        m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
+    }
+
+    if (m_TempBox)
+    {
+        BufferShape(*m_TempBox);
+        m_ShaderNormal->SetUniformMat4f("u_Model", m_TempBoxModel);
+        m_TextureBox->Bind(m_TextureSlot);
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOShape, *m_IBOShape, *m_ShaderNormal);
     }
 }

@@ -11,8 +11,11 @@ namespace Jam3D {
 
 ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window) 
     : View(window), m_UpperLeftViewportIndex(-1), m_UpperRightViewportIndex(-1), m_LowerLeftViewportIndex(-1),
-    m_LowerRightViewportIndex(-1), m_ShadowViewportIndex(-1), m_MouseRightPressedUpperLeft(false),
-    m_SelectedLocation(glm::vec3(0.0f, 0.0f, 0.0f)), m_DrawPlanes(true)
+    m_LowerRightViewportIndex(-1), m_ShadowViewportIndex(-1), m_DrawPlanes(true), 
+    m_MouseRightPressedUpperLeft(false), m_MouseLeftPressedUpperLeft(false), m_MouseLeftPressedUpperRight(false),
+    m_MouseLeftPressedLowerLeft(false), m_MouseLeftPressedLowerRight(false),
+    m_MouseLeftPressLocation(glm::vec3(0.0f, 0.0f, 0.0f)), 
+    m_TempBoxCenter(0.0f, 0.0f, 0.0f), m_TempBoxDimensions(100.0f, 100.0f, 100.0f), m_TempBoxRotation(0.0f, 0.0f, 0.0f)
 {
     InitViewports();
     InitCameras();
@@ -120,12 +123,117 @@ void ObjectCreationView::RenderImGui()
             m_DrawPlanes = !m_DrawPlanes;
         ImGui::End();
     }
+
+    {
+        ImGui::Begin("Draw box");
+        if (ImGui::Button("Start"))
+            StartDrawing();
+        if (ImGui::Button("Save"))
+            SaveTempBox();
+        if (ImGui::Button("Cancel"))
+            CancelDrawing();
+        ImGui::End();
+    }
+}
+
+void ObjectCreationView::StartDrawing()
+{
+    m_TempBox = std::make_unique<Box>(m_TempBoxCenter, m_TempBoxDimensions, m_TempBoxRotation);
+}
+
+void ObjectCreationView::SaveTempBox()
+{
+    AddBox(m_TempBox->m_Center, m_TempBox->m_Dimensions, m_TempBox->m_Rotation);
+    m_TempBox = nullptr;
+}
+
+void ObjectCreationView::CancelDrawing()
+{
+    m_TempBox = nullptr;
+}
+
+void ObjectCreationView::UpdateTempBox(OrthoCamera& camera, Viewport& viewport, double xPos, double yPos, bool x, bool y, bool z)
+{
+    glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), camera.m_ViewMatrix, camera.m_ProjectionMatrix, Jam3D::MathHelper::Vec4ToGlm(viewport.m_Corners));
+
+    if (x)
+    {
+        double xCenter = 0.0;
+        double xDim = worldCoords.x - m_MouseLeftPressLocation.x;
+        if (worldCoords.x > m_MouseLeftPressLocation.x)
+            xCenter = worldCoords.x - xDim / 2;
+        else
+        {
+            xDim = -xDim;
+            xCenter = m_MouseLeftPressLocation.x - xDim / 2;
+        }
+        m_TempBox->m_Dimensions.x = xDim;
+        m_TempBox->m_Center.x = xCenter;
+    }
+
+    if (y)
+    {
+        double yCenter = 0.0;
+        double yDim = worldCoords.y - m_MouseLeftPressLocation.y;
+        if (worldCoords.y > m_MouseLeftPressLocation.y)
+            yCenter = worldCoords.y - yDim / 2;
+        else 
+        {
+            yDim = -yDim;
+            yCenter = m_MouseLeftPressLocation.y - yDim / 2;
+        }
+        m_TempBox->m_Dimensions.y = yDim;
+        m_TempBox->m_Center.y = yCenter;
+    }
+
+    if (z)
+    {
+        double zCenter = 0.0;
+        double zDim = worldCoords.z - m_MouseLeftPressLocation.z;
+        if (worldCoords.z > m_MouseLeftPressLocation.z)
+            zCenter = worldCoords.z - zDim / 2;
+        else 
+        {
+            zDim = -zDim;
+            zCenter = m_MouseLeftPressLocation.z - zDim / 2;
+        }
+        m_TempBox->m_Dimensions.z = zDim;
+        m_TempBox->m_Center.z = zCenter;
+    }
+
+    m_TempBox->Update();
 }
 
 void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
 {
+    // Right Click
     if (m_MouseRightPressedUpperLeft)
         m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
+
+    // Left Click
+    if (m_MouseLeftPressedUpperRight)
+    {
+        if (m_TempBox)
+        {
+            UpdateTempBox(*m_UpperRightCamera, m_Viewports[m_UpperRightViewportIndex], xPos, yPos, true, false, true);
+        }
+    }
+
+    if (m_MouseLeftPressedLowerLeft)
+    {
+        if (m_TempBox)
+        {
+            UpdateTempBox(*m_LowerLeftCamera, m_Viewports[m_LowerLeftViewportIndex], xPos, yPos, true, true, false);
+        }
+    }
+
+    if (m_MouseLeftPressedLowerRight)
+    {
+        if (m_TempBox)
+        {
+            UpdateTempBox(*m_LowerRightCamera, m_Viewports[m_LowerRightViewportIndex], xPos, yPos, false, true, true);
+        }
+    }
 
     // Upper-left: Normal
     else if (IsInViewport(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex]))
@@ -152,12 +260,23 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
         m_UpperLeftCamera->MouseButtonCallback(button, action, mods);
         m_MouseRightPressedUpperLeft = false;
     }
+    else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE)
+    {
+        m_MouseLeftPressedUpperLeft = false;
+        m_MouseLeftPressedUpperRight = false;
+        m_MouseLeftPressedLowerLeft = false;
+        m_MouseLeftPressedLowerRight = false;
+
+    }
 
     // Upper-left: Normal
     if (IsInViewport(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex]))
     {
         if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+        {
             m_MouseRightPressedUpperLeft = true;
+            m_MouseLeftPressedUpperLeft = true;
+        }
         m_UpperLeftCamera->MouseButtonCallback(button, action, mods);
     }
 
@@ -168,8 +287,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_UpperRightViewportIndex].m_Corners);
             glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), m_UpperRightCamera->m_ViewMatrix, m_UpperRightCamera->m_ProjectionMatrix, viewport);
-            m_SelectedLocation.x = -worldCoords.x; // Flip to fix coordinate system handedness
-            m_SelectedLocation.z = worldCoords.z;
+            
+            m_MouseLeftPressedUpperRight = true;
+            m_MouseLeftPressLocation.x = worldCoords.x;
+            m_MouseLeftPressLocation.z = worldCoords.z;
         }
     }
 
@@ -180,8 +301,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_LowerLeftViewportIndex].m_Corners);
             glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), m_LowerLeftCamera->m_ViewMatrix, m_LowerLeftCamera->m_ProjectionMatrix, viewport);
-            m_SelectedLocation.x = -worldCoords.x; // Flip to fix coordinate system handedness
-            m_SelectedLocation.y = worldCoords.y;
+            
+            m_MouseLeftPressedLowerLeft = true;
+            m_MouseLeftPressLocation.x = worldCoords.x;
+            m_MouseLeftPressLocation.y = worldCoords.y;
         }
     }
 
@@ -192,8 +315,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_LowerRightViewportIndex].m_Corners);
             glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), m_LowerRightCamera->m_ViewMatrix, m_LowerRightCamera->m_ProjectionMatrix, viewport);
-            m_SelectedLocation.z = worldCoords.z;
-            m_SelectedLocation.y = worldCoords.y;
+            
+            m_MouseLeftPressedLowerRight = true;
+            m_MouseLeftPressLocation.z = worldCoords.z;
+            m_MouseLeftPressLocation.y = worldCoords.y;
         }
     }
 }
