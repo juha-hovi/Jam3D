@@ -214,25 +214,19 @@ void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
     if (m_MouseLeftPressedUpperRight)
     {
         if (m_TempBox)
-        {
             UpdateTempBox(*m_UpperRightCamera, m_Viewports[m_UpperRightViewportIndex], xPos, yPos, true, false, true);
-        }
     }
 
     if (m_MouseLeftPressedLowerLeft)
     {
         if (m_TempBox)
-        {
             UpdateTempBox(*m_LowerLeftCamera, m_Viewports[m_LowerLeftViewportIndex], xPos, yPos, true, true, false);
-        }
     }
 
     if (m_MouseLeftPressedLowerRight)
     {
         if (m_TempBox)
-        {
             UpdateTempBox(*m_LowerRightCamera, m_Viewports[m_LowerRightViewportIndex], xPos, yPos, false, true, true);
-        }
     }
 
     // Upper-left: Normal

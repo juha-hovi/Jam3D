@@ -12,7 +12,8 @@
 
 # Application:
 * Improve object creation view
-  * Stretch existing TempBox
+  * Separate functionality into tools
+    * Draw, stretch, move
 
 # Libraries:
 * Add matrices to math
