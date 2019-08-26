@@ -275,7 +275,7 @@ void View::SetLightSources()
     m_ShaderNormal->SetUniform1i("u_LightSourceCount", m_LightSources.size());
 }
 
-void IsInViewport(double xPos, double yPos, Viewport viewport)
+bool View::IsInViewport(double xPos, double yPos, Viewport& viewport)
 {
     return (xPos > viewport.m_Corners.x0
             && xPos < viewport.m_Corners.x0 + viewport.m_Corners.x1 

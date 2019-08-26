@@ -58,7 +58,7 @@ protected:
     void RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, bool yzPlane); 
     void SetLightSources();
 
-    void IsInViewport(double xPos, double yPos, Viewport viewport);
+    bool IsInViewport(double xPos, double yPos, Viewport& viewport);
 
     std::unique_ptr<VertexBufferLayout> m_Layout;
 
