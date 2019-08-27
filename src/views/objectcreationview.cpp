@@ -19,7 +19,7 @@ ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window)
     m_MouseLeftPressedTempBoxXMinusMargin(false), m_MouseLeftPressedTempBoxXPlusMargin(false),
     m_MouseLeftPressedTempBoxYMinusMargin(false), m_MouseLeftPressedTempBoxYPlusMargin(false),
     m_MouseLeftPressedTempBoxZMinusMargin(false), m_MouseLeftPressedTempBoxZPlusMargin(false),
-    m_MouseLeftPressLocation(glm::vec3(0.0f, 0.0f, 0.0f)), m_CurrentTool(ObjectCreationView::DRAW),
+    m_MouseLeftPressLocation(glm::vec3(0.0f, 0.0f, 0.0f)), m_CurrentTool(ObjectCreationView::MOVE),
     m_TempBoxCenterOriginal(0.0f, 0.0f, 0.0f), m_TempBoxDimensionsOriginal(0.0f, 0.0f, 0.0f)
 {
     InitViewports();
@@ -139,20 +139,23 @@ void ObjectCreationView::RenderImGui()
             CancelDrawing();
         ImGui::Text("======");
         ImGui::Text("Tools:");
-        if (ImGui::Button("Draw"))
-            m_CurrentTool = ObjectCreationView::DRAW;
-        if (ImGui::Button("Stretch"))
-            m_CurrentTool = ObjectCreationView::STRECH;
         if (ImGui::Button("Move"))
             m_CurrentTool = ObjectCreationView::MOVE;
+        if (ImGui::Button("Stretch"))
+            m_CurrentTool = ObjectCreationView::STRECH;
+        if (ImGui::Button("Draw"))
+            m_CurrentTool = ObjectCreationView::DRAW;
         ImGui::End();
     }
 }
 
 void ObjectCreationView::StartDrawing()
 {
-    Jam3D::Vec3<float> zero(0.0f, 0.0f, 0.0f);
-    m_TempBox = std::make_unique<Box>(zero, zero, zero);
+    Jam3D::Vec3<float> center(0.0f, 0.0f, 0.0f);
+    Jam3D::Vec3<float> dimension(300.0f, 300.0f, 300.0f);
+    Jam3D::Vec3<float> rotation(0.0f, 0.0f, 0.0f);
+
+    m_TempBox = std::make_unique<Box>(center, dimension, rotation);
 }
 
 void ObjectCreationView::SaveTempBox()
@@ -232,7 +235,6 @@ void ObjectCreationView::StrechTempBox(glm::vec3 worldCoords, bool x, bool y, bo
 {
     if (x)
     {
-        std::cout << m_MouseLeftPressedTempBoxXMinusMargin << std::endl;
         double xDiff = worldCoords.x - m_MouseLeftPressLocation.x;
         if (m_MouseLeftPressedTempBoxXMinusMargin)
         {
@@ -241,7 +243,38 @@ void ObjectCreationView::StrechTempBox(glm::vec3 worldCoords, bool x, bool y, bo
         }
         else if (m_MouseLeftPressedTempBoxXPlusMargin)
         {
+            m_TempBox->m_Dimensions.x = m_TempBoxDimensionsOriginal.x - xDiff;
+            m_TempBox->m_Center.x = m_TempBoxCenterOriginal.x + xDiff / 2;
+        }
+    }
 
+    if (y)
+    {
+        double yDiff = worldCoords.y - m_MouseLeftPressLocation.y;
+        if (m_MouseLeftPressedTempBoxYMinusMargin)
+        {
+            m_TempBox->m_Dimensions.y = m_TempBoxDimensionsOriginal.y - yDiff;
+            m_TempBox->m_Center.y = m_TempBoxCenterOriginal.y + yDiff / 2;
+        }
+        else if (m_MouseLeftPressedTempBoxYPlusMargin)
+        {
+            m_TempBox->m_Dimensions.y = m_TempBoxDimensionsOriginal.y + yDiff;
+            m_TempBox->m_Center.y = m_TempBoxCenterOriginal.y + yDiff / 2;
+        }
+    }
+
+    if (z)
+    {
+        double zDiff = worldCoords.z - m_MouseLeftPressLocation.z;
+        if (m_MouseLeftPressedTempBoxZMinusMargin)
+        {
+            m_TempBox->m_Dimensions.z = m_TempBoxDimensionsOriginal.z - zDiff;
+            m_TempBox->m_Center.z = m_TempBoxCenterOriginal.z + zDiff / 2;
+        }
+        else if (m_MouseLeftPressedTempBoxZPlusMargin)
+        {
+            m_TempBox->m_Dimensions.z = m_TempBoxDimensionsOriginal.z + zDiff;
+            m_TempBox->m_Center.z = m_TempBoxCenterOriginal.z + zDiff / 2;
         }
     }
 
@@ -271,7 +304,7 @@ void ObjectCreationView::MoveTempBox(glm::vec3 worldCoords, bool x, bool y, bool
 
 void ObjectCreationView::IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool z)
 {
-    double marginRatio = 0.1;
+    double marginRatio = 0.15;
 
     if (x && z)
     {
@@ -447,16 +480,19 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
         m_MouseLeftPressedUpperRight = false;
         m_MouseLeftPressedLowerLeft = false;
         m_MouseLeftPressedLowerRight = false;
-
-        m_MouseLeftPressedTempBoxXMinusMargin = false;
-        m_MouseLeftPressedTempBoxXPlusMargin = false;
-        m_MouseLeftPressedTempBoxYMinusMargin = false;
-        m_MouseLeftPressedTempBoxYPlusMargin = false;
-        m_MouseLeftPressedTempBoxZMinusMargin = false;
-        m_MouseLeftPressedTempBoxZPlusMargin = false;
         
         if (m_TempBox)
+        {
+            m_MouseLeftPressedTempBoxXMinusMargin = false;
+            m_MouseLeftPressedTempBoxXPlusMargin = false;
+            m_MouseLeftPressedTempBoxYMinusMargin = false;
+            m_MouseLeftPressedTempBoxYPlusMargin = false;
+            m_MouseLeftPressedTempBoxZMinusMargin = false;
+            m_MouseLeftPressedTempBoxZPlusMargin = false;
+
             m_TempBoxCenterOriginal = m_TempBox->m_Center;
+            m_TempBoxDimensionsOriginal = m_TempBox->m_Dimensions;
+        }
     }
 
     // Upper-left: Normal

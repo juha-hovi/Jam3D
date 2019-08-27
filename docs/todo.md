@@ -11,9 +11,7 @@
 * Directional light shader implementation
 
 # Application:
-* Improve object creation view
-  * Separate functionality into tools
-    * Draw, stretch, move
+* Fix Upper-Right viewport size, grid is different than lower viewports
 
 # Libraries:
 * Add matrices to math
