@@ -74,7 +74,7 @@ void TestView::Render()
 
     m_Viewports[m_NormalViewportIndex].Use();
     RenderScene(*m_Camera, true);
-    RenderMisc(*m_Camera, true, false, false, false);
+    RenderMisc(*m_Camera, m_DrawAxes, m_DrawPlanes, false, false);
 
     RenderImGui();
 }

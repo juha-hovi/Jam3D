@@ -43,8 +43,6 @@ public:
     int m_LowerRightViewportIndex;
     int m_ShadowViewportIndex;
 
-    bool m_DrawPlanes = true;
-
     bool m_MouseRightPressedUpperLeft;
 
     bool m_MouseLeftPressedUpperLeft;

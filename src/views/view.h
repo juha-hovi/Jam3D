@@ -33,7 +33,10 @@ class View
 public:
     View(std::shared_ptr<GLWindow> window);
 
-    virtual void Render() = 0;    
+    virtual void Render() = 0;
+
+    static bool m_DrawPlanes;
+    static bool m_DrawAxes;
 
 protected:
     void AddBox(Jam3D::Vec3<float> center, Jam3D::Vec3<float> dimensions, Jam3D::Vec3<float> rotation);

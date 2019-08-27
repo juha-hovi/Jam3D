@@ -21,6 +21,9 @@ std::vector<std::shared_ptr<Texture2D>> View::m_SphereTextures;
 std::unique_ptr<Box> View::m_TempBox = nullptr;
 glm::mat4 View::m_TempBoxModel = glm::mat4(1.0f);
 
+bool View::m_DrawPlanes = true;
+bool View::m_DrawAxes = true;
+
 View::View(std::shared_ptr<GLWindow> window)
     : m_Window(window), m_ShadowNearPlane(1.0f), m_ShadowFarPlane(5000), m_ShadowProjectionMatrix(glm::mat4(1.0f))
 {
@@ -79,7 +82,7 @@ void View::InitRendering()
     m_TextureBox = std::make_shared<Texture2D>("res/tex_test_full.png", Texture2D::STRETCH);
     m_TextureEarth = std::make_shared<Texture2D>("res/earth2048.bmp", Texture2D::STRETCH);
     m_TextureRGB = std::make_shared<Texture2D>("res/rgb.png", Texture2D::STRETCH);
-    m_TexturePlane = std::make_shared<Texture2D>("res/planetile_100x100_transparent.png", Texture2D::TILE);
+    m_TexturePlane = std::make_shared<Texture2D>("res/planetile_100x100.png", Texture2D::TILE);
 }
 
 void View::InitMisc()
@@ -219,6 +222,8 @@ void View::RenderPointShadow()
 
 void View::RenderScene(Camera &camera, bool applyLighting)
 {
+    glEnable(GL_CULL_FACE); 
+
     m_ShaderNormal->Bind();
     m_ShaderNormal->SetUniformMat4f("u_View", camera.m_ViewMatrix);
     m_ShaderNormal->SetUniformMat4f("u_Proj", camera.m_ProjectionMatrix);
@@ -259,6 +264,8 @@ void View::RenderScene(Camera &camera, bool applyLighting)
 
 void View::RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, bool yzPlane)
 {
+    glDisable(GL_CULL_FACE);
+
     glm::mat4 model(1.0f);
     m_ShaderNormal->SetUniformMat4f("u_Model", model);
     m_ShaderNormal->SetUniformMat4f("u_View", camera.m_ViewMatrix);

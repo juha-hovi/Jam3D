@@ -97,9 +97,12 @@ void Application::Run()
         
         DoTick();
         m_CurrentView->Render();
+
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         
         {
-            ImGui::Begin("Views");
+            ImGui::Begin("Jam3D");
+            ImGui::Text("Views:");
             if (ImGui::Button("Test"))
             {
                 m_CurrentView = m_TestView;
@@ -110,6 +113,12 @@ void Application::Run()
                 m_CurrentView = m_ObjectCreationView;
                 m_ObjectCreationView->SetAsCurrent();
             }
+            ImGui::Text("========");
+            ImGui::Text("Settings:");
+            if (ImGui::Button("Toggle grid"))
+                m_CurrentView->m_DrawPlanes = !(m_CurrentView->m_DrawPlanes); 
+            if (ImGui::Button("Toggle axes"))
+                m_CurrentView->m_DrawAxes = !(m_CurrentView->m_DrawAxes); 
             ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
             ImGui::End();
         }

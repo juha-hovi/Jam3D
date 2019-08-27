@@ -11,7 +11,7 @@ namespace Jam3D {
 
 ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window) 
     : View(window), m_UpperLeftViewportIndex(-1), m_UpperRightViewportIndex(-1), m_LowerLeftViewportIndex(-1),
-    m_LowerRightViewportIndex(-1), m_ShadowViewportIndex(-1), m_DrawPlanes(true), 
+    m_LowerRightViewportIndex(-1), m_ShadowViewportIndex(-1),
     m_MouseRightPressedUpperLeft(false), m_MouseLeftPressedUpperLeft(false), m_MouseLeftPressedUpperRight(false),
     m_MouseLeftPressedLowerLeft(false), m_MouseLeftPressedLowerRight(false),
     m_MouseLeftPressedTempBoxXMinusMargin(false), m_MouseLeftPressedTempBoxXPlusMargin(false),
@@ -92,41 +92,28 @@ void ObjectCreationView::Render()
     // Render overall window
     m_Viewports[m_UpperLeftViewportIndex].Use();
     RenderScene(*m_UpperLeftCamera, true);
-    RenderMisc(*m_UpperLeftCamera, true, false, false, false);
+    RenderMisc(*m_UpperLeftCamera, m_DrawAxes, m_DrawPlanes, false, false);
 
     // Render xz
     m_Viewports[m_UpperRightViewportIndex].Use();
     RenderScene(*m_UpperRightCamera, false);
-    glDisable(GL_CULL_FACE); 
-    RenderMisc(*m_UpperRightCamera, true, m_DrawPlanes, false, false);
-    glEnable(GL_CULL_FACE); 
+    RenderMisc(*m_UpperRightCamera, m_DrawAxes, m_DrawPlanes, false, false);
 
     // Render xy
     m_Viewports[m_LowerLeftViewportIndex].Use();
     RenderScene(*m_LowerLeftCamera, false);
-    glDisable(GL_CULL_FACE); 
-    RenderMisc(*m_LowerLeftCamera, true, false, m_DrawPlanes, false);
-    glEnable(GL_CULL_FACE); 
+    RenderMisc(*m_LowerLeftCamera, m_DrawAxes, false, m_DrawPlanes, false);
 
     // Render yz
     m_Viewports[m_LowerRightViewportIndex].Use();
     RenderScene(*m_LowerRightCamera, false);
-    glDisable(GL_CULL_FACE); 
-    RenderMisc(*m_LowerRightCamera, true, false, false, m_DrawPlanes);
-    glEnable(GL_CULL_FACE); 
+    RenderMisc(*m_LowerRightCamera, m_DrawAxes, false, false, m_DrawPlanes);
 
     RenderImGui();
 }
 
 void ObjectCreationView::RenderImGui()
 {
-    {
-        ImGui::Begin("Grid");
-        if (ImGui::Button("On/Off"))
-            m_DrawPlanes = !m_DrawPlanes;
-        ImGui::End();
-    }
-
     {
         ImGui::Begin("Draw box");
         if (!m_TempBox)
