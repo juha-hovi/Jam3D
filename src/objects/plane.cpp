@@ -43,12 +43,12 @@ Plane::Plane(unsigned int type)
     {
         float vertexData[vertexDataSize] = {
         -dist, -dist, 0.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f,
-         dist, -dist, 0.0f, 10.0f,  0.0f, 0.0f, 0.0f, 1.0f,
-         dist,  dist, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 1.0f,
+         dist, -dist, 0.0f, 12.0f,  0.0f, 0.0f, 0.0f, 1.0f,
+         dist,  dist, 0.0f, 12.0f, 12.0f, 0.0f, 0.0f, 1.0f,
 
         -dist, -dist, 0.0f, 0.0f,   0.0f, 0.0f, 0.0f, 1.0f,
-         dist,  dist, 0.0f, 10.0f, 10.0f, 0.0f, 0.0f, 1.0f,
-        -dist,  dist, 0.0f, 0.0f,  10.0f, 0.0f, 0.0f, 1.0f
+         dist,  dist, 0.0f, 12.0f, 12.0f, 0.0f, 0.0f, 1.0f,
+        -dist,  dist, 0.0f, 0.0f,  12.0f, 0.0f, 0.0f, 1.0f
         };
 
         for (int i = 0; i < vertexDataSize; ++i)
@@ -65,12 +65,12 @@ Plane::Plane(unsigned int type)
     {
         float vertexData[vertexDataSize] = {
         0.0f, -dist, -dist, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-        0.0f,  dist, -dist, 10.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-        0.0f,  dist,  dist, 10.0f, 10.0f, 1.0f, 0.0f, 0.0f,
+        0.0f,  dist, -dist, 12.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+        0.0f,  dist,  dist, 12.0f, 12.0f, 1.0f, 0.0f, 0.0f,
 
         0.0f, -dist, -dist, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-        0.0f,  dist,  dist, 10.0f, 10.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, -dist,  dist, 0.0f,  10.0f, 1.0f, 0.0f, 0.0f
+        0.0f,  dist,  dist, 12.0f, 12.0f, 1.0f, 0.0f, 0.0f,
+        0.0f, -dist,  dist, 0.0f,  12.0f, 1.0f, 0.0f, 0.0f
         };   
 
         for (int i = 0; i < vertexDataSize; ++i)

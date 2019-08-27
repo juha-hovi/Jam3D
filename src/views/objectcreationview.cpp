@@ -152,7 +152,7 @@ void ObjectCreationView::RenderImGui()
 void ObjectCreationView::StartDrawing()
 {
     Jam3D::Vec3<float> center(0.0f, 0.0f, 0.0f);
-    Jam3D::Vec3<float> dimension(300.0f, 300.0f, 300.0f);
+    Jam3D::Vec3<float> dimension(400.0f, 400.0f, 400.0f);
     Jam3D::Vec3<float> rotation(0.0f, 0.0f, 0.0f);
 
     m_TempBox = std::make_unique<Box>(center, dimension, rotation);
