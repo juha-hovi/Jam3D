@@ -233,18 +233,26 @@ void ObjectCreationView::DrawTempBox(glm::vec3 worldCoords, bool x, bool y, bool
 
 void ObjectCreationView::StrechTempBox(glm::vec3 worldCoords, bool x, bool y, bool z)
 {
+    float minBoxDim = 50;
+
     if (x)
     {
-        double xDiff = worldCoords.x - m_MouseLeftPressLocation.x;
+        float xDiff = worldCoords.x - m_MouseLeftPressLocation.x;
         if (m_MouseLeftPressedTempBoxXMinusMargin)
         {
-            m_TempBox->m_Dimensions.x = m_TempBoxDimensionsOriginal.x + xDiff;
-            m_TempBox->m_Center.x = m_TempBoxCenterOriginal.x + xDiff / 2;
+            if (m_TempBoxDimensionsOriginal.x + xDiff > minBoxDim)
+            {
+                m_TempBox->m_Dimensions.x = m_TempBoxDimensionsOriginal.x + xDiff;
+                m_TempBox->m_Center.x = m_TempBoxCenterOriginal.x + xDiff / 2;
+            }
         }
         else if (m_MouseLeftPressedTempBoxXPlusMargin)
         {
-            m_TempBox->m_Dimensions.x = m_TempBoxDimensionsOriginal.x - xDiff;
-            m_TempBox->m_Center.x = m_TempBoxCenterOriginal.x + xDiff / 2;
+            if (m_TempBoxDimensionsOriginal.x - xDiff > minBoxDim)
+            {
+                m_TempBox->m_Dimensions.x = m_TempBoxDimensionsOriginal.x - xDiff;
+                m_TempBox->m_Center.x = m_TempBoxCenterOriginal.x + xDiff / 2;
+            }
         }
     }
 
@@ -253,13 +261,19 @@ void ObjectCreationView::StrechTempBox(glm::vec3 worldCoords, bool x, bool y, bo
         double yDiff = worldCoords.y - m_MouseLeftPressLocation.y;
         if (m_MouseLeftPressedTempBoxYMinusMargin)
         {
-            m_TempBox->m_Dimensions.y = m_TempBoxDimensionsOriginal.y - yDiff;
-            m_TempBox->m_Center.y = m_TempBoxCenterOriginal.y + yDiff / 2;
+            if (m_TempBoxDimensionsOriginal.y - yDiff > minBoxDim)
+            {
+                m_TempBox->m_Dimensions.y = m_TempBoxDimensionsOriginal.y - yDiff;
+                m_TempBox->m_Center.y = m_TempBoxCenterOriginal.y + yDiff / 2;
+            }
         }
         else if (m_MouseLeftPressedTempBoxYPlusMargin)
         {
-            m_TempBox->m_Dimensions.y = m_TempBoxDimensionsOriginal.y + yDiff;
-            m_TempBox->m_Center.y = m_TempBoxCenterOriginal.y + yDiff / 2;
+            if (m_TempBoxDimensionsOriginal.y + yDiff > minBoxDim)
+            {
+                m_TempBox->m_Dimensions.y = m_TempBoxDimensionsOriginal.y + yDiff;
+                m_TempBox->m_Center.y = m_TempBoxCenterOriginal.y + yDiff / 2;
+            }
         }
     }
 
@@ -268,13 +282,19 @@ void ObjectCreationView::StrechTempBox(glm::vec3 worldCoords, bool x, bool y, bo
         double zDiff = worldCoords.z - m_MouseLeftPressLocation.z;
         if (m_MouseLeftPressedTempBoxZMinusMargin)
         {
-            m_TempBox->m_Dimensions.z = m_TempBoxDimensionsOriginal.z - zDiff;
-            m_TempBox->m_Center.z = m_TempBoxCenterOriginal.z + zDiff / 2;
+            if (m_TempBoxDimensionsOriginal.z - zDiff > minBoxDim)
+            {
+                m_TempBox->m_Dimensions.z = m_TempBoxDimensionsOriginal.z - zDiff;
+                m_TempBox->m_Center.z = m_TempBoxCenterOriginal.z + zDiff / 2;
+            }
         }
         else if (m_MouseLeftPressedTempBoxZPlusMargin)
         {
-            m_TempBox->m_Dimensions.z = m_TempBoxDimensionsOriginal.z + zDiff;
-            m_TempBox->m_Center.z = m_TempBoxCenterOriginal.z + zDiff / 2;
+            if (m_TempBoxDimensionsOriginal.z + zDiff > minBoxDim)
+            {
+                m_TempBox->m_Dimensions.z = m_TempBoxDimensionsOriginal.z + zDiff;
+                m_TempBox->m_Center.z = m_TempBoxCenterOriginal.z + zDiff / 2;
+            }
         }
     }
 
