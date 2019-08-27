@@ -26,7 +26,7 @@ Shader::Shader(const std::string& fp, unsigned int type)
 //    - program ID associated with the shaders
 unsigned int Shader::CreateShader(ShaderSources src)
 {
-    if (m_Type == VERTEX_FRAGMENT)
+    if (m_Type == Shader::VERTEX_FRAGMENT)
     {
         unsigned int program = glCreateProgram();
         unsigned int vertexID = CompileShader(GL_VERTEX_SHADER, src.vertexSource);
@@ -43,7 +43,7 @@ unsigned int Shader::CreateShader(ShaderSources src)
         return program;
     }
     
-    else if (m_Type == VERTEX_GEOMETRY_FRAGMENT)
+    else if (m_Type == Shader::VERTEX_GEOMETRY_FRAGMENT)
     {
         unsigned int program = glCreateProgram();
         unsigned int vertexID = CompileShader(GL_VERTEX_SHADER, src.vertexSource);

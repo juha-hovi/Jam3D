@@ -9,6 +9,10 @@ namespace Jam3D {
 class ObjectCreationView : public View
 {
 public:
+    enum : unsigned int {
+        DRAW, STRECH, MOVE
+    };
+
     ObjectCreationView(std::shared_ptr<GLWindow> window);
     void Render() override;
 
@@ -27,6 +31,11 @@ public:
     void CancelDrawing();
 
     void UpdateTempBox(OrthoCamera& camera, Viewport& viewport, double xPos, double yPos, bool x, bool y, bool z);
+    void DrawTempBox(glm::vec3, bool x, bool y, bool z);
+    void StrechTempBox(glm::vec3, bool x, bool y, bool z);
+    void MoveTempBox(glm::vec3, bool x, bool y, bool z);
+
+    void IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool z);
 
     int m_UpperLeftViewportIndex;
     int m_UpperRightViewportIndex;
@@ -43,17 +52,25 @@ public:
     bool m_MouseLeftPressedLowerLeft;
     bool m_MouseLeftPressedLowerRight;
 
+    bool m_MouseLeftPressedTempBoxXMinusMargin;
+    bool m_MouseLeftPressedTempBoxXPlusMargin;
+    bool m_MouseLeftPressedTempBoxYMinusMargin;
+    bool m_MouseLeftPressedTempBoxYPlusMargin;
+    bool m_MouseLeftPressedTempBoxZMinusMargin;
+    bool m_MouseLeftPressedTempBoxZPlusMargin;
+
     glm::vec3 m_MouseLeftPressLocation;
+
+    unsigned int m_CurrentTool;
+
+    Jam3D::Vec3<float> m_TempBoxCenterOriginal;
+    Jam3D::Vec3<float> m_TempBoxDimensionsOriginal;
 
     std::shared_ptr<PerspectiveCamera> m_UpperLeftCamera;
 
     std::shared_ptr<OrthoCamera> m_UpperRightCamera;
     std::shared_ptr<OrthoCamera> m_LowerLeftCamera;
     std::shared_ptr<OrthoCamera> m_LowerRightCamera;
-
-    Jam3D::Vec3<float> m_TempBoxCenter;
-    Jam3D::Vec3<float> m_TempBoxDimensions;
-    Jam3D::Vec3<float> m_TempBoxRotation;
 };
 
 }
