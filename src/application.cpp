@@ -46,6 +46,7 @@ Application::Application()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     m_GLWindow = std::make_shared<GLWindow>(m_WindowWidth, m_WindowHeight, "Jam3D");
 
@@ -54,6 +55,7 @@ Application::Application()
     if (GLEW_OK != err)
         Jam3D::Log::Error("GLEW initialization failed!");
 
+    glEnable(GL_MULTISAMPLE); 
     glEnable(GL_DEBUG_OUTPUT);
     glDebugMessageCallback(OpenGLDebugCallback, 0);
 
