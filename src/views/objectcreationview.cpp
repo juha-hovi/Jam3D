@@ -7,8 +7,6 @@
 #include "imgui/imgui_impl_opengl3.h"
 #define IMGUI_IMPL_OPENGL_LOADER_GLEW
 
-#include <iostream>
-
 namespace Jam3D {
 
 ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window) 
@@ -131,8 +129,16 @@ void ObjectCreationView::RenderImGui()
 
     {
         ImGui::Begin("Draw box");
-        if (ImGui::Button("Start"))
-            StartDrawing();
+        if (!m_TempBox)
+        {
+            if (ImGui::Button("Start"))
+                StartDrawing();
+        }
+        else
+        {
+            if (ImGui::Button("Reset"))
+                StartDrawing();
+        }
         if (ImGui::Button("Save"))
             SaveTempBox();
         if (ImGui::Button("Cancel"))
@@ -156,6 +162,8 @@ void ObjectCreationView::StartDrawing()
     Jam3D::Vec3<float> rotation(0.0f, 0.0f, 0.0f);
 
     m_TempBox = std::make_unique<Box>(center, dimension, rotation);
+    m_TempBoxCenterOriginal = center;
+    m_TempBoxDimensionsOriginal = dimension;
 }
 
 void ObjectCreationView::SaveTempBox()
@@ -342,25 +350,21 @@ void ObjectCreationView::IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool 
 
         if (MathHelper::IsInRect(worldCoords.x, worldCoords.z, xMinusRect))
         {
-            std::cout << "X-" << std::endl;
             m_MouseLeftPressedTempBoxXMinusMargin = true;
         }
 
         else if (MathHelper::IsInRect(worldCoords.x, worldCoords.z, xPlusRect))
         {
-            std::cout << "X+" << std::endl;
             m_MouseLeftPressedTempBoxXPlusMargin = true;
         }
 
         if (MathHelper::IsInRect(worldCoords.x, worldCoords.z, zMinusRect))
         {
-            std::cout << "Z-" << std::endl;
             m_MouseLeftPressedTempBoxZMinusMargin = true;
         }
 
         else if (MathHelper::IsInRect(worldCoords.x, worldCoords.z, zPlusRect))
         {
-            std::cout << "Z+" << std::endl;
             m_MouseLeftPressedTempBoxZPlusMargin = true;
         }
     }
@@ -381,25 +385,21 @@ void ObjectCreationView::IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool 
 
         if (MathHelper::IsInRect(worldCoords.x, worldCoords.y, xMinusRect))
         {
-            std::cout << "X-" << std::endl;
             m_MouseLeftPressedTempBoxXMinusMargin = true;
         }
 
         else if (MathHelper::IsInRect(worldCoords.x, worldCoords.y, xPlusRect))
         {
-            std::cout << "X+" << std::endl;
             m_MouseLeftPressedTempBoxXPlusMargin = true;
         }
 
         if (MathHelper::IsInRect(worldCoords.x, worldCoords.y, yMinusRect))
         {
-            std::cout << "Y-" << std::endl;
             m_MouseLeftPressedTempBoxYMinusMargin = true;
         }
 
         else if (MathHelper::IsInRect(worldCoords.x, worldCoords.y, yPlusRect))
         {
-            std::cout << "Y+" << std::endl;
             m_MouseLeftPressedTempBoxYPlusMargin = true;
         }
     }
@@ -420,25 +420,21 @@ void ObjectCreationView::IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool 
 
         if (MathHelper::IsInRect(worldCoords.y, worldCoords.z, yMinusRect))
         {
-            std::cout << "Y-" << std::endl;
             m_MouseLeftPressedTempBoxYMinusMargin = true;
         }
 
         else if (MathHelper::IsInRect(worldCoords.y, worldCoords.z, yPlusRect))
         {
-            std::cout << "Y+" << std::endl;
             m_MouseLeftPressedTempBoxYPlusMargin = true;
         }
 
         if (MathHelper::IsInRect(worldCoords.y, worldCoords.z, zMinusRect))
         {
-            std::cout << "Z-" << std::endl;
             m_MouseLeftPressedTempBoxZMinusMargin = true;
         }
 
         else if (MathHelper::IsInRect(worldCoords.y, worldCoords.z, zPlusRect))
         {
-            std::cout << "Z+" << std::endl;
             m_MouseLeftPressedTempBoxZPlusMargin = true;
         }
     }
@@ -518,7 +514,6 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     // Upper-left: Normal
     if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
     {
-        std::cout << "UL" << std::endl;
         if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
         {
             m_MouseRightPressedUpperLeft = true;
@@ -530,7 +525,6 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     // Upper-Right: XZ
     else if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_UpperRightViewportIndex].m_Corners))
     {
-        std::cout << "UR" << std::endl;
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_UpperRightViewportIndex].m_Corners);
@@ -548,7 +542,6 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     // Lower-Left: XY
     else if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_LowerLeftViewportIndex].m_Corners))
     {
-        std::cout << "LL" << std::endl;
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_LowerLeftViewportIndex].m_Corners);
@@ -566,7 +559,6 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     // Lower-Right: YZ
     else if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_LowerRightViewportIndex].m_Corners))
     {
-        std::cout << "LR" << std::endl;
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_LowerRightViewportIndex].m_Corners);
