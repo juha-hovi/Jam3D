@@ -14,11 +14,13 @@ ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window)
     m_LowerRightViewportIndex(-1), m_ShadowViewportIndex(-1),
     m_MouseRightPressedUpperLeft(false), m_MouseLeftPressedUpperLeft(false), m_MouseLeftPressedUpperRight(false),
     m_MouseLeftPressedLowerLeft(false), m_MouseLeftPressedLowerRight(false),
+    m_MouseLeftPressedBetweenLeftRight(false), m_MouseLeftPressedBetweenUpperLower(false),
     m_MouseLeftPressedTempBoxXMinusMargin(false), m_MouseLeftPressedTempBoxXPlusMargin(false),
     m_MouseLeftPressedTempBoxYMinusMargin(false), m_MouseLeftPressedTempBoxYPlusMargin(false),
     m_MouseLeftPressedTempBoxZMinusMargin(false), m_MouseLeftPressedTempBoxZPlusMargin(false),
     m_MouseLeftPressLocation(glm::vec3(0.0f, 0.0f, 0.0f)), m_CurrentTool(ObjectCreationView::MOVE),
-    m_TempBoxCenterOriginal(0.0f, 0.0f, 0.0f), m_TempBoxDimensionsOriginal(0.0f, 0.0f, 0.0f)
+    m_TempBoxCenterOriginal(0.0f, 0.0f, 0.0f), m_TempBoxDimensionsOriginal(0.0f, 0.0f, 0.0f),
+    m_ViewportDivider(2), m_ViewportMiddle(0.0f, 0.0f), m_ViewportmiddleOriginal(0.0f, 0.0f)
 {
     InitViewports();
     InitCameras();
@@ -27,17 +29,40 @@ ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window)
 
 void ObjectCreationView::InitViewports()
 {
-    int divider = 2;
     m_UpperLeftViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(0, m_Window->m_Height / 2 + divider, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
+    m_Viewports.push_back(Jam3D::Vec4<int>(0, m_Window->m_Height / 2 + m_ViewportDivider, m_Window->m_Width / 2 - m_ViewportDivider, m_Window->m_Height / 2 - m_ViewportDivider));
     m_UpperRightViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2 + divider, m_Window->m_Height / 2 + divider, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
+    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2 + m_ViewportDivider, m_Window->m_Height / 2 + m_ViewportDivider, m_Window->m_Width / 2 - m_ViewportDivider, m_Window->m_Height / 2 - m_ViewportDivider));
     m_LowerLeftViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(0, 0, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
+    m_Viewports.push_back(Jam3D::Vec4<int>(0, 0, m_Window->m_Width / 2 - m_ViewportDivider, m_Window->m_Height / 2 - m_ViewportDivider));
     m_LowerRightViewportIndex = m_Viewports.size();
-    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2 + divider, 0, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
+    m_Viewports.push_back(Jam3D::Vec4<int>(m_Window->m_Width / 2 + m_ViewportDivider, 0, m_Window->m_Width / 2 - m_ViewportDivider, m_Window->m_Height / 2 - m_ViewportDivider));
     m_ShadowViewportIndex = m_Viewports.size();
     m_Viewports.push_back(Viewport(Jam3D::Vec4<int>(0, 0, m_ShadowWidth, m_ShadowHeight)));
+
+    m_ViewportMiddle.x = m_Window->m_Width / 2;
+    m_ViewportMiddle.y = m_Window->m_Height / 2;
+    m_ViewportmiddleOriginal = m_ViewportMiddle;
+}
+
+void ObjectCreationView::UpdateViewports()
+{
+    m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 = m_ViewportMiddle.x - m_ViewportDivider;
+    m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0 = m_ViewportMiddle.y + m_ViewportDivider;
+
+    m_Viewports[m_UpperRightViewportIndex].m_Corners.x0 = m_ViewportMiddle.x + m_ViewportDivider;
+    m_Viewports[m_UpperRightViewportIndex].m_Corners.y0 = m_ViewportMiddle.y + m_ViewportDivider;
+
+    m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1 = m_ViewportMiddle.x - m_ViewportDivider;
+    m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1 = m_ViewportMiddle.y - m_ViewportDivider;
+
+    m_Viewports[m_LowerRightViewportIndex].m_Corners.x0 = m_ViewportMiddle.x + m_ViewportDivider;
+    m_Viewports[m_LowerRightViewportIndex].m_Corners.y1 = m_ViewportMiddle.y - m_ViewportDivider;
+
+    m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1 = m_Window->m_Height - m_ViewportMiddle.y - m_ViewportDivider;
+    m_Viewports[m_UpperRightViewportIndex].m_Corners.x1 = m_Window->m_Width - m_ViewportMiddle.x - m_ViewportDivider;
+    m_Viewports[m_UpperRightViewportIndex].m_Corners.y1 = m_Window->m_Height - m_ViewportMiddle.y - m_ViewportDivider;
+    m_Viewports[m_LowerRightViewportIndex].m_Corners.x1 = m_Window->m_Width - m_ViewportMiddle.x - m_ViewportDivider;
 }
 
 void ObjectCreationView::InitCameras()
@@ -169,7 +194,7 @@ void ObjectCreationView::CancelDrawing()
 
 void ObjectCreationView::UpdateTempBox(OrthoCamera& camera, Viewport& viewport, double xPos, double yPos, bool x, bool y, bool z)
 {
-    glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), camera.m_ViewMatrix, camera.m_ProjectionMatrix, Jam3D::MathHelper::Vec4ToGlm(viewport.m_Corners));
+    glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, yPos, 1.0f), camera.m_ViewMatrix, camera.m_ProjectionMatrix, Jam3D::MathHelper::Vec4ToGlm(viewport.m_Corners));
 
     if (m_CurrentTool == ObjectCreationView::DRAW)
         DrawTempBox(worldCoords, x, y, z);
@@ -320,6 +345,24 @@ void ObjectCreationView::MoveTempBox(glm::vec3 worldCoords, bool x, bool y, bool
     }
 }
 
+void ObjectCreationView::ResizeViewports(double pos, bool x, bool y)
+{
+    if (x)
+    {
+        double diff = pos - m_MouseLeftPressLocation.x;
+        m_ViewportMiddle.x = m_ViewportmiddleOriginal.x + diff;
+    }
+
+    if (y)
+    {
+        double diff = pos - m_MouseLeftPressLocation.y;
+        m_ViewportMiddle.y = m_ViewportmiddleOriginal.y + diff;
+    }
+
+    UpdateViewports();
+    InitViewportBorders();
+}
+
 void ObjectCreationView::IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool z)
 {
     double marginRatio = 0.15;
@@ -432,6 +475,7 @@ void ObjectCreationView::IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool 
 
 void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
 {
+    yPos = m_Window->m_Height - yPos;
     // Right Click
     if (m_MouseRightPressedUpperLeft)
         m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
@@ -455,8 +499,18 @@ void ObjectCreationView::CursorPosCallback(double xPos, double yPos)
             UpdateTempBox(*m_LowerRightCamera, m_Viewports[m_LowerRightViewportIndex], xPos, yPos, false, true, true);
     }
 
+    if (m_MouseLeftPressedBetweenLeftRight)
+    {
+        ResizeViewports(xPos, true, false);
+    }
+
+    if (m_MouseLeftPressedBetweenUpperLower)
+    {
+        ResizeViewports(yPos, false, true);
+    }
+
     // Upper-left: Normal
-    else if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
+    else if (MathHelper::IsInRect(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
         m_UpperLeftCamera->CursorPosCallback(xPos, yPos);
 }
 
@@ -464,9 +518,10 @@ void ObjectCreationView::KeyCallback(int key, int scancode, int action, int mods
 {
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
+    yPos = m_Window->m_Height - yPos;
 
     // Upper-left: Normal
-    if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
+    if (MathHelper::IsInRect(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
         m_UpperLeftCamera->KeyCallback(key, scancode, action, mods);
 }
 
@@ -474,6 +529,7 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
 {
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
+    yPos = m_Window->m_Height - yPos;
 
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
     {
@@ -486,6 +542,10 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
         m_MouseLeftPressedUpperRight = false;
         m_MouseLeftPressedLowerLeft = false;
         m_MouseLeftPressedLowerRight = false;
+        m_MouseLeftPressedBetweenLeftRight = false;
+        m_MouseLeftPressedBetweenUpperLower = false;
+
+        m_ViewportmiddleOriginal = m_ViewportMiddle;
         
         if (m_TempBox)
         {
@@ -502,7 +562,7 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     }
 
     // Upper-left: Normal
-    if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
+    if (MathHelper::IsInRect(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
     {
         if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
         {
@@ -513,12 +573,12 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     }
 
     // Upper-Right: XZ
-    else if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_UpperRightViewportIndex].m_Corners))
+    else if (MathHelper::IsInRect(xPos, yPos, m_Viewports[m_UpperRightViewportIndex].m_Corners))
     {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_UpperRightViewportIndex].m_Corners);
-            glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), m_UpperRightCamera->m_ViewMatrix, m_UpperRightCamera->m_ProjectionMatrix, viewport);
+            glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, yPos, 1.0f), m_UpperRightCamera->m_ViewMatrix, m_UpperRightCamera->m_ProjectionMatrix, viewport);
             
             m_MouseLeftPressedUpperRight = true;
             m_MouseLeftPressLocation.x = worldCoords.x;
@@ -530,12 +590,12 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     }
 
     // Lower-Left: XY
-    else if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_LowerLeftViewportIndex].m_Corners))
+    else if (MathHelper::IsInRect(xPos, yPos, m_Viewports[m_LowerLeftViewportIndex].m_Corners))
     {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_LowerLeftViewportIndex].m_Corners);
-            glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), m_LowerLeftCamera->m_ViewMatrix, m_LowerLeftCamera->m_ProjectionMatrix, viewport);
+            glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, yPos, 1.0f), m_LowerLeftCamera->m_ViewMatrix, m_LowerLeftCamera->m_ProjectionMatrix, viewport);
             
             m_MouseLeftPressedLowerLeft = true;
             m_MouseLeftPressLocation.x = worldCoords.x;
@@ -547,12 +607,12 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
     }
 
     // Lower-Right: YZ
-    else if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_LowerRightViewportIndex].m_Corners))
+    else if (MathHelper::IsInRect(xPos, yPos, m_Viewports[m_LowerRightViewportIndex].m_Corners))
     {
         if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
         {
             glm::vec4 viewport = Jam3D::MathHelper::Vec4ToGlm(m_Viewports[m_LowerRightViewportIndex].m_Corners);
-            glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, m_Window->m_Height - yPos, 1.0f), m_LowerRightCamera->m_ViewMatrix, m_LowerRightCamera->m_ProjectionMatrix, viewport);
+            glm::vec3 worldCoords = glm::unProject(glm::vec3(xPos, yPos, 1.0f), m_LowerRightCamera->m_ViewMatrix, m_LowerRightCamera->m_ProjectionMatrix, viewport);
             
             m_MouseLeftPressedLowerRight = true;
             m_MouseLeftPressLocation.z = worldCoords.z;
@@ -562,15 +622,38 @@ void ObjectCreationView::MouseButtonCallback(int button, int action, int mods)
                 IsInMargin(worldCoords, false, true, true);
         }
     }
+    // Not in viewport -> must be between viewports.
+    else 
+    {
+        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+        {
+            m_MouseLeftPressLocation.x = xPos;
+            m_MouseLeftPressLocation.y = yPos;
+
+            // Between left and right
+            if (xPos > m_Viewports[m_UpperLeftViewportIndex].m_Corners.x0 + m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1
+                && xPos < m_Viewports[m_UpperRightViewportIndex].m_Corners.x0)
+            {
+                m_MouseLeftPressedBetweenLeftRight = true;
+            }
+            // Between upper and lower
+            if (yPos < m_Viewports[m_UpperLeftViewportIndex].m_Corners.y0
+                && yPos > m_Viewports[m_LowerLeftViewportIndex].m_Corners.y0 + m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1)
+            {
+                m_MouseLeftPressedBetweenUpperLower = true;
+            }
+        }
+    }
 }
 
 void ObjectCreationView::ScrollCallback(double yOffset)
 {
     double xPos, yPos;
     glfwGetCursorPos(m_Window->m_Window, &xPos, &yPos);
+    yPos = m_Window->m_Height - yPos;
 
     // Upper-left: Normal
-    if (MathHelper::IsInRect(xPos, m_Window->m_Height - yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
+    if (MathHelper::IsInRect(xPos, yPos, m_Viewports[m_UpperLeftViewportIndex].m_Corners))
         m_UpperLeftCamera->ScrollCallback(yOffset);
 }
 

@@ -13,7 +13,6 @@ public:
     void Use();
 
     Jam3D::Vec4<int> m_Corners;
-    Jam3D::Vec2<int> m_Dimensions;
 };
     
 }

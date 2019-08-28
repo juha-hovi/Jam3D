@@ -8,6 +8,10 @@ OrthoCamera::OrthoCamera(float left, float right, float bottom, float top, Camer
     m_ProjectionMatrix = glm::ortho(left, right, bottom, top, m_Near, m_Far);
     m_Width = right - left;
     m_Height = top - bottom;
+    if (m_Width > m_Height)
+        m_LargestDim = m_Width;
+    else
+        m_LargestDim = m_Height;
 
     // Initialize vectors here since the camera is not meant to be rotated
     glm::vec3 worldUp(0.0f, 1.0f, 0.0f);

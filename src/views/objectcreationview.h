@@ -35,6 +35,9 @@ public:
     void StrechTempBox(glm::vec3, bool x, bool y, bool z);
     void MoveTempBox(glm::vec3, bool x, bool y, bool z);
 
+    void UpdateViewports();
+    void ResizeViewports(double pos, bool x, bool y);
+
     void IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool z);
 
     int m_UpperLeftViewportIndex;
@@ -50,6 +53,9 @@ public:
     bool m_MouseLeftPressedLowerLeft;
     bool m_MouseLeftPressedLowerRight;
 
+    bool m_MouseLeftPressedBetweenLeftRight;
+    bool m_MouseLeftPressedBetweenUpperLower;
+
     bool m_MouseLeftPressedTempBoxXMinusMargin;
     bool m_MouseLeftPressedTempBoxXPlusMargin;
     bool m_MouseLeftPressedTempBoxYMinusMargin;
@@ -63,6 +69,10 @@ public:
 
     Jam3D::Vec3<float> m_TempBoxCenterOriginal;
     Jam3D::Vec3<float> m_TempBoxDimensionsOriginal;
+
+    unsigned int m_ViewportDivider;
+    Jam3D::Vec2<float> m_ViewportMiddle;
+    Jam3D::Vec2<float> m_ViewportmiddleOriginal;
 
     std::shared_ptr<PerspectiveCamera> m_UpperLeftCamera;
 

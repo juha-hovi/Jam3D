@@ -12,6 +12,7 @@ public:
 
     int m_Width;
     int m_Height;
+    int m_LargestDim;
 };
 
 }
