@@ -112,6 +112,15 @@ void View::InitMisc()
     m_IBOYZPlane = std::make_unique<IndexBuffer>(m_YZPlane->m_Indices.data(), m_YZPlane->m_Indices.size());
 }
 
+void View::InitViewportBorders()
+{
+    m_ViewportBorders = std::make_unique<ViewportBorders>(m_Viewports, m_Window);
+    m_VAOViewportBorders = std::make_unique<VertexArray>();
+    m_VBOViewportBorders = std::make_unique<VertexBuffer>(m_ViewportBorders->m_Positions.data(), m_ViewportBorders->m_Positions.size() * sizeof(float));
+    m_VAOViewportBorders->AddBuffer(*m_VBOViewportBorders, *m_Layout);
+    m_IBOViewportBorders = std::make_unique<IndexBuffer>(m_ViewportBorders->m_Indices.data(), m_ViewportBorders->m_Indices.size());
+}
+
 void View::InitPointShadow()
 {
     m_FrameBuffer = std::make_unique<FrameBuffer>();
@@ -295,98 +304,6 @@ void View::RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, boo
     {
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOYZPlane, *m_IBOYZPlane, *m_ShaderNormal);
     }
-}
-
-void View::InitViewportBorders()
-{
-    std::vector<float> positions;
-    std::vector<unsigned int> indices;
-
-    for (int i = 0; i < m_Viewports.size() - 1; ++i)
-    {
-        float xBottomLeft = 2.0f * ((float)m_Viewports[i].m_Corners.x0 - 1) / (float)m_Window->m_Width - 1.0f;
-        float yBottomLeft = 2.0f * ((float)m_Viewports[i].m_Corners.y0 - 1) / (float)m_Window->m_Height - 1.0f;
-        float xBottomRight = 2.0f * ((float)m_Viewports[i].m_Corners.x0 + (float)m_Viewports[i].m_Corners.x1 + 1) / (float)m_Window->m_Width - 1.0f;
-        float yBottomRight = 2.0f * ((float)m_Viewports[i].m_Corners.y0 - 1) / (float)m_Window->m_Height - 1.0f;
-        float xTopLeft = 2.0f * ((float)m_Viewports[i].m_Corners.x0 - 1) / (float)m_Window->m_Width - 1.0f;
-        float yTopLeft = 2.0f * ((float)m_Viewports[i].m_Corners.y0 + (float)m_Viewports[i].m_Corners.y1 + 1) / (float)m_Window->m_Height - 1.0f;
-        float xTopRight = 2.0f * ((float)m_Viewports[i].m_Corners.x0 + (float)m_Viewports[i].m_Corners.x1 + 1) / (float)m_Window->m_Width - 1.0f;
-        float yTopRight = 2.0f * ((float)m_Viewports[i].m_Corners.y0 + (float)m_Viewports[i].m_Corners.y1 + 1) / (float)m_Window->m_Height - 1.0f;
-
-        float z = -1.0f;
-
-        // Bottom
-        positions.push_back(xBottomLeft);
-        positions.push_back(yBottomLeft);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-        positions.push_back(xBottomRight);
-        positions.push_back(yBottomRight);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-        // Top
-        positions.push_back(xTopLeft);
-        positions.push_back(yTopLeft);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-        positions.push_back(xTopRight);
-        positions.push_back(yTopRight);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-
-        // Left
-        positions.push_back(xBottomLeft);
-        positions.push_back(yBottomLeft);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-        positions.push_back(xTopLeft);
-        positions.push_back(yTopLeft);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-
-        // Right
-        positions.push_back(xBottomRight);
-        positions.push_back(yBottomRight);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-        positions.push_back(xTopRight);
-        positions.push_back(yTopRight);
-        positions.push_back(z);
-        for (int j = 0; j < 5; ++j)
-        {
-            positions.push_back(0.0f);
-        }
-    }
-    for (unsigned int i = 0; i < positions.size(); ++i)
-    {
-        indices.push_back(i);
-    }
-
-    m_VAOViewportBorders = std::make_unique<VertexArray>();
-    m_VBOViewportBorders = std::make_unique<VertexBuffer>(positions.data(), positions.size() * sizeof(float));
-    m_VAOViewportBorders->AddBuffer(*m_VBOViewportBorders, *m_Layout);
-    m_IBOViewportBorders = std::make_unique<IndexBuffer>(indices.data(), indices.size());
 }
 
 void View::RenderViewportBorders()

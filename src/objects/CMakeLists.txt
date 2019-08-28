@@ -11,5 +11,7 @@ set(shapes_source
     shape.h
     sphere.cpp
     sphere.h
+    viewportborders.cpp
+    viewportborders.h
 )
 add_library(shapes ${shapes_source})

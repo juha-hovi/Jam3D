@@ -23,6 +23,7 @@
 #include "box.h"
 #include "sphere.h"
 #include "lightsource.h"
+#include "viewportborders.h"
 
 #include "camera.h"
 
@@ -74,6 +75,7 @@ protected:
     std::unique_ptr<VertexBuffer> m_VBOAxes;
     std::unique_ptr<IndexBuffer> m_IBOAxes;
 
+    std::unique_ptr<ViewportBorders> m_ViewportBorders;
     std::unique_ptr<VertexArray> m_VAOViewportBorders;
     std::unique_ptr<VertexBuffer> m_VBOViewportBorders;
     std::unique_ptr<IndexBuffer> m_IBOViewportBorders;
