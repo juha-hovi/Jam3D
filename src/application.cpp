@@ -88,6 +88,8 @@ void Application::Run()
     ImGui_ImplGlfw_InitForOpenGL(m_GLWindow->m_Window, true);
     ImGui_ImplOpenGL3_Init(glsl_version);
     
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    
     // Loop until the window is closed by the user.
     while (!glfwWindowShouldClose(m_GLWindow->m_Window))  
     {
@@ -100,7 +102,6 @@ void Application::Run()
         DoTick();
         m_CurrentView->Render();
 
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         
         {
             ImGui::Begin("Jam3D");

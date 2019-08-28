@@ -22,11 +22,12 @@ ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window)
 {
     InitViewports();
     InitCameras();
+    InitViewportBorders();
 }
 
 void ObjectCreationView::InitViewports()
 {
-    int divider = 10;
+    int divider = 2;
     m_UpperLeftViewportIndex = m_Viewports.size();
     m_Viewports.push_back(Jam3D::Vec4<int>(0, m_Window->m_Height / 2 + divider, m_Window->m_Width / 2 - divider, m_Window->m_Height / 2 - divider));
     m_UpperRightViewportIndex = m_Viewports.size();
@@ -109,6 +110,8 @@ void ObjectCreationView::Render()
     RenderScene(*m_LowerRightCamera, false);
     RenderMisc(*m_LowerRightCamera, m_DrawAxes, false, false, m_DrawPlanes);
 
+    RenderViewportBorders();
+    
     RenderImGui();
 }
 

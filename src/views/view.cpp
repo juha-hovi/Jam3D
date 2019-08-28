@@ -77,7 +77,7 @@ void View::InitRendering()
     m_Layout->Push<float>(2);
     m_Layout->Push<float>(3);
 
-    m_ShaderNormal = std::make_unique<Shader>("src/shaders/basic3d.shader", Shader::VERTEX_FRAGMENT);
+    m_ShaderNormal = std::make_unique<Shader>("src/shaders/3d.shader", Shader::VERTEX_FRAGMENT);
 
     m_TextureBox = std::make_shared<Texture2D>("res/tex_test_full.png", Texture2D::STRETCH);
     m_TextureEarth = std::make_shared<Texture2D>("res/earth2048.bmp", Texture2D::STRETCH);
@@ -276,8 +276,8 @@ void View::RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, boo
 
     if (axes)
     {
-    m_TextureRGB->Bind(m_TextureSlot);
-    m_Renderer->Draw(GL_LINES, *m_VAOAxes, *m_IBOAxes, *m_ShaderNormal);
+        m_TextureRGB->Bind(m_TextureSlot);
+        m_Renderer->Draw(GL_LINES, *m_VAOAxes, *m_IBOAxes, *m_ShaderNormal);
     }
 
     m_TexturePlane->Bind(m_TextureSlot);
@@ -295,6 +295,115 @@ void View::RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, boo
     {
         m_Renderer->Draw(GL_TRIANGLES, *m_VAOYZPlane, *m_IBOYZPlane, *m_ShaderNormal);
     }
+}
+
+void View::InitViewportBorders()
+{
+    std::vector<float> positions;
+    std::vector<unsigned int> indices;
+
+    for (int i = 0; i < m_Viewports.size() - 1; ++i)
+    {
+        float xBottomLeft = 2.0f * ((float)m_Viewports[i].m_Corners.x0 - 1) / (float)m_Window->m_Width - 1.0f;
+        float yBottomLeft = 2.0f * ((float)m_Viewports[i].m_Corners.y0 - 1) / (float)m_Window->m_Height - 1.0f;
+        float xBottomRight = 2.0f * ((float)m_Viewports[i].m_Corners.x0 + (float)m_Viewports[i].m_Corners.x1 + 1) / (float)m_Window->m_Width - 1.0f;
+        float yBottomRight = 2.0f * ((float)m_Viewports[i].m_Corners.y0 - 1) / (float)m_Window->m_Height - 1.0f;
+        float xTopLeft = 2.0f * ((float)m_Viewports[i].m_Corners.x0 - 1) / (float)m_Window->m_Width - 1.0f;
+        float yTopLeft = 2.0f * ((float)m_Viewports[i].m_Corners.y0 + (float)m_Viewports[i].m_Corners.y1 + 1) / (float)m_Window->m_Height - 1.0f;
+        float xTopRight = 2.0f * ((float)m_Viewports[i].m_Corners.x0 + (float)m_Viewports[i].m_Corners.x1 + 1) / (float)m_Window->m_Width - 1.0f;
+        float yTopRight = 2.0f * ((float)m_Viewports[i].m_Corners.y0 + (float)m_Viewports[i].m_Corners.y1 + 1) / (float)m_Window->m_Height - 1.0f;
+
+        float z = -1.0f;
+
+        // Bottom
+        positions.push_back(xBottomLeft);
+        positions.push_back(yBottomLeft);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+        positions.push_back(xBottomRight);
+        positions.push_back(yBottomRight);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+        // Top
+        positions.push_back(xTopLeft);
+        positions.push_back(yTopLeft);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+        positions.push_back(xTopRight);
+        positions.push_back(yTopRight);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+
+        // Left
+        positions.push_back(xBottomLeft);
+        positions.push_back(yBottomLeft);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+        positions.push_back(xTopLeft);
+        positions.push_back(yTopLeft);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+
+        // Right
+        positions.push_back(xBottomRight);
+        positions.push_back(yBottomRight);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+        positions.push_back(xTopRight);
+        positions.push_back(yTopRight);
+        positions.push_back(z);
+        for (int j = 0; j < 5; ++j)
+        {
+            positions.push_back(0.0f);
+        }
+    }
+    for (unsigned int i = 0; i < positions.size(); ++i)
+    {
+        indices.push_back(i);
+    }
+
+    m_VAOViewportBorders = std::make_unique<VertexArray>();
+    m_VBOViewportBorders = std::make_unique<VertexBuffer>(positions.data(), positions.size() * sizeof(float));
+    m_VAOViewportBorders->AddBuffer(*m_VBOViewportBorders, *m_Layout);
+    m_IBOViewportBorders = std::make_unique<IndexBuffer>(indices.data(), indices.size());
+}
+
+void View::RenderViewportBorders()
+{
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_DEPTH_TEST);
+    glViewport(0, 0, m_Window->m_Width, m_Window->m_Height);
+
+    glm::mat4 model(1.0f);
+    m_ShaderNormal->SetUniformMat4f("u_Model", model);
+    m_ShaderNormal->SetUniformMat4f("u_View", model);
+    m_ShaderNormal->SetUniformMat4f("u_Proj", model);
+    m_ShaderNormal->SetUniform1i("u_ApplyLighting", false);
+    m_ShaderNormal->SetUniform1i("u_ApplyTexture", false);
+    m_ShaderNormal->SetUniform4f("u_Color", 0.0f, 0.0f, 0.0f, 1.0f);
+
+    m_Renderer->Draw(GL_LINES, *m_VAOViewportBorders, *m_IBOViewportBorders, *m_ShaderNormal);
 }
 
 void View::SetLightSources()

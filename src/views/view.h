@@ -51,6 +51,7 @@ protected:
     void InitRendering();
     void InitMisc();
     void InitPointShadow();
+    void InitViewportBorders();
 
     void UpdateModelMats();
     void BufferShape(const Shape& shape);
@@ -59,6 +60,7 @@ protected:
     void RenderPointShadow();
     void RenderScene(Camera& camera, bool applyLighting);
     void RenderMisc(Camera &camera, bool axes, bool xzPlane, bool xyPlane, bool yzPlane); 
+    void RenderViewportBorders();
     void SetLightSources();
 
     std::unique_ptr<VertexBufferLayout> m_Layout;
@@ -71,6 +73,10 @@ protected:
     std::unique_ptr<VertexArray> m_VAOAxes;
     std::unique_ptr<VertexBuffer> m_VBOAxes;
     std::unique_ptr<IndexBuffer> m_IBOAxes;
+
+    std::unique_ptr<VertexArray> m_VAOViewportBorders;
+    std::unique_ptr<VertexBuffer> m_VBOViewportBorders;
+    std::unique_ptr<IndexBuffer> m_IBOViewportBorders;
 
     std::unique_ptr<Plane> m_XZPlane;
     std::unique_ptr<VertexArray> m_VAOXZPlane;

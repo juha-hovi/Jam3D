@@ -30,6 +30,7 @@ TestView::TestView(std::shared_ptr<GLWindow> window)
 
     InitViewports();
     InitCameras();
+    InitViewportBorders();
 }
 
 void TestView::InitViewports()
@@ -75,6 +76,8 @@ void TestView::Render()
     m_Viewports[m_NormalViewportIndex].Use();
     RenderScene(*m_Camera, true);
     RenderMisc(*m_Camera, m_DrawAxes, m_DrawPlanes, false, false);
+
+    //RenderViewportBorders();
 
     RenderImGui();
 }
