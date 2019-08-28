@@ -10,6 +10,7 @@ class PerspectiveCamera : public Camera
 public:
 	PerspectiveCamera(float fov, glm::vec3 target, CameraBaseProperties properties);
 	void Update() override;
+	void UpdateProjMat(float aspectRatio);
 	
 	void ProcessInput();
 

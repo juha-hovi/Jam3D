@@ -80,18 +80,26 @@ void ObjectCreationView::InitCameras()
     properties.window = m_Window;
     m_UpperLeftCamera = std::make_shared<PerspectiveCamera>(fov, target, properties);
 
-    float left = -1100.0f;
-    float right = 1100.0f;
-    float bottom = -618.75f;
-    float top = 618.75f;
+    float left = -m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
+    float right = m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
+    float bottom = -m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;
+    float top = m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;    
     properties.pitch = 90.0f;
     properties.position = glm::vec3(0.0f, 2000.0f, 0.0f);
     m_UpperRightCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
 
+    left = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
+    right = m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
+    bottom = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1;
+    top = m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1;
     properties.pitch = 0.0f;
     properties.position = glm::vec3(0.0f, 0.0f, -2000.0f);
     m_LowerLeftCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
 
+    left = -m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
+    right = m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
+    bottom = -m_Viewports[m_LowerRightViewportIndex].m_Corners.y1;
+    top = m_Viewports[m_LowerRightViewportIndex].m_Corners.y1;
     properties.position = glm::vec3(2000.0f, 0.0f, 0.0f);
     m_LowerRightCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
 }
@@ -361,6 +369,26 @@ void ObjectCreationView::ResizeViewports(double pos, bool x, bool y)
 
     UpdateViewports();
     InitViewportBorders();
+
+    m_UpperLeftCamera->UpdateProjMat((float)m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 / (float)m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1);
+
+    float left = -m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
+    float right = m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
+    float bottom = -m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;
+    float top = m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;     
+    m_UpperRightCamera->UpdateProjMat(left, right, bottom, top);
+
+    left = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
+    right = m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
+    bottom = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1;
+    top = m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1; 
+    m_LowerLeftCamera->UpdateProjMat(left, right, bottom, top);
+
+    left = -m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
+    right = m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
+    bottom = -m_Viewports[m_LowerRightViewportIndex].m_Corners.y1;
+    top = m_Viewports[m_LowerRightViewportIndex].m_Corners.y1; 
+    m_LowerRightCamera->UpdateProjMat(left, right, bottom, top);
 }
 
 void ObjectCreationView::IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool z)

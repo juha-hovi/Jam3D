@@ -32,6 +32,11 @@ void PerspectiveCamera::Update()
 	m_ViewMatrix = glm::lookAt(m_Position, m_Position - m_CameraZ, m_CameraY);
 }
 
+void PerspectiveCamera::UpdateProjMat(float aspectRatio)
+{
+	m_ProjectionMatrix = glm::mat4(glm::perspective(glm::radians(m_FoV), aspectRatio, m_Near, m_Far));
+}
+
 void PerspectiveCamera::ProcessInput()
 {
 	if (m_PressedW)
@@ -56,7 +61,7 @@ void PerspectiveCamera::CursorPosCallback(double xPos, double yPos)
 	{
 		float xDiff = ((float)xPos - m_MousePosPrevious.x) * m_RotationSensitivity;
 		float yDiff = ((float)yPos - m_MousePosPrevious.y) * m_RotationSensitivity;
-		m_Pitch += yDiff;
+		m_Pitch -= yDiff;
 		m_Yaw += xDiff;
 
 		if (m_Pitch > 89.0f)

@@ -34,4 +34,33 @@ void OrthoCamera::Update()
 	m_ViewMatrix = glm::lookAt(m_Position, m_Position - m_CameraZ, m_CameraY);
 }
 
+void OrthoCamera::UpdateProjMat(float left, float right, float bottom, float top)
+{
+    m_ProjectionMatrix = glm::ortho(left, right, bottom, top, m_Near, m_Far);
+}
+
+// Maintains the largest dimension. In: aspectRatio = width/height
+void OrthoCamera::UpdateAspectRatio(float aspectRatio)
+{
+    if (aspectRatio >= 1.0f)
+    {
+        float left = -(float)m_LargestDim / 2.0f;
+        float right = (float)m_LargestDim / 2.0f;
+        float bottom = -((float)m_LargestDim / 2.0f) / aspectRatio;
+        float top = ((float)m_LargestDim / 2.0f) / aspectRatio;
+        m_Height = top - bottom;
+        m_ProjectionMatrix = glm::ortho(left, right, bottom, top, m_Near, m_Far);
+    }
+    else
+    {
+        float bottom = -(float)m_LargestDim / 2.0f;
+        float top = (float)m_LargestDim / 2.0f;
+        float left = -((float)m_LargestDim / 2.0f) * aspectRatio;
+        float right = ((float)m_LargestDim / 2.0f) * aspectRatio;
+        m_Width = right - left;
+        m_ProjectionMatrix = glm::ortho(left, right, bottom, top, m_Near, m_Far);
+    }
+    
+}
+
 }

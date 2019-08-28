@@ -172,6 +172,7 @@ void TestView::RenderImGui()
 
 void TestView::CursorPosCallback(double xPos, double yPos)
 {
+    yPos = m_Window->m_Height - yPos;
     m_Camera->CursorPosCallback(xPos, yPos);
 }
 
