@@ -20,7 +20,8 @@ ObjectCreationView::ObjectCreationView(std::shared_ptr<GLWindow> window)
     m_MouseLeftPressedTempBoxZMinusMargin(false), m_MouseLeftPressedTempBoxZPlusMargin(false),
     m_MouseLeftPressLocation(glm::vec3(0.0f, 0.0f, 0.0f)), m_CurrentTool(ObjectCreationView::MOVE),
     m_TempBoxCenterOriginal(0.0f, 0.0f, 0.0f), m_TempBoxDimensionsOriginal(0.0f, 0.0f, 0.0f),
-    m_ViewportDivider(2), m_ViewportMiddle(0.0f, 0.0f), m_ViewportmiddleOriginal(0.0f, 0.0f)
+    m_ViewportDivider(2), m_ViewportMiddle(0.0f, 0.0f), m_ViewportmiddleOriginal(0.0f, 0.0f),
+    m_OrthoCamDimMultip(1.5f)
 {
     InitViewports();
     InitCameras();
@@ -79,29 +80,19 @@ void ObjectCreationView::InitCameras()
     properties.windowDim = Jam3D::Vec2<float>({(float)m_Window->m_Width, (float)m_Window->m_Height});
     properties.window = m_Window;
     m_UpperLeftCamera = std::make_shared<PerspectiveCamera>(fov, target, properties);
-
-    float left = -m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
-    float right = m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
-    float bottom = -m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;
-    float top = m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;    
+  
     properties.pitch = 90.0f;
     properties.position = glm::vec3(0.0f, 2000.0f, 0.0f);
-    m_UpperRightCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
+    m_UpperRightCamera = std::make_shared<OrthoCamera>(0.0f, 1.0f, 0.0f, 1.0f, properties);
 
-    left = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
-    right = m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
-    bottom = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1;
-    top = m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1;
     properties.pitch = 0.0f;
     properties.position = glm::vec3(0.0f, 0.0f, -2000.0f);
-    m_LowerLeftCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
+    m_LowerLeftCamera = std::make_shared<OrthoCamera>(0.0f, 1.0f, 0.0f, 1.0f, properties);
 
-    left = -m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
-    right = m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
-    bottom = -m_Viewports[m_LowerRightViewportIndex].m_Corners.y1;
-    top = m_Viewports[m_LowerRightViewportIndex].m_Corners.y1;
     properties.position = glm::vec3(2000.0f, 0.0f, 0.0f);
-    m_LowerRightCamera = std::make_shared<OrthoCamera>(left, right, bottom, top, properties);
+    m_LowerRightCamera = std::make_shared<OrthoCamera>(0.0f, 1.0f, 0.0f, 1.0f, properties);
+
+    UpdateCameraProj();
 }
 
 void ObjectCreationView::Render()
@@ -112,6 +103,7 @@ void ObjectCreationView::Render()
     glEnable(GL_CULL_FACE);  
 
     UpdateModelMats();
+    UpdateCameraProj();
     m_UpperLeftCamera->Update();
     m_UpperRightCamera->Update();
     m_LowerLeftCamera->Update();
@@ -174,6 +166,12 @@ void ObjectCreationView::RenderImGui()
             m_CurrentTool = ObjectCreationView::STRECH;
         if (ImGui::Button("Draw"))
             m_CurrentTool = ObjectCreationView::DRAW;
+        ImGui::End();
+    }
+
+    {
+        ImGui::Begin("Camera");
+        ImGui::SliderFloat("Zoom", &m_OrthoCamDimMultip, 0.2f, 2.0f);
         ImGui::End();
     }
 }
@@ -369,25 +367,29 @@ void ObjectCreationView::ResizeViewports(double pos, bool x, bool y)
 
     UpdateViewports();
     InitViewportBorders();
+    UpdateCameraProj();
+}
 
+void ObjectCreationView::UpdateCameraProj()
+{
     m_UpperLeftCamera->UpdateProjMat((float)m_Viewports[m_UpperLeftViewportIndex].m_Corners.x1 / (float)m_Viewports[m_UpperLeftViewportIndex].m_Corners.y1);
 
-    float left = -m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
-    float right = m_Viewports[m_UpperRightViewportIndex].m_Corners.x1;
-    float bottom = -m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;
-    float top = m_Viewports[m_UpperRightViewportIndex].m_Corners.y1;     
+    float left = -m_Viewports[m_UpperRightViewportIndex].m_Corners.x1 / m_OrthoCamDimMultip;
+    float right = m_Viewports[m_UpperRightViewportIndex].m_Corners.x1 / m_OrthoCamDimMultip;
+    float bottom = -m_Viewports[m_UpperRightViewportIndex].m_Corners.y1 / m_OrthoCamDimMultip;
+    float top = m_Viewports[m_UpperRightViewportIndex].m_Corners.y1 / m_OrthoCamDimMultip;     
     m_UpperRightCamera->UpdateProjMat(left, right, bottom, top);
 
-    left = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
-    right = m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1;
-    bottom = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1;
-    top = m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1; 
+    left = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1 / m_OrthoCamDimMultip;
+    right = m_Viewports[m_LowerLeftViewportIndex].m_Corners.x1 / m_OrthoCamDimMultip;
+    bottom = -m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1 / m_OrthoCamDimMultip;
+    top = m_Viewports[m_LowerLeftViewportIndex].m_Corners.y1 / m_OrthoCamDimMultip; 
     m_LowerLeftCamera->UpdateProjMat(left, right, bottom, top);
 
-    left = -m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
-    right = m_Viewports[m_LowerRightViewportIndex].m_Corners.x1;
-    bottom = -m_Viewports[m_LowerRightViewportIndex].m_Corners.y1;
-    top = m_Viewports[m_LowerRightViewportIndex].m_Corners.y1; 
+    left = -m_Viewports[m_LowerRightViewportIndex].m_Corners.x1 / m_OrthoCamDimMultip;
+    right = m_Viewports[m_LowerRightViewportIndex].m_Corners.x1 / m_OrthoCamDimMultip;
+    bottom = -m_Viewports[m_LowerRightViewportIndex].m_Corners.y1 / m_OrthoCamDimMultip;
+    top = m_Viewports[m_LowerRightViewportIndex].m_Corners.y1 / m_OrthoCamDimMultip; 
     m_LowerRightCamera->UpdateProjMat(left, right, bottom, top);
 }
 

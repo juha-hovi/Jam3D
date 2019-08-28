@@ -37,6 +37,7 @@ public:
 
     void UpdateViewports();
     void ResizeViewports(double pos, bool x, bool y);
+    void UpdateCameraProj();
 
     void IsInMargin(glm::vec3 worldCoords, bool x, bool y, bool z);
 
@@ -75,6 +76,8 @@ public:
     Jam3D::Vec2<float> m_ViewportmiddleOriginal;
 
     std::shared_ptr<PerspectiveCamera> m_UpperLeftCamera;
+
+    float m_OrthoCamDimMultip;
 
     std::shared_ptr<OrthoCamera> m_UpperRightCamera;
     std::shared_ptr<OrthoCamera> m_LowerLeftCamera;
