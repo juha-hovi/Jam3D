@@ -1,4 +1,6 @@
 set(views_source
+    gridlayout.cpp
+    gridlayout.h
     objectcreationview.cpp
     objectcreationview.h
 	testview.cpp

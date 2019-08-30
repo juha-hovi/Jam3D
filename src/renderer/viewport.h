@@ -8,7 +8,7 @@ namespace Jam3D {
 class Viewport
 {
 public:
-    Viewport(Vec4<int> corners);
+    Viewport(Jam3D::Vec4<int> corners);
 
     void Use();
 
