@@ -26,9 +26,9 @@ void GridLayout::InitViewports()
 }
 
 // In: row/col = position of cell under/left of the resized border
-// pos = mousepos
+// delta = change in position
 // vertical/horizontal = border drag affects row/col
-void GridLayout::ResizeViewports(int row, int col, int pos, bool vertical, bool horizontal)
+void GridLayout::ResizeViewports(int row, int col, int delta, bool vertical, bool horizontal)
 {
     if (vertical)
     {

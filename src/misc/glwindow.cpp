@@ -22,4 +22,11 @@ void GLWindow::InitGLFW()
     glfwMakeContextCurrent(m_Window);
 }
 
+Jam3D::Vec2<double> GLWindow::GetCursorPos()
+{
+    double xPos, yPos;
+    glfwGetCursorPos(m_Window, &xPos, &yPos);
+    return Jam3D::Vec2<double>(xPos, m_Height - yPos);
+}
+
 }
