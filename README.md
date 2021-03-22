@@ -2,12 +2,12 @@
 
 Basic 3D modeling software. C++ / OpenGL programming practice project.
 
-##Main View:
-![Alt text](docs/scrnshot_main.jpg?raw=true "Title")
+## Main View:
+![Alt text](docs/scrnshot_main.png?raw=true "Title")
 
 
-##Object Creation View:
-![Alt text](docs/scrnshot_creation.jpg?raw=true "Title")
+## Object Creation View:
+![Alt text](docs/scrnshot_creation.png?raw=true "Title")
 
 
 ## Directory structure
