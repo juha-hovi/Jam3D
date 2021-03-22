@@ -2,6 +2,14 @@
 
 Basic 3D modeling software. C++ / OpenGL programming practice project.
 
+##Main View:
+![Alt text](docs/scrnshot_main.jpg?raw=true "Title")
+
+
+##Object Creation View:
+![Alt text](docs/scrnshot_creation.jpg?raw=true "Title")
+
+
 ## Directory structure
 ### bin: Binaries
 Folder for cmake build files. Executable output is /bin/src/Jam3D
